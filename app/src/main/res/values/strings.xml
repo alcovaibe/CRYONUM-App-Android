@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Icy Math</string>
+    <string name="action_menu">Меню</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="lorem_ipsum">1</string>
+    <string name="photo_camera">Сфотографировать</string>
+    <string name="recognize_image">Распознать с изображения</string>
+    <string name="enter">Ввести подстановку</string>
+    <string name="history">История</string>
+    <string name="ic_menu">Меню</string>
+    <string name="back">Назад</string>
+    <string name="language">Язык</string>
+    <string name="settings">Настройки</string>
+    <string name="help_center">Справочный центр</string>
+    <string name="about">О приложении</string>
+    <string name="title_activity_main_menu">MainActivityMenu</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="menu_home">Home</string>
+    <string name="divider">─────────────────────────────────────────────</string>
+    <string name="emael">ivanzavalov391@gmail.com</string>
+    <string name="policy">Политика конфеденциальности</string>
+    <string name="app_version">Версия приложения: 1.0</string>
+    <string name="connection">Связь со мной</string>
+    <string name="developer">Разработчик: Иван Завьялов</string>
+    <string name="later_in_time">Ожидается в следующем обновлении.</string>
+    <string name="dark_themes">Темная тема</string>
+    <string name="image">Изображение</string>
+    <string name="Switch">Switch</string>
+    <string name="language_app">Язык интерфейса</string>
+    <string name="Russian_language">Русский</string>
+    <string name="Language_later_time">Поддержка других языков будет добавлена в последующих обновлениях.</string>
+    <string name="history2">К сожалению,эта функция сейчас не доступна. Она появится в следующих обновлениях.</string>
+</resources>

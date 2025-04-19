@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_header_main_activity_menu"
+    app:headerLayout="@layout/nav_header_main_activity_menu">
+
+    <activity
+        android:id="@+id/nav_header_main_activity_menu"
+        android:name="com.example.icymath.MainActivityMenu"
+        android:label="@string/menu_home"
+        tools:layout="@layout/nav_header_main_activity_menu"/>
+    <fragment
+        android:id="@+id/nav_language"
+        android:name="com.example.icymath.ui.language.LanguageFragment"
+        android:label="@string/language"
+        tools:layout="@layout/fragment_language" >
+        <action
+            android:id="@+id/action_nav_language_to_nav_header_main_activity_menu"
+            app:destination="@id/nav_header_main_activity_menu" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.icymath.ui.settings.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_nav_settings_to_nav_header_main_activity_menu"
+            app:destination="@id/nav_header_main_activity_menu" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_help_center"
+        android:name="com.example.icymath.ui.helpcenter.HelpCenterFragment"
+        android:label="@string/help_center"
+        tools:layout="@layout/fragment_help_center" >
+        <action
+            android:id="@+id/action_nav_help_center_to_nav_header_main_activity_menu"
+            app:destination="@id/nav_header_main_activity_menu" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="com.example.icymath.ui.about.AboutFragment"
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about">
+        <action
+            android:id="@+id/action_nav_about_to_nav_header_main_activity_menu"
+            app:destination="@id/nav_header_main_activity_menu" />
+    </fragment>
+</navigation>
