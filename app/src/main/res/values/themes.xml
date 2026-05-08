@@ -1,18 +1,43 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.IcyMath" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+
+    <!-- Базовая тема -->
+    <style name="Base.Theme.IcyMath" parent="Theme.Material3.Light.NoActionBar" />
+
+    <!-- Основная тема приложения -->
+    <style name="Theme.IcyMath" parent="Theme.IcyMath.Light" />
+
+    <!-- Твой родной сплэш (КАК БЫЛО) -->
+    <style name="Theme.IcyMath.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="Theme.IcyMath" parent="Base.Theme.IcyMath" />
-
-    <style name="Theme.IcyMath.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <!-- Светлая тема -->
+    <style name="Theme.IcyMath.Light" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/black</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="Theme.IcyMath.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <!-- AMOLED Тема -->
+    <style name="Theme.IcyMath.Amoled" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
 
-    <style name="Theme.IcyMath.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!-- Sandy Тема -->
+    <style name="Theme.IcyMath.SandyBrown" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowBackground">@color/SandyBrown</item>
+        <item name="android:statusBarColor">@color/SandyBrown</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.IcyMath.System" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 </resources>

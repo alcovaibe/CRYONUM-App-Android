@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="action_delete" type="id" />
+    <item name="nav_settings" type="id" />
+    <item name="nav_help_center" type="id" />
+    <item name="partners" type="id" />
+    <item name="about" type="id" />
+    <item name="nav_schedule" type="id" />
+    <item name="nav_calculator" type="id" />
+    <item name="nav_home" type="id" />
+    <item name="nav_reference" type="id" />
+    <item name="nav_camera" type="id" />
+    <item name="nav_gallery" type="id" />
+    <item name="nav_history" type="id" />
+</resources>

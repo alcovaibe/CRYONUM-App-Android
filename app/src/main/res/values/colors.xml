@@ -1,9 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="email_red">#FF0000</color> <!-- всегда ярко-красный -->
+    <color name="titleColor">#000000</color>
+    <color name="colorSurface">#FFFFFF</color>
+
+
+
+    <!-- Базовые цвета (светлая тема) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="SandyBrown">#F4A460</color>
+    <color name="DarkGrey">#696969</color>
     <color name="SlateBlue">#6A5ACD</color>
     <color name="red">#FF0000</color>
-    <color name="DarkGrey">#696969</color>
+    <color name="cardBackgroundColor">#FAFAFA</color> <!-- светло-серый -->
+    <color name="cardStrokeColor">#FFFAFA</color>     <!-- тонкая граница -->
+    <color name="headerColor">#F4A460</color> <!-- SandyBrown -->
+
+
+
+    <!-- Дополнительные HTML-цвета -->
+    <color name="LightCoral">#F08080</color>
+    <color name="Tomato">#FF6347</color>
+    <color name="Orange">#FFA500</color>
+    <color name="Gold">#FFD700</color>
+    <color name="Khaki">#F0E68C</color>
+    <color name="LimeGreen">#32CD32</color>
+    <color name="Turquoise">#40E0D0</color>
+    <color name="SkyBlue">#87CEEB</color>
+    <color name="DodgerBlue">#1E90FF</color>
+    <color name="MediumPurple">#9370DB</color>
+    <color name="Orchid">#DA70D6</color>
+    <color name="HotPink">#FF69B4</color>
+    <color name="RosyBrown">#BC8F8F</color>
+    <color name="Chocolate">#D2691E</color>
+    <color name="DimGray">#696969</color>
+
+    <!-- Семантические цвета для светлой темы -->
+    <color name="colorPrimary_Light">@color/black</color>
+    <color name="colorOnPrimary_Light">@color/white</color>
+
+    <color name="colorBackground_Light">@color/white</color>
+    <color name="colorOnBackground_Light">@color/black</color>
+
+    <color name="colorSurface_Light">#F2F2F2</color>
+    <color name="colorOnSurface_Light">@color/black</color>
+
+    <!-- Семантические цвета для тёмной темы -->
+    <color name="colorPrimary_Dark">@color/white</color>
+    <color name="colorOnPrimary_Dark">@color/black</color>
+
+    <color name="colorBackground_Dark">@color/black</color>
+    <color name="colorOnBackground_Dark">@color/white</color>
+
+    <color name="colorSurface_Dark">#1E1E1E</color>
+    <color name="colorOnSurface_Dark">@color/white</color>
+
+    <!-- AMOLED тема -->
+    <color name="colorBackground_Amoled">@color/black</color>
+    <color name="colorOnBackground_Amoled">@color/white</color>
+
+    <!-- Карточки истории (светлая) -->
+    <color name="history_card_text_primary_Light">#000000</color>
+    <color name="history_card_text_secondary_Light">#666666</color>
+    <color name="history_card_background_Light">#FFFFFF</color>
+
+    <!-- Карточки истории (тёмная) -->
+    <color name="history_card_text_primary_Dark">@color/white</color>
+    <color name="history_card_text_secondary_Dark">#CCCCCC</color>
+    <color name="history_card_background_Dark">#333333</color>
+
+
+    <!-- Светлый фон -->
+    <color name="bg_light">#FFFFFF</color> <!-- белый фон -->
+
+    <!-- Темный фон -->
+    <color name="bg_dark">#121212</color> <!-- темный почти черный фон -->
+
+    <color name="bottom_nav_background">#F5F5F5</color> <!-- default -->
+    <color name="outline_active">#F4A460</color> <!-- Песочная -->
+    <color name="outline_inactive">#808080</color> <!-- Серый -->
+
 </resources>

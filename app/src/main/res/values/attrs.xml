@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorBackground" format="color" />
+    <attr name="titleColor" format="color" />
+    <attr name="headerColor" format="color" />
+    <attr name="bottomNavigationBackgroundColor" format="color" />
+    <attr name="cardStrokeColor" format="color" />
+    <attr name="keyboardKeyBackground" format="color" />
+    <attr name="keyboardKeyTextColor" format="color" />
+    <attr name="inputFieldBackground" format="color" />
+    <attr name="inputFieldTextColor" format="color" />
+    <attr name="confirmButtonBackground" format="color" />
+    <attr name="confirmButtonTextColor" format="color" />
+</resources>

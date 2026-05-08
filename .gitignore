@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# App specific excludes
+*.keystore
+*.apk
+/release/
+.idea/
