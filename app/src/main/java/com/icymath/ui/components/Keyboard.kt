@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -28,13 +29,15 @@ fun Keyboard(
     onNumberClick: (String) -> Unit,
     onBackspaceClick: () -> Unit,
     onClearClick: () -> Unit,
+    isBiometricEnabled: Boolean = false,
+    onBiometricClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val keys = listOf(
         listOf("7", "8", "9"),
         listOf("4", "5", "6"),
         listOf("1", "2", "3"),
-        listOf("C", "0", "backspace")
+        listOf(if (isBiometricEnabled) "fingerprint" else "C", "0", "backspace")
     )
 
     Column(
@@ -53,6 +56,7 @@ fun Keyboard(
                             when (key) {
                                 "backspace" -> onBackspaceClick()
                                 "C" -> onClearClick()
+                                "fingerprint" -> onBiometricClick()
                                 else -> onNumberClick(key)
                             }
                         },
@@ -98,9 +102,16 @@ private fun KeyboardKey(
                         modifier = Modifier.size(24.dp)
                     )
                 }
+                "fingerprint" -> {
+                    Icon(
+                        imageVector = Icons.Default.Fingerprint,
+                        contentDescription = "Biometric",
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
                 "C" -> {
                     Text(
-                        text = text, // Оставляем "C" как на скриншоте
+                        text = text,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium
                     )

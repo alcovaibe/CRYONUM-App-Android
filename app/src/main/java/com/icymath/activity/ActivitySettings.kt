@@ -58,7 +58,10 @@ class ActivitySettings : AppCompatActivity() {
                 R.string.security,
                 R.string.security,
                 onClick = {
-                    startActivity(Intent(this, ActivitySecurity::class.java))
+                    val intent = Intent(this, ActivitySecurity::class.java).apply {
+                        putExtra("MODE", ActivitySecurity.MODE_SETUP)
+                    }
+                    startActivity(intent)
                 }
             )
         )

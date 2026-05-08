@@ -15,8 +15,8 @@ android {
         applicationId = "com.icymath"
         minSdk = 26
         targetSdk = 36
-        versionCode = 411
-        versionName = "1.5.0.211"
+        versionCode = 412
+        versionName = "1.5.0.212"
 
         buildConfigField("String", "APP_VERSION", "\"$versionName\"")
 
@@ -95,6 +95,9 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.biometric)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.lifecycle.process)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

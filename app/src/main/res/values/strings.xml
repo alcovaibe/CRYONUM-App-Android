@@ -217,4 +217,13 @@
     <string name="description_komet">Неофициальный клиент на Max</string>
     <string name="card_description_narfu">Карточка партнера с названием Сафу - Северный Арктический Федеральный Университет</string>
     <string name="card_expand_arrow">стрелочкаразвертывания карточки</string>
+    <string name="app_lock">Замок приложения</string>
+    <string name="biometric_unlock">Использовать биометрию</string>
+    <string name="enter_pin">Введите PIN-код</string>
+    <string name="set_pin">Установите PIN-код</string>
+    <string name="confirm_pin">Подтвердите PIN-код</string>
+    <string name="pin_mismatch">PIN-коды не совпадают</string>
+    <string name="unlock_app">Разблокировать Icy Math</string>
+    <string name="biometric_title">Биометрическая разблокировка</string>
+    <string name="biometric_subtitle">Используйте отпечаток пальца для входа</string>
 </resources>

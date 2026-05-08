@@ -100,12 +100,21 @@ fun SettingCard(item: SettingItemCompose) {
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = stringResource(item.nameRes),
-                fontSize = 18.sp,
-                color = IcyMathTheme.colors.titleColor,
-                modifier = Modifier.weight(1f)
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(item.nameRes),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = IcyMathTheme.colors.titleColor
+                )
+                if (item.descriptionRes != 0 && item.descriptionRes != item.nameRes) {
+                    Text(
+                        text = stringResource(item.descriptionRes),
+                        fontSize = 14.sp,
+                        color = IcyMathTheme.colors.titleColor.copy(alpha = 0.7f)
+                    )
+                }
+            }
 
             Image(
                 painter = painterResource(id = R.drawable.ic_arrow_right),
