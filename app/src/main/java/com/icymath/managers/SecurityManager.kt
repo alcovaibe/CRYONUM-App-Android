@@ -32,7 +32,8 @@ object SecurityManager {
     private val LOCKOUT_UNTIL = longPreferencesKey("lockout_until")
 
     private val isUnlockedSession = AtomicBoolean(false)
-    private var firstCheckPerformed = false
+    private val isLockActivityVisible = AtomicBoolean(false)
+    private val firstCheckPerformed = AtomicBoolean(false)
     private const val LOCK_TIMEOUT_MS = 60_000L // 1 minute
     private const val MAX_ATTEMPTS = 5
     private const val LOCKOUT_DURATION_MS = 30_000L // 30 seconds
@@ -49,10 +50,24 @@ object SecurityManager {
 
     fun setUnlocked(unlocked: Boolean) {
         isUnlockedSession.set(unlocked)
-        if (unlocked) firstCheckPerformed = true
+        if (unlocked) firstCheckPerformed.set(true)
     }
 
     fun isSessionUnlocked(): Boolean = isUnlockedSession.get()
+
+    /**
+     * Tries to "reserve" the lock screen showing action.
+     * Returns true if successful (no lock screen is currently showing or pending).
+     */
+    fun checkAndMarkLocking(): Boolean {
+        return isLockActivityVisible.compareAndSet(false, true)
+    }
+
+    fun setLockActivityVisible(visible: Boolean) {
+        isLockActivityVisible.set(visible)
+    }
+
+    fun isLockActivityVisible(): Boolean = isLockActivityVisible.get()
 
     suspend fun clearPin(context: Context) {
         context.dataStore.edit { 
@@ -64,7 +79,7 @@ object SecurityManager {
         }
         _securitySettings.value = _securitySettings.value.copy(isBiometricEnabled = false)
         isUnlockedSession.set(false)
-        firstCheckPerformed = false
+        firstCheckPerformed.set(false)
     }
 
     suspend fun isAppLockEnabled(context: Context): Boolean {
@@ -76,7 +91,7 @@ object SecurityManager {
         _securitySettings.value = _securitySettings.value.copy(isAppLockEnabled = enabled)
         if (!enabled) {
             isUnlockedSession.set(false)
-            firstCheckPerformed = false
+            firstCheckPerformed.set(false)
         }
     }
 
@@ -153,16 +168,20 @@ object SecurityManager {
         if (!isAppLockEnabled(context)) return false
         
         // Cold start check
-        if (!firstCheckPerformed) return true
-        
-        // Session check
-        if (isUnlockedSession.get()) return false
+        if (!firstCheckPerformed.get()) return true
         
         val lastTime = context.dataStore.data.map { it[LAST_BACKGROUND_TIME] ?: 0L }.first()
         if (lastTime == 0L) return true
         
         val diff = System.currentTimeMillis() - lastTime
-        return diff > LOCK_TIMEOUT_MS
+        if (diff > LOCK_TIMEOUT_MS) {
+            // Timeout reached, invalidate session
+            isUnlockedSession.set(false)
+            return true
+        }
+        
+        // Session check
+        return !isUnlockedSession.get()
     }
 
     private fun pbkdf2(pin: String, salt: ByteArray): ByteArray {

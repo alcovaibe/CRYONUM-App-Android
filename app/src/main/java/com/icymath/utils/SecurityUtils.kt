@@ -14,11 +14,13 @@ object SecurityUtils {
         
         activity.lifecycleScope.launch {
             if (SecurityManager.shouldLock(activity)) {
-                val intent = Intent(activity, ActivitySecurity::class.java).apply {
-                    putExtra("MODE", ActivitySecurity.MODE_UNLOCK)
-                    addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                if (SecurityManager.checkAndMarkLocking()) {
+                    val intent = Intent(activity, ActivitySecurity::class.java).apply {
+                        putExtra("MODE", ActivitySecurity.MODE_UNLOCK)
+                        addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    }
+                    activity.startActivity(intent)
                 }
-                activity.startActivity(intent)
             }
         }
     }

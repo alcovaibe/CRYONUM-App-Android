@@ -202,6 +202,11 @@ class ActivitySecurity : AppCompatActivity() {
                 MODE_UNLOCK -> {
                     if (SecurityManager.verifyPin(this@ActivitySecurity, pin)) {
                         SecurityManager.setUnlocked(true)
+                        
+                        if (intent.getBooleanExtra("LAUNCH_MAIN_ON_SUCCESS", false)) {
+                            startActivity(Intent(this@ActivitySecurity, ActivitySubstitutions::class.java))
+                        }
+
                         finish()
                     } else {
                         onResult(getString(R.string.error_enter))
@@ -265,6 +270,11 @@ class ActivitySecurity : AppCompatActivity() {
                 Log.d(TAG, "Biometric authentication succeeded")
                 isBiometricDialogShowing = false
                 SecurityManager.setUnlocked(true)
+
+                if (intent.getBooleanExtra("LAUNCH_MAIN_ON_SUCCESS", false)) {
+                    startActivity(Intent(this@ActivitySecurity, ActivitySubstitutions::class.java))
+                }
+
                 finish()
             }
 
@@ -294,26 +304,12 @@ class ActivitySecurity : AppCompatActivity() {
         val promptInfoBuilder = BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.biometric_title))
             .setSubtitle(getString(R.string.biometric_subtitle))
+            .setNegativeButtonText(getString(R.string.cancel)) // Now we can set it because we removed DEVICE_CREDENTIAL
 
-        val authenticators = BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        // Only allow strong biometrics. If they fail/cancelled, user stays on our PIN screen.
+        promptInfoBuilder.setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
         
-        promptInfoBuilder.setAllowedAuthenticators(authenticators)
-        
-        // Ensure no negative button text is set when DEVICE_CREDENTIAL is used,
-        // as per the BiometricPrompt API requirements.
-        
-        val promptInfo = try {
-            promptInfoBuilder.build()
-        } catch (e: Exception) {
-            Log.e(TAG, "Error building prompt info", e)
-            // Fallback for older devices/versions
-            BiometricPrompt.PromptInfo.Builder()
-                .setTitle(getString(R.string.biometric_title))
-                .setSubtitle(getString(R.string.biometric_subtitle))
-                .setNegativeButtonText(getString(R.string.cancel))
-                .build()
-        }
+        val promptInfo = promptInfoBuilder.build()
 
         try {
             biometricPrompt?.authenticate(promptInfo)
@@ -325,6 +321,7 @@ class ActivitySecurity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        SecurityManager.setLockActivityVisible(false)
         isBiometricDialogShowing = false
         biometricPrompt = null
     }

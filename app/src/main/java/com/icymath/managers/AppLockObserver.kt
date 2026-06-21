@@ -20,11 +20,13 @@ class AppLockObserver(context: Context) : DefaultLifecycleObserver {
     override fun onStart(owner: LifecycleOwner) {
         scope.launch {
             if (SecurityManager.shouldLock(appContext)) {
-                val intent = Intent(appContext, ActivitySecurity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    putExtra("MODE", ActivitySecurity.MODE_UNLOCK)
+                if (SecurityManager.checkAndMarkLocking()) {
+                    val intent = Intent(appContext, ActivitySecurity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        putExtra("MODE", ActivitySecurity.MODE_UNLOCK)
+                    }
+                    appContext.startActivity(intent)
                 }
-                appContext.startActivity(intent)
             }
         }
     }
@@ -34,7 +36,7 @@ class AppLockObserver(context: Context) : DefaultLifecycleObserver {
             try {
                 delay(100)
                 SecurityManager.setLastBackgroundTime(appContext, System.currentTimeMillis())
-                SecurityManager.setUnlocked(false)
+                Log.d("AppLockObserver", "Background time saved")
             } catch (e: Exception) {
                 Log.e("AppLockObserver", "Error in onStop handler", e)
             }

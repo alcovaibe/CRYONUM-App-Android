@@ -12,9 +12,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.icymath.activity.ActivitySecurity
 import com.icymath.activity.ActivitySubstitutions
 import com.icymath.managers.LocaleManager
+import com.icymath.managers.SecurityManager
 import com.icymath.managers.ThemeManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SplashActivity : ComponentActivity() {
 
@@ -98,11 +103,30 @@ class SplashActivity : ComponentActivity() {
             Log.w(TAG, "apply system ui changes failed: ${t.message}")
         }
 
-        // Small delay and then launch main activity
+        // Small delay and then launch main activity or lock screen
         window.decorView.postDelayed({
             if (!isFinishing) {
-                startActivity(Intent(this@SplashActivity, ActivitySubstitutions::class.java))
-                finish()
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (SecurityManager.shouldLock(this@SplashActivity)) {
+                        // If locked, go straight to security but only if not already showing
+                        if (SecurityManager.checkAndMarkLocking()) {
+                            val intent = Intent(this@SplashActivity, ActivitySecurity::class.java).apply {
+                                putExtra("MODE", ActivitySecurity.MODE_UNLOCK)
+                                // Add a flag or extra to tell ActivitySecurity to launch main screen after success
+                                putExtra("LAUNCH_MAIN_ON_SUCCESS", true)
+                            }
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            // If someone else is already locking, just finish
+                            finish()
+                        }
+                    } else {
+                        // Normal flow
+                        startActivity(Intent(this@SplashActivity, ActivitySubstitutions::class.java))
+                        finish()
+                    }
+                }
             }
         }, SPLASH_DELAY_MS)
     }
