@@ -75,7 +75,7 @@ class ActivityHistory : AppCompatActivity() {
                         startActivity(Intent(this, ActivityReferenceMaterial::class.java))
                         finish()
                     }
-                    R.id.nav_camera -> imagePicker?.startCamera()
+                    R.id.nav_camera -> imagePicker?.requestCamera()
                     R.id.nav_home -> {
                         startActivity(Intent(this, ActivitySubstitutions::class.java))
                         finish()

@@ -169,7 +169,7 @@ class ActivitySubstitutions : AppCompatActivity() {
             R.id.nav_calculator -> startActivity(Intent(this, ActivityCalculator::class.java))
             R.id.about -> startActivity(Intent(this, ActivityAbout::class.java))
             R.id.nav_reference -> startActivity(Intent(this, ActivityReferenceMaterial::class.java))
-            R.id.nav_camera -> imagePicker.startCamera()
+            R.id.nav_camera -> imagePicker.requestCamera()
             R.id.nav_gallery -> imagePicker.startGallery()
             R.id.nav_history -> startActivity(Intent(this, ActivityHistory::class.java))
             R.id.nav_home -> { /* Already here */ }

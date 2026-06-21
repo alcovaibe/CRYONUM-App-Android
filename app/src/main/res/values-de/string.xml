@@ -214,4 +214,16 @@
     <string name="description_komet">Inoffizieller Client für Max</string>
     <string name="card_description_narfu">Partnerkarte mit dem Namen Safu - Northern Arctic Federal University</string>
     <string name="card_expand_arrow">Karten-Erweiterungspfeil</string>
+    <string name="app_lock">App-Sperre</string>
+    <string name="app_lock_label">PIN-Code verwenden</string>
+    <string name="app_lock_description">Schützen Sie Ihre Daten, indem Sie eine 4-stellige PIN festlegen. Die App fragt diese bei jedem Kaltstart oder nach 1 Minute im Hintergrund ab.</string>
+    <string name="biometric_unlock">Biometrie verwenden</string>
+    <string name="enter_pin">PIN eingeben</string>
+    <string name="set_pin">PIN festlegen</string>
+    <string name="confirm_pin">PIN bestätigen</string>
+    <string name="pin_mismatch">PINs stimmen nicht überein</string>
+    <string name="unlock_app">Icy Math entsperren</string>
+    <string name="biometric_title">Biometrische Entsperrung</string>
+    <string name="biometric_subtitle">Verwenden Sie Ihren Fingerabdruck zum Anmelden</string>
+    <string name="lockout_message">Zu viele Versuche. Versuchen Sie es in %d Sek. erneut.</string>
 </resources>

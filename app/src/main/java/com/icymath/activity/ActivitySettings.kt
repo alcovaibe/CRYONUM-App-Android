@@ -35,7 +35,7 @@ class ActivitySettings : AppCompatActivity() {
         val settings = listOf(
             SettingItemCompose(
                 R.string.Themes,
-                R.string.ThemeSelection,
+                R.string.Themes, // Changed from R.string.ThemeSelection to remove description
                 onClick = {
                     startActivity(Intent(this, ActivityThemeSelection::class.java))
                 }
@@ -59,7 +59,7 @@ class ActivitySettings : AppCompatActivity() {
                 R.string.security,
                 onClick = {
                     val intent = Intent(this, ActivitySecurity::class.java).apply {
-                        putExtra("MODE", ActivitySecurity.MODE_SETUP)
+                        putExtra("MODE", ActivitySecurity.MODE_SETTINGS)
                     }
                     startActivity(intent)
                 }

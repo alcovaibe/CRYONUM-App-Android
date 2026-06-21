@@ -137,7 +137,7 @@ class ActivityReferenceMaterial : AppCompatActivity() {
             onMenuAction = { id ->
                 when (id) {
                     R.id.nav_reference -> { /* Мы уже здесь */ }
-                    R.id.nav_camera -> imagePicker?.startCamera()
+                    R.id.nav_camera -> imagePicker?.requestCamera()
                     R.id.nav_home -> {
                         startActivity(Intent(this, ActivitySubstitutions::class.java))
                         finish()
