@@ -90,7 +90,8 @@ fun PdfViewerScreen(
                             renderer.openPage(i).use { page ->
                                 val bitmapW = (page.width * renderScale).toInt().coerceAtLeast(1)
                                 val bitmapH = (page.height * renderScale).toInt().coerceAtLeast(1)
-                                val bitmap = createBitmap(bitmapW, bitmapH, Bitmap.Config.RGB_565)
+                                // S-04: PdfRenderer requires ARGB_8888 for rendering
+                                val bitmap = createBitmap(bitmapW, bitmapH, Bitmap.Config.ARGB_8888)
                                 val canvas = Canvas(bitmap)
                                 canvas.drawColor(Color.WHITE)
                                 val matrix = Matrix().apply { postScale(renderScale, renderScale) }
@@ -101,7 +102,8 @@ fun PdfViewerScreen(
                     }
                 }
                 true
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                android.util.Log.e("PdfViewer", "Error rendering PDF: ${e.message}", e)
                 renderedPages.forEach { it.recycle() }
                 false
             }

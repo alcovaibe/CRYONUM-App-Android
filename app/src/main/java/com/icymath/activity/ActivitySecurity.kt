@@ -300,15 +300,20 @@ class ActivitySecurity : AppCompatActivity() {
         
         promptInfoBuilder.setAllowedAuthenticators(authenticators)
         
-        // If DEVICE_CREDENTIAL is used, we cannot set negative button text on some API levels
-        // The system will provide its own way to cancel or use credential.
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            // For older versions where DEVICE_CREDENTIAL might not be fully integrated into BiometricPrompt with authenticators
-            // Actually, setAllowedAuthenticators(BIOMETRIC_STRONG | DEVICE_CREDENTIAL) is the modern way.
-            // If authenticators includes DEVICE_CREDENTIAL, then negative button text MUST NOT be set.
+        // Ensure no negative button text is set when DEVICE_CREDENTIAL is used,
+        // as per the BiometricPrompt API requirements.
+        
+        val promptInfo = try {
+            promptInfoBuilder.build()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error building prompt info", e)
+            // Fallback for older devices/versions
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle(getString(R.string.biometric_title))
+                .setSubtitle(getString(R.string.biometric_subtitle))
+                .setNegativeButtonText(getString(R.string.cancel))
+                .build()
         }
-
-        val promptInfo = promptInfoBuilder.build()
 
         try {
             biometricPrompt?.authenticate(promptInfo)
