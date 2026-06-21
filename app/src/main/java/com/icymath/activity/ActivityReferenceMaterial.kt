@@ -22,6 +22,7 @@ import com.icymath.managers.LocaleManager
 import com.icymath.managers.SystemUiManager
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.activity.ReferenceMaterialScreenBridge
+import com.icymath.utils.SecurityUtils
 import java.io.File
 import java.io.FileOutputStream
 
@@ -44,6 +45,8 @@ class ActivityReferenceMaterial : AppCompatActivity() {
         ThemeManager.applyTheme(this)
         SystemUiManager.applyEdgeToEdge(this)
         super.onCreate(savedInstanceState)
+        
+        SecurityUtils.checkLock(this)
 
         requestedOrientation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
@@ -82,6 +85,11 @@ class ActivityReferenceMaterial : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        SecurityUtils.checkLock(this)
     }
 
     private fun initData() {

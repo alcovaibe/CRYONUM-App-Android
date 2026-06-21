@@ -212,7 +212,17 @@ object InstallationInformationManager {
 
     private fun enqueueImmediateSendWork(context: Context) {
         try {
+            val constraints = androidx.work.Constraints.Builder()
+                .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED)
+                .build()
+                
             val workRequest = OneTimeWorkRequest.Builder(SendInstallInfoWorker::class.java)
+                .setConstraints(constraints)
+                .setBackoffCriteria(
+                    androidx.work.BackoffPolicy.EXPONENTIAL,
+                    androidx.work.WorkRequest.MIN_BACKOFF_MILLIS,
+                    TimeUnit.MILLISECONDS
+                )
                 .build()
             WorkManager.getInstance(context)
                 .enqueueUniqueWork(UNIQUE_IMMEDIATE_WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest)

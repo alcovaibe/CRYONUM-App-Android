@@ -9,14 +9,18 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
+import androidx.lifecycle.lifecycleScope
 import com.icymath.R
 import com.icymath.items.HistoryItem
 import com.icymath.managers.HistoryManager
 import com.icymath.managers.ImagePicker
 import com.icymath.managers.LocaleManager
+import com.icymath.managers.SecurityManager
 import com.icymath.managers.SystemUiManager
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.activity.HistoryScreenBridge
+import com.icymath.utils.SecurityUtils
+import kotlinx.coroutines.launch
 
 class ActivityHistory : AppCompatActivity() {
     private var imagePicker: ImagePicker? = null
@@ -30,6 +34,8 @@ class ActivityHistory : AppCompatActivity() {
         ThemeManager.applyTheme(this)
         SystemUiManager.applyEdgeToEdge(this)
         super.onCreate(savedInstanceState)
+        
+        SecurityUtils.checkLock(this)
 
         requestedOrientation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
@@ -87,6 +93,11 @@ class ActivityHistory : AppCompatActivity() {
         )
 
         setContentView(composeView)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        SecurityUtils.checkLock(this)
     }
 
     private fun openItem(item: HistoryItem) {

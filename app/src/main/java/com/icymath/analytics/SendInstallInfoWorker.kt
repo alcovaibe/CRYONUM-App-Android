@@ -70,7 +70,8 @@ class SendInstallInfoWorker(context: Context, params: WorkerParameters) : Worker
 
     companion object {
         private const val TAG = "SendInstallInfoWorker"
-        private const val SERVER_URL = "http://192.168.1.10:5000/install_info"
+        // In production, this should be an HTTPS URL provided via BuildConfig or Remote Config
+        private const val SERVER_URL = "https://api.icymath.com/install_info"
         private val JSON = "application/json; charset=utf-8".toMediaType()
     }
 }

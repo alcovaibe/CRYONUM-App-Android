@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.icymath.R
 import com.icymath.managers.ImagePicker
@@ -26,9 +27,13 @@ import com.icymath.managers.LocaleManager
 import com.icymath.managers.PolicyManager
 import com.icymath.managers.ThemeManager
 import com.icymath.managers.SystemUiManager
+import com.icymath.managers.SecurityManager
+import com.icymath.managers.AppLockObserver
+import com.icymath.utils.SecurityUtils
 import com.icymath.math.PermutationUtils
 import com.icymath.ui.activity.SubstitutionsScreenBridge
 import com.icymath.utils.InputFilter
+import kotlinx.coroutines.launch
 
 class ActivitySubstitutions : AppCompatActivity() {
 
@@ -65,6 +70,9 @@ class ActivitySubstitutions : AppCompatActivity() {
         ThemeManager.applyTheme(this)
         SystemUiManager.applyEdgeToEdge(this)
         super.onCreate(savedInstanceState)
+        
+        // S-01: Quick check to prevent bypass window
+        SecurityUtils.checkLock(this)
 
         registerLaunchers()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -121,6 +129,7 @@ class ActivitySubstitutions : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        SecurityUtils.checkLock(this)
         checkPolicy()
     }
 

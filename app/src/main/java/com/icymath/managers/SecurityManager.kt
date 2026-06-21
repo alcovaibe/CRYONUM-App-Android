@@ -7,12 +7,16 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.security.MessageDigest
+import java.security.SecureRandom
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "security_settings")
 
 object SecurityManager {
     private val PIN_HASH_KEY = stringPreferencesKey("pin_hash")
+    private val PIN_SALT_KEY = stringPreferencesKey("pin_salt")
     private val IS_APP_LOCK_ENABLED = booleanPreferencesKey("is_app_lock_enabled")
     private val IS_BIOMETRIC_ENABLED = booleanPreferencesKey("is_biometric_enabled")
     private val LAST_BACKGROUND_TIME = longPreferencesKey("last_background_time")
@@ -35,8 +39,10 @@ object SecurityManager {
     suspend fun clearPin(context: Context) {
         context.dataStore.edit { 
             it.remove(PIN_HASH_KEY)
+            it.remove(PIN_SALT_KEY)
             it.remove(FAILED_ATTEMPTS)
             it.remove(LOCKOUT_UNTIL)
+            it.remove(IS_BIOMETRIC_ENABLED)
         }
         isUnlockedSession.set(false)
         firstCheckPerformed = false
@@ -63,17 +69,33 @@ object SecurityManager {
     }
 
     suspend fun savePin(context: Context, pin: String) {
-        val hash = hashPin(pin)
+        val salt = ByteArray(16).apply { SecureRandom().nextBytes(this) }
+        val hash = pbkdf2(pin, salt)
+        val saltString = bytesToHex(salt)
+        val hashString = bytesToHex(hash)
+        
         context.dataStore.edit { 
-            it[PIN_HASH_KEY] = hash 
+            it[PIN_HASH_KEY] = hashString
+            it[PIN_SALT_KEY] = saltString
             it[FAILED_ATTEMPTS] = 0
             it[LOCKOUT_UNTIL] = 0L
         }
     }
 
     suspend fun verifyPin(context: Context, pin: String): Boolean {
-        val savedHash = context.dataStore.data.map { it[PIN_HASH_KEY] }.first()
-        val isCorrect = savedHash == hashPin(pin)
+        // S-04: Enforce lockout in the domain method
+        if (getRemainingLockoutTime(context) > 0) return false
+        
+        val prefs = context.dataStore.data.first()
+        val savedHash = prefs[PIN_HASH_KEY] ?: return false
+        val savedSalt = prefs[PIN_SALT_KEY] ?: return false
+        
+        val salt = hexToBytes(savedSalt)
+        val currentHash = pbkdf2(pin, salt)
+        val currentHashString = bytesToHex(currentHash)
+        
+        // C-02: Use MessageDigest.isEqual for constant-time comparison (prevention of timing attacks)
+        val isCorrect = MessageDigest.isEqual(savedHash.toByteArray(), currentHashString.toByteArray())
         
         if (isCorrect) {
             context.dataStore.edit { 
@@ -81,7 +103,7 @@ object SecurityManager {
                 it[LOCKOUT_UNTIL] = 0L
             }
         } else {
-            val attempts = (context.dataStore.data.map { it[FAILED_ATTEMPTS] ?: 0 }.first()) + 1
+            val attempts = (prefs[FAILED_ATTEMPTS] ?: 0) + 1
             context.dataStore.edit { 
                 it[FAILED_ATTEMPTS] = attempts 
                 if (attempts >= MAX_ATTEMPTS) {
@@ -122,10 +144,21 @@ object SecurityManager {
         return diff > LOCK_TIMEOUT_MS
     }
 
-    private fun hashPin(pin: String): String {
-        val bytes = pin.toByteArray()
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        return digest.fold("") { str, it -> str + "%02x".format(it) }
+    private fun pbkdf2(pin: String, salt: ByteArray): ByteArray {
+        val spec = PBEKeySpec(pin.toCharArray(), salt, 10000, 256)
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+        return factory.generateSecret(spec).encoded
+    }
+
+    private fun bytesToHex(bytes: ByteArray): String {
+        return bytes.fold("") { str, it -> str + "%02x".format(it) }
+    }
+
+    private fun hexToBytes(hex: String): ByteArray {
+        val result = ByteArray(hex.length / 2)
+        for (i in result.indices) {
+            result[i] = hex.substring(i * 2, i * 2 + 2).toInt(16).toByte()
+        }
+        return result
     }
 }

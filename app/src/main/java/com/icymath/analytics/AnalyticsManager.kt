@@ -142,19 +142,22 @@ object AnalyticsManager {
     fun logEvent(screen: String, action: String, details: String? = null) {
         if (!analyticsEnabled) return
         
+        // Redact potentially sensitive details in production
+        val redactedDetails = if (com.icymath.BuildConfig.DEBUG) details else "[REDACTED]"
+
         // Log to Firebase
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.SCREEN_NAME, screen)
             putString("action", action)
-            details?.let { putString("details", it) }
+            redactedDetails?.let { putString("details", it) }
         }
         firebaseAnalytics?.logEvent("user_action", bundle)
 
         // Log to Crashlytics as a "breadcrumb"
-        FirebaseCrashlytics.getInstance().log("Screen: $screen, Action: $action, Details: $details")
+        FirebaseCrashlytics.getInstance().log("Screen: $screen, Action: $action, Details: $redactedDetails")
         FirebaseCrashlytics.getInstance().setCustomKey("current_screen", screen)
 
-        val event = UserEvent(timestamp = System.currentTimeMillis(), screen = screen, action = action, details = details)
+        val event = UserEvent(timestamp = System.currentTimeMillis(), screen = screen, action = action, details = redactedDetails)
         executor.execute {
             try {
                 db?.analyticsDao()?.insertEvent(event)

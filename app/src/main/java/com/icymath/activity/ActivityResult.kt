@@ -12,6 +12,7 @@ import com.icymath.managers.HistoryManager
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.activity.ResultScreenBridge
+import com.icymath.utils.SecurityUtils
 
 class ActivityResult : AppCompatActivity() {
 
@@ -20,9 +21,16 @@ class ActivityResult : AppCompatActivity() {
         super.attachBaseContext(LocaleManager.applyLocale(newBase, lang))
     }
 
+    override fun onResume() {
+        super.onResume()
+        SecurityUtils.checkLock(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
         super.onCreate(savedInstanceState)
+        
+        SecurityUtils.checkLock(this)
 
         requestedOrientation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ActivityInfo.SCREEN_ORIENTATION_LOCKED

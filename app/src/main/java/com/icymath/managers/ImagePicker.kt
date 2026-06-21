@@ -162,6 +162,9 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
             val image = InputImage.fromFilePath(activity, uri)
             recognizer.process(image)
                 .addOnSuccessListener { visionText ->
+                    // S-08 Cleanup temp file after successful recognition if it was a camera photo
+                    cleanupTempFile(uri)
+                    
                     val full = visionText.text
                     val lines = full.split(Regex("\\r?\\n")).map { it.trim() }.filter { it.isNotEmpty() }
                     
@@ -180,12 +183,26 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
                     }
                 }
                 .addOnFailureListener {
+                    cleanupTempFile(uri)
                     Toast.makeText(activity, R.string.error_photo_galery, Toast.LENGTH_SHORT).show()
                     callback.onResult(null, null)
                 }
         } catch (e: Exception) {
+            cleanupTempFile(uri)
             Toast.makeText(activity, R.string.error_photo_galery, Toast.LENGTH_SHORT).show()
             callback.onResult(null, null)
+        }
+    }
+
+    private fun cleanupTempFile(uri: Uri) {
+        // Only delete if it's our own temp file from camera (photoUri matches)
+        if (uri == photoUri) {
+            try {
+                activityRef.get()?.contentResolver?.delete(uri, null, null)
+                photoUri = null
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to cleanup temp file: ${e.message}")
+            }
         }
     }
 

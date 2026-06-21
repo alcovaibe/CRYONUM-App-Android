@@ -15,11 +15,13 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.icymath.BuildConfig
 import com.icymath.R
 import com.icymath.managers.HistoryManager
 import com.icymath.managers.PolicyManager
 import com.icymath.managers.SystemUiManager
 import com.icymath.managers.ThemeManager
+import com.icymath.utils.SecurityUtils
 import org.mariuszgromada.math.mxparser.Constant
 import org.mariuszgromada.math.mxparser.Expression
 import org.mariuszgromada.math.mxparser.License
@@ -51,6 +53,8 @@ class ActivityCalculator : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
         super.onCreate(savedInstanceState)
+        
+        SecurityUtils.checkLock(this)
 
         // confirm non-commercial use of mXparser
         License.iConfirmNonCommercialUse("com.example.icymath")
@@ -210,6 +214,7 @@ class ActivityCalculator : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        SecurityUtils.checkLock(this)
         checkPolicy()
     }
 
@@ -352,23 +357,23 @@ class ActivityCalculator : AppCompatActivity() {
 
         @JvmStatic
         fun evaluate(rawExpression: String, radians: Boolean): String {
-            Log.d("CalcDebug", "Raw input: '$rawExpression'")
+            if (BuildConfig.DEBUG) Log.d("CalcDebug", "Raw input: '$rawExpression'")
             val normalized = normalizeExpression(rawExpression)
-            Log.d("CalcDebug", "Normalized: '$normalized'")
+            if (BuildConfig.DEBUG) Log.d("CalcDebug", "Normalized: '$normalized'")
             if (normalized.isBlank()) {
                 throw IllegalArgumentException("Пустое выражение")
             }
             val exprForParser = if (radians) normalized else convertTrigToDegrees(normalized)
-            Log.d("CalcDebug", "Expr for parser: '$exprForParser'")
+            if (BuildConfig.DEBUG) Log.d("CalcDebug", "Expr for parser: '$exprForParser'")
 
             val expr = Expression(exprForParser)
             val result = try {
                 expr.calculate()
             } catch (ex: Exception) {
-                Log.e("CalcDebug", "Exception during calculate(): ${ex.message}", ex)
+                if (BuildConfig.DEBUG) Log.e("CalcDebug", "Exception during calculate(): ${ex.message}", ex)
                 Double.NaN
             }
-            Log.d("CalcDebug", "Raw result (double): $result")
+            if (BuildConfig.DEBUG) Log.d("CalcDebug", "Raw result (double): $result")
             if (result.isNaN() || result.isInfinite()) {
                 throw IllegalArgumentException("Не удалось посчитать выражение")
             }
