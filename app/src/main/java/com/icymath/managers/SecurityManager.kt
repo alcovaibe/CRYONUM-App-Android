@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.security.MessageDigest
@@ -13,6 +16,11 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "security_settings")
+
+data class SecuritySettings(
+    val isAppLockEnabled: Boolean = false,
+    val isBiometricEnabled: Boolean = false
+)
 
 object SecurityManager {
     private val PIN_HASH_KEY = stringPreferencesKey("pin_hash")
@@ -29,6 +37,16 @@ object SecurityManager {
     private const val MAX_ATTEMPTS = 5
     private const val LOCKOUT_DURATION_MS = 30_000L // 30 seconds
 
+    private val _securitySettings = MutableStateFlow(SecuritySettings())
+    val securitySettings: StateFlow<SecuritySettings> = _securitySettings.asStateFlow()
+
+    suspend fun refreshSecuritySettings(context: Context) {
+        _securitySettings.value = SecuritySettings(
+            isAppLockEnabled = isAppLockEnabled(context),
+            isBiometricEnabled = isBiometricEnabled(context)
+        )
+    }
+
     fun setUnlocked(unlocked: Boolean) {
         isUnlockedSession.set(unlocked)
         if (unlocked) firstCheckPerformed = true
@@ -44,6 +62,7 @@ object SecurityManager {
             it.remove(LOCKOUT_UNTIL)
             it.remove(IS_BIOMETRIC_ENABLED)
         }
+        _securitySettings.value = _securitySettings.value.copy(isBiometricEnabled = false)
         isUnlockedSession.set(false)
         firstCheckPerformed = false
     }
@@ -54,6 +73,7 @@ object SecurityManager {
 
     suspend fun setAppLockEnabled(context: Context, enabled: Boolean) {
         context.dataStore.edit { it[IS_APP_LOCK_ENABLED] = enabled }
+        _securitySettings.value = _securitySettings.value.copy(isAppLockEnabled = enabled)
         if (!enabled) {
             isUnlockedSession.set(false)
             firstCheckPerformed = false
@@ -66,6 +86,7 @@ object SecurityManager {
 
     suspend fun setBiometricEnabled(context: Context, enabled: Boolean) {
         context.dataStore.edit { it[IS_BIOMETRIC_ENABLED] = enabled }
+        _securitySettings.value = _securitySettings.value.copy(isBiometricEnabled = enabled)
     }
 
     suspend fun savePin(context: Context, pin: String) {

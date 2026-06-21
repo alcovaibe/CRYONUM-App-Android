@@ -1,5 +1,6 @@
 package com.icymath.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -9,6 +10,7 @@ import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -30,6 +32,14 @@ class ActivitySecurity : AppCompatActivity() {
     private var firstPin = ""
     private lateinit var composeView: ComposeView
     
+    private val setupAppLockLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            refreshSecuritySettings()
+        }
+    }
+
     private var isBiometricDialogShowing = false
     private var biometricPrompt: BiometricPrompt? = null
     
@@ -86,19 +96,25 @@ class ActivitySecurity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (mode == MODE_SETTINGS) {
-            initUi(composeView)
+            refreshSecuritySettings()
+        }
+    }
+
+    private fun refreshSecuritySettings() {
+        lifecycleScope.launch {
+            SecurityManager.refreshSecuritySettings(this@ActivitySecurity)
         }
     }
 
     private fun initUi(composeView: ComposeView) {
         composeView.setContent {
             if (mode == MODE_SETTINGS) {
-                var isAppLockEnabled by remember { mutableStateOf(false) }
-                var isBiometricEnabled by remember { mutableStateOf(false) }
+                val securitySettings by SecurityManager.securitySettings.collectAsState()
+                val isAppLockEnabled = securitySettings.isAppLockEnabled
+                val isBiometricEnabled = securitySettings.isBiometricEnabled
 
                 LaunchedEffect(Unit) {
-                    isAppLockEnabled = SecurityManager.isAppLockEnabled(this@ActivitySecurity)
-                    isBiometricEnabled = SecurityManager.isBiometricEnabled(this@ActivitySecurity)
+                    SecurityManager.refreshSecuritySettings(this@ActivitySecurity)
                 }
 
                 SecurityScreenBridge.SecuritySettingsContent(
@@ -108,12 +124,11 @@ class ActivitySecurity : AppCompatActivity() {
                             val intent = Intent(this@ActivitySecurity, ActivitySecurity::class.java).apply {
                                 putExtra("MODE", MODE_SETUP)
                             }
-                            startActivity(intent)
+                            setupAppLockLauncher.launch(intent)
                         } else {
                             lifecycleScope.launch {
                                 SecurityManager.setAppLockEnabled(this@ActivitySecurity, false)
                                 SecurityManager.clearPin(this@ActivitySecurity)
-                                isAppLockEnabled = false
                             }
                         }
                     },
@@ -121,7 +136,6 @@ class ActivitySecurity : AppCompatActivity() {
                     onBiometricToggle = { enabled ->
                         lifecycleScope.launch {
                             SecurityManager.setBiometricEnabled(this@ActivitySecurity, enabled)
-                            isBiometricEnabled = enabled
                         }
                     },
                     onBack = { finish() }
@@ -204,6 +218,8 @@ class ActivitySecurity : AppCompatActivity() {
                         if (pin == firstPin) {
                             SecurityManager.savePin(this@ActivitySecurity, pin)
                             SecurityManager.setAppLockEnabled(this@ActivitySecurity, true)
+                            SecurityManager.setUnlocked(true)
+                            setResult(Activity.RESULT_OK)
                             Toast.makeText(this@ActivitySecurity, R.string.ok, Toast.LENGTH_SHORT).show()
                             finish()
                         } else {

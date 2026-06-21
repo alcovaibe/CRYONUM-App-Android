@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.icymath.R
 import com.icymath.ui.styles.AppStyles
@@ -107,4 +108,16 @@ private fun RowScope.BottomNavItem(
             unselectedIconColor = colors.titleColor.copy(alpha = 0.6f)
         )
     )
+}
+
+@Preview(showBackground = true, name = "Light Mode")
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
+@Composable
+fun AppBottomNavigationPreview() {
+    IcyMathTheme {
+        AppBottomNavigation(
+            currentRoute = R.id.nav_home,
+            onItemSelected = {}
+        )
+    }
 }

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.icymath.R
@@ -64,5 +65,18 @@ fun PolicyDialogContent(
                 Text(text = stringResource(R.string.decline))
             }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Light Mode")
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
+@Composable
+fun PolicyDialogContentPreview() {
+    IcyMathTheme {
+        PolicyDialogContent(
+            onViewPolicy = {},
+            onAccept = {},
+            onDecline = {}
+        )
     }
 }

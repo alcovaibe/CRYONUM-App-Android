@@ -75,6 +75,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import com.icymath.managers.PolicyManager
 import java.io.File
 
@@ -331,5 +332,20 @@ fun PdfViewerScreen(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Light Mode")
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
+@Composable
+fun PdfViewerScreenPreview() {
+    MaterialTheme {
+        PdfViewerScreen(
+            filePath = "",
+            shouldShowAcceptDialogOnScrollEnd = false,
+            onBack = {},
+            onShowAcceptDialog = {},
+            onPdfError = {}
+        )
     }
 }

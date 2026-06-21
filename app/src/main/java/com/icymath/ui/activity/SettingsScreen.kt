@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.icymath.R
@@ -140,6 +141,26 @@ object SettingsScreenBridge {
                     settings = settings
                 )
             }
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Light Mode", locale = "ru")
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode", locale = "ru")
+@Composable
+fun SettingsScreenPreview() {
+    val mockSettings = listOf(
+        SettingItemCompose(R.string.Themes, R.string.Themes, {}),
+        SettingItemCompose(R.string.language, R.string.language, {}),
+        SettingItemCompose(R.string.analytics, R.string.analytics, {}),
+        SettingItemCompose(R.string.security, R.string.security, {})
+    )
+    IcyMathTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            SettingsScreen(
+                onBackClick = {},
+                settings = mockSettings
+            )
         }
     }
 }

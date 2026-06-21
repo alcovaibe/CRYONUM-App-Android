@@ -18,7 +18,7 @@ class AppLockObserver(private val context: Context) : DefaultLifecycleObserver {
         CoroutineScope(Dispatchers.Main).launch {
             if (SecurityManager.shouldLock(context)) {
                 val intent = Intent(context, ActivitySecurity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
                     putExtra("MODE", ActivitySecurity.MODE_UNLOCK)
                 }
                 context.startActivity(intent)
