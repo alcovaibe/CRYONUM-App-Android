@@ -12,9 +12,12 @@ import com.icymath.managers.SecurityManager
 import com.icymath.managers.ThemeManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class MyApplicationInfo : Application() {
+
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     override fun onCreate() {
         super.onCreate()
@@ -44,8 +47,8 @@ class MyApplicationInfo : Application() {
             override fun onActivityDestroyed(activity: Activity) {}
 
             private fun applySecureFlag(activity: Activity) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (SecurityManager.isAppLockEnabled(activity)) {
+                applicationScope.launch {
+                    if (SecurityManager.isAppLockEnabled(activity.applicationContext)) {
                         activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
                     } else {
                         // Normally we don't remove it if it was set by activity itself, 

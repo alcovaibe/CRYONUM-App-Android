@@ -166,14 +166,27 @@ object SecurityManager {
     }
 
     private fun pbkdf2(pin: String, salt: ByteArray): ByteArray {
-        val spec = PBEKeySpec(pin.toCharArray(), salt, 10000, 256)
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        return factory.generateSecret(spec).encoded
+        val pinChars = pin.toCharArray()
+        val spec = PBEKeySpec(pinChars, salt, 10000, 256)
+        return try {
+            val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+            factory.generateSecret(spec).encoded
+        } finally {
+            spec.clearPassword()
+            pinChars.fill('\u0000')
+        }
     }
 
     private fun bytesToHex(bytes: ByteArray): String {
-        return bytes.fold("") { str, it -> str + "%02x".format(it) }
+        val result = StringBuilder(bytes.size * 2)
+        for (byte in bytes) {
+            result.append(HEX_CHARS[(byte.toInt() ushr 4) and 0x0F])
+            result.append(HEX_CHARS[byte.toInt() and 0x0F])
+        }
+        return result.toString()
     }
+
+    private val HEX_CHARS = "0123456789abcdef".toCharArray()
 
     private fun hexToBytes(hex: String): ByteArray {
         val result = ByteArray(hex.length / 2)

@@ -15,45 +15,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,20 +33,20 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.core.graphics.createBitmap
 import com.icymath.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import com.icymath.managers.PolicyManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 import java.io.File
 
 @Composable
@@ -90,76 +60,95 @@ fun PdfViewerScreen(
     fromDialogViewAction: Boolean = false
 ) {
     val context = LocalContext.current
-    val density = LocalDensity.current
-    val pages = remember { mutableStateListOf<Bitmap>() }
+    val pages = remember(filePath) { mutableStateListOf<Bitmap>() }
     var isLoading by remember { mutableStateOf(true) }
     var showAcceptButton by remember { mutableStateOf(isFirstLaunchMode || fromDialogViewAction) }
 
-    val scrollState = rememberScrollState()
+    val listState = rememberLazyListState()
     var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(androidx.compose.ui.geometry.Offset.Zero) }
 
     var isZoomControlVisible by remember { mutableStateOf(false) }
-    var lastScrollValue by remember { mutableIntStateOf(0) }
     var isBackButtonVisible by remember { mutableStateOf(true) }
 
-    // Render PDF pages
+    // Render PDF pages off the main thread and publish the result in one UI update.
     LaunchedEffect(filePath) {
-        withContext(Dispatchers.IO) {
+        isLoading = true
+        pages.forEach { it.recycle() }
+        pages.clear()
+
+        val renderedPages = mutableListOf<Bitmap>()
+        val success = withContext(Dispatchers.IO) {
             try {
                 val file = File(filePath)
                 ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY).use { pfd ->
                     PdfRenderer(pfd).use { renderer ->
-                        val renderScale = 2.0f
+                        val renderScale = 1.5f
 
                         for (i in 0 until renderer.pageCount) {
+                            if (!isActive) break
                             renderer.openPage(i).use { page ->
                                 val bitmapW = (page.width * renderScale).toInt().coerceAtLeast(1)
                                 val bitmapH = (page.height * renderScale).toInt().coerceAtLeast(1)
-                                val bitmap = createBitmap(bitmapW, bitmapH, Bitmap.Config.ARGB_8888)
+                                val bitmap = createBitmap(bitmapW, bitmapH, Bitmap.Config.RGB_565)
                                 val canvas = Canvas(bitmap)
                                 canvas.drawColor(Color.WHITE)
-                                val matrix = Matrix()
-                                matrix.postScale(renderScale, renderScale)
+                                val matrix = Matrix().apply { postScale(renderScale, renderScale) }
                                 page.render(bitmap, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                                pages.add(bitmap)
+                                renderedPages.add(bitmap)
                             }
                         }
                     }
                 }
-                isLoading = false
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    onPdfError()
-                }
+                true
+            } catch (_: Exception) {
+                renderedPages.forEach { it.recycle() }
+                false
             }
+        }
+
+        if (success) {
+            pages.addAll(renderedPages)
+            isLoading = false
+        } else {
+            onPdfError()
         }
     }
 
-    // Hide/show back button on scroll
-    LaunchedEffect(scrollState) {
-        snapshotFlow { scrollState.value }
-            .map { it > lastScrollValue }
+    DisposableEffect(filePath) {
+        onDispose {
+            pages.forEach { it.recycle() }
+            pages.clear()
+        }
+    }
+
+    // Hide/show back button on scroll without reading mutable state inside the Flow transform.
+    LaunchedEffect(listState) {
+        var previousIndex = listState.firstVisibleItemIndex
+        var previousOffset = listState.firstVisibleItemScrollOffset
+        snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
             .distinctUntilChanged()
-            .collect { isScrollingDown ->
-                if (isScrollingDown && isBackButtonVisible && scrollState.value > 50) {
-                    isBackButtonVisible = false
-                } else if (!isScrollingDown && !isBackButtonVisible) {
-                    isBackButtonVisible = true
-                }
-                lastScrollValue = scrollState.value
+            .collect { (index, scrollOffset) ->
+                val isScrollingDown = index > previousIndex ||
+                    (index == previousIndex && scrollOffset > previousOffset)
+                val hasScrolled = index > 0 || scrollOffset > 50
+                isBackButtonVisible = !(isScrollingDown && hasScrolled)
+                previousIndex = index
+                previousOffset = scrollOffset
             }
     }
 
-    // Show accept dialog at end of scroll
+    // Show accept dialog at end of scroll.
     if (shouldShowAcceptDialogOnScrollEnd && !isFirstLaunchMode) {
-        LaunchedEffect(scrollState) {
-            snapshotFlow { scrollState.value >= scrollState.maxValue - 50 && scrollState.maxValue > 0 }
+        LaunchedEffect(listState) {
+            snapshotFlow {
+                val totalItems = listState.layoutInfo.totalItemsCount
+                val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+                totalItems > 0 && lastVisibleIndex >= totalItems - 1
+            }
                 .distinctUntilChanged()
                 .collect { isAtEnd ->
-                    if (isAtEnd) {
-                        onShowAcceptDialog()
-                    }
+                    if (isAtEnd) onShowAcceptDialog()
                 }
         }
     }
@@ -194,10 +183,10 @@ fun PdfViewerScreen(
                         }
                     }
             ) {
-                Column(
+                LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(scrollState)
                         .graphicsLayer(
                             scaleX = scale,
                             scaleY = scale,
@@ -207,7 +196,8 @@ fun PdfViewerScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    pages.forEach { bitmap ->
+                    items(pages.size, key = { it }) { index ->
+                        val bitmap = pages[index]
                         Card(
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                             colors = CardDefaults.cardColors(containerColor = androidx.compose.ui.graphics.Color.White),
@@ -225,44 +215,48 @@ fun PdfViewerScreen(
                     }
 
                     if (showAcceptButton) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = {
-                                PolicyManager.acceptPolicy(context)
-                                showAcceptButton = false
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .padding(bottom = 40.dp)
-                                .height(64.dp),
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            )
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.accept),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(
+                                onClick = {
+                                    PolicyManager.acceptPolicy(context)
+                                    showAcceptButton = false
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 40.dp)
+                                    .height(64.dp),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                )
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.accept),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
                         }
                     }
 
                     if (shouldShowAcceptDialogOnScrollEnd && !isFirstLaunchMode) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = onShowAcceptDialog,
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
-                            modifier = Modifier.padding(bottom = 32.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.view_policy_options_at_end),
-                                fontSize = 16.sp,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(
+                                onClick = onShowAcceptDialog,
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier.padding(bottom = 32.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.view_policy_options_at_end),
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -277,13 +271,13 @@ fun PdfViewerScreen(
             exit = fadeOut() + slideOutHorizontally { -it },
             modifier = Modifier
                 .padding(12.dp)
-                .zIndex(1f) // Поднимаем выше всех слоев
+                .zIndex(1f)
         ) {
             IconButton(
                 onClick = onBack,
                 modifier = Modifier
-                    .size(40.dp) // Немного увеличил размер для удобства
-                    .shadow(4.dp, CircleShape) // Добавил тень, чтобы не сливалось с белым фоном страниц
+                    .size(40.dp)
+                    .shadow(4.dp, CircleShape)
                     .background(androidx.compose.ui.graphics.Color.White, CircleShape)
                     .clip(CircleShape)
             ) {
@@ -307,7 +301,7 @@ fun PdfViewerScreen(
         ) {
             Surface(
                 color = MaterialTheme.colorScheme.surface,
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(24.dp),
                 tonalElevation = 8.dp,
                 modifier = Modifier.padding(8.dp)
             ) {
@@ -327,7 +321,7 @@ fun PdfViewerScreen(
             // Auto-hide zoom control after 4 seconds
             LaunchedEffect(isZoomControlVisible) {
                 if (isZoomControlVisible) {
-                    kotlinx.coroutines.delay(4000)
+                    delay(4000)
                     isZoomControlVisible = false
                 }
             }
