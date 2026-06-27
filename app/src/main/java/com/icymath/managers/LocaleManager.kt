@@ -127,6 +127,9 @@ object LocaleManager {
         // persist explicitly
         saveLanguage(activity.applicationContext, safeLanguage)
 
+        // Keep session unlocked during restart
+        SecurityManager.setUnlocked(SecurityManager.isSessionUnlocked())
+
         // apply locale (no persisting inside)
         applyLocale(activity, safeLanguage)
 

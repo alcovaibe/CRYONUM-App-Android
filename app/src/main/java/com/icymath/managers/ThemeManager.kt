@@ -109,6 +109,9 @@ object ThemeManager {
         val prefs = appCtx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putBoolean(KEY_SKIP_SPLASH, true).apply()
 
+        // Keep session unlocked during restart
+        SecurityManager.setUnlocked(SecurityManager.isSessionUnlocked())
+
         applyNightMode(theme)
 
         val intent = Intent(activity, ActivitySubstitutions::class.java)

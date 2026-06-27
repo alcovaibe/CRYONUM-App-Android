@@ -46,8 +46,8 @@ fun AppDrawer(
                 MenuItem(R.id.nav_help_center, R.string.help_center, R.drawable.ic_help, isVisible = true),
                 MenuItem(R.id.partners, R.string.partners, R.drawable.ic_partners, isVisible = true),
                 MenuItem(R.id.about, R.string.about_app, R.drawable.ic_about, isVisible = true),
-                MenuItem(R.id.nav_schedule, R.string.schedule, R.drawable.ic_schedule, isVisible = false),
-                MenuItem(R.id.nav_calculator, R.string.calculator_title, R.drawable.ic_delete, isVisible = false)
+                MenuItem(R.id.nav_schedule, R.string.schedule, R.drawable.ic_schedule, isVisible = true),
+                MenuItem(R.id.nav_calculator, R.string.calculator_title, R.drawable.ic_delete, isVisible = true)
             )
         }
 

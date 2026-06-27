@@ -105,7 +105,7 @@ fun SettingCard(item: SettingItemCompose) {
                 Text(
                     text = stringResource(item.nameRes),
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Normal,
                     color = IcyMathTheme.colors.titleColor
                 )
                 if (item.descriptionRes != 0 && item.descriptionRes != item.nameRes) {

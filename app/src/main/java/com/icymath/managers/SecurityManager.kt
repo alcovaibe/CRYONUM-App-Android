@@ -34,6 +34,10 @@ object SecurityManager {
     private val isUnlockedSession = AtomicBoolean(false)
     private val isLockActivityVisible = AtomicBoolean(false)
     private val firstCheckPerformed = AtomicBoolean(false)
+    
+    @Volatile
+    private var inMemoryBackgroundTime: Long = 0L
+
     private const val LOCK_TIMEOUT_MS = 60_000L // 1 minute
     private const val MAX_ATTEMPTS = 5
     private const val LOCKOUT_DURATION_MS = 30_000L // 30 seconds
@@ -50,7 +54,10 @@ object SecurityManager {
 
     fun setUnlocked(unlocked: Boolean) {
         isUnlockedSession.set(unlocked)
-        if (unlocked) firstCheckPerformed.set(true)
+        if (unlocked) {
+            firstCheckPerformed.set(true)
+            inMemoryBackgroundTime = 0L // Start fresh session
+        }
     }
 
     fun isSessionUnlocked(): Boolean = isUnlockedSession.get()
@@ -163,6 +170,7 @@ object SecurityManager {
     }
 
     suspend fun setLastBackgroundTime(context: Context, time: Long) {
+        inMemoryBackgroundTime = time
         context.dataStore.edit { it[LAST_BACKGROUND_TIME] = time }
     }
 
@@ -171,8 +179,12 @@ object SecurityManager {
 
         // 1. If we are already unlocked in this session, we only lock if we've been in background too long
         if (isUnlockedSession.get()) {
-            val lastTime = context.dataStore.data.map { it[LAST_BACKGROUND_TIME] ?: 0L }.first()
-            if (lastTime == 0L) return false // Active session, never backgrounded yet
+            // ONLY check in-memory time for active sessions. 
+            // DataStore fallback is dangerous here during theme/locale restarts because
+            // it might contain an old background time from a previous run.
+            val lastTime = inMemoryBackgroundTime
+
+            if (lastTime == 0L) return false // Active session, never backgrounded in this process run yet
 
             val diff = System.currentTimeMillis() - lastTime
             if (diff > LOCK_TIMEOUT_MS) {
@@ -184,13 +196,16 @@ object SecurityManager {
             return false
         }
 
-        // 2. If not unlocked yet, we check if it's a cold start or a genuine lock condition
+        // 2. If not unlocked yet, we check if it's a cold start.
+        // If firstCheckPerformed is true, it means we already decided we need a lock,
+        // but the lock activity might not have called setUnlocked(true) yet.
         if (!firstCheckPerformed.get()) {
             return true
         }
 
-        // Session was invalidated or never established (e.g. process death)
-        return true
+        // In case process was killed but firstCheckPerformed survived (though unlikely for AtomicBoolean),
+        // or session was invalidated.
+        return !isUnlockedSession.get()
     }
 
     private fun pbkdf2(pin: String, salt: ByteArray): ByteArray {
