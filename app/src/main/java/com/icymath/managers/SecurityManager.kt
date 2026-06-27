@@ -69,6 +69,8 @@ object SecurityManager {
 
     fun isLockActivityVisible(): Boolean = isLockActivityVisible.get()
 
+    fun isFirstCheckPerformed(): Boolean = firstCheckPerformed.get()
+
     suspend fun clearPin(context: Context) {
         context.dataStore.edit { 
             it.remove(PIN_HASH_KEY)
@@ -89,10 +91,10 @@ object SecurityManager {
     suspend fun setAppLockEnabled(context: Context, enabled: Boolean) {
         context.dataStore.edit { it[IS_APP_LOCK_ENABLED] = enabled }
         _securitySettings.value = _securitySettings.value.copy(isAppLockEnabled = enabled)
-        if (!enabled) {
-            isUnlockedSession.set(false)
-            firstCheckPerformed.set(false)
-        }
+        
+        // Reset state so that next time it's enabled, it performs a fresh check
+        isUnlockedSession.set(false)
+        firstCheckPerformed.set(false)
     }
 
     suspend fun isBiometricEnabled(context: Context): Boolean {
@@ -166,22 +168,29 @@ object SecurityManager {
 
     suspend fun shouldLock(context: Context): Boolean {
         if (!isAppLockEnabled(context)) return false
-        
-        // Cold start check
-        if (!firstCheckPerformed.get()) return true
-        
-        val lastTime = context.dataStore.data.map { it[LAST_BACKGROUND_TIME] ?: 0L }.first()
-        if (lastTime == 0L) return true
-        
-        val diff = System.currentTimeMillis() - lastTime
-        if (diff > LOCK_TIMEOUT_MS) {
-            // Timeout reached, invalidate session
-            isUnlockedSession.set(false)
+
+        // 1. If we are already unlocked in this session, we only lock if we've been in background too long
+        if (isUnlockedSession.get()) {
+            val lastTime = context.dataStore.data.map { it[LAST_BACKGROUND_TIME] ?: 0L }.first()
+            if (lastTime == 0L) return false // Active session, never backgrounded yet
+
+            val diff = System.currentTimeMillis() - lastTime
+            if (diff > LOCK_TIMEOUT_MS) {
+                // Background timeout reached, invalidate session
+                isUnlockedSession.set(false)
+                return true
+            }
+            // Still within valid session time
+            return false
+        }
+
+        // 2. If not unlocked yet, we check if it's a cold start or a genuine lock condition
+        if (!firstCheckPerformed.get()) {
             return true
         }
-        
-        // Session check
-        return !isUnlockedSession.get()
+
+        // Session was invalidated or never established (e.g. process death)
+        return true
     }
 
     private fun pbkdf2(pin: String, salt: ByteArray): ByteArray {

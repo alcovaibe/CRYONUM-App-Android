@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.net.toUri
 import com.icymath.BuildConfig
 import com.icymath.R
 import com.icymath.analytics.InstallationInformationManager
@@ -13,6 +14,7 @@ import com.icymath.managers.LocaleManager
 import com.icymath.managers.PolicyManager
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.activity.setAboutContent
+import android.content.Intent
 
 class ActivityAbout : AppCompatActivity() {
 
@@ -67,9 +69,20 @@ class ActivityAbout : AppCompatActivity() {
                         isFirstLaunchMode = false
                     )
                 } catch (ignored: Exception) { }
+            },
+            onSourceCodeClick = {
+                openUrl("https://github.com/alcovaibe/Icy-Math")
             }
         )
 
         setContentView(composeView)
+    }
+
+    private fun openUrl(url: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+            startActivity(intent)
+        } catch (_: Exception) {
+        }
     }
 }

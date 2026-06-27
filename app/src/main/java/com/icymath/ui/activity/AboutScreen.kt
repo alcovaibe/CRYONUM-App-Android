@@ -43,11 +43,12 @@ fun setAboutContent(
     appVersion: String,
     installSource: String,
     onBackClick: () -> Unit,
-    onPrivacyClick: () -> Unit
+    onPrivacyClick: () -> Unit,
+    onSourceCodeClick: () -> Unit
 ) {
     composeView.setContent {
         IcyMathTheme {
-            AboutScreen(appVersion, installSource, onBackClick, onPrivacyClick)
+            AboutScreen(appVersion, installSource, onBackClick, onPrivacyClick, onSourceCodeClick)
         }
     }
 }
@@ -58,7 +59,8 @@ fun AboutScreen(
     appVersion: String,
     installSource: String,
     onBackClick: () -> Unit,
-    onPrivacyClick: () -> Unit
+    onPrivacyClick: () -> Unit,
+    onSourceCodeClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -118,6 +120,18 @@ fun AboutScreen(
                     .padding(8.dp)
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.source_code),
+                color = Color(0xFF2196F3),
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .clickable { onSourceCodeClick() }
+                    .padding(8.dp)
+            )
+
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
@@ -154,7 +168,8 @@ fun AboutScreenPreview() {
                 appVersion = "1.0.0 (42)",
                 installSource = "Google Play Store",
                 onBackClick = {},
-                onPrivacyClick = {}
+                onPrivacyClick = {},
+                onSourceCodeClick = {}
             )
         }
     }

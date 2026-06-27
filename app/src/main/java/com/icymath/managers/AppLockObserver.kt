@@ -9,7 +9,6 @@ import com.icymath.activity.ActivitySecurity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AppLockObserver(context: Context) : DefaultLifecycleObserver {
@@ -20,10 +19,14 @@ class AppLockObserver(context: Context) : DefaultLifecycleObserver {
     override fun onStart(owner: LifecycleOwner) {
         scope.launch {
             if (SecurityManager.shouldLock(appContext)) {
+                val isColdStart = !SecurityManager.isFirstCheckPerformed()
                 if (SecurityManager.checkAndMarkLocking()) {
                     val intent = Intent(appContext, ActivitySecurity::class.java).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         putExtra("MODE", ActivitySecurity.MODE_UNLOCK)
+                        if (isColdStart) {
+                            putExtra("LAUNCH_MAIN_ON_SUCCESS", true)
+                        }
                     }
                     appContext.startActivity(intent)
                 }
@@ -34,7 +37,6 @@ class AppLockObserver(context: Context) : DefaultLifecycleObserver {
     override fun onStop(owner: LifecycleOwner) {
         scope.launch {
             try {
-                delay(100)
                 SecurityManager.setLastBackgroundTime(appContext, System.currentTimeMillis())
                 Log.d("AppLockObserver", "Background time saved")
             } catch (e: Exception) {
