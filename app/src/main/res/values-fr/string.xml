@@ -44,8 +44,9 @@
     <string name="history_parity"> %1$s</string>
 
     <plurals name="inversion">
-        <item quantity="one">%d inversion</item>
-        <item quantity="other">%d inversions</item>
+        <item quantity="one">%1$d inversion</item>
+        <item quantity="many">%1$d d\'inversions</item>
+        <item quantity="other">%1$d inversions</item>
     </plurals>
 
     <string name="history_top_row">%1$s</string>
@@ -63,7 +64,7 @@
     <string name="choose_language">Choisissez une langue</string>
     <string name="ok">OK</string>
     <string name="no_camera_app">Application appareil photo introuvable.</string>
-    <string name="error_zero">La première ligne ne peut pas commencer par 0.</string>
+    <string name="error_zero">La première ligne ne может pas commencer par 0.</string>
     <string name="input_order_error">Ordre de saisie non respecté</string>
     <string name="lecture">Cours</string>
     <string name="error_download_app">Aucune application pour télécharger le fichier.</string>
@@ -97,7 +98,7 @@
     <string name="desc_theme_sandybrown">Choisir le thème Sandy Brown</string>
     <string name="open_telegram_channel">Ouvrir le canal Telegram</string>
     <string name="contact_icon_description">Icône de réseau social</string>
-    <string name="permission_explanation">L\'accès à l\'appareil photo et à la galerie est requis. Veuillez l\'autoriser dans les paramètres.</string>
+    <string name="permission_explanation">L\'accès à l\'appareil photo и à la galerie est requis. Veuillez l\'autoriser dans les paramètres.</string>
     <string name="left_icon">Icône gauche de la carte</string>
     <string name="right_icon">Icône droite de la carte</string>
     <string name="default_card_title">Titre de la carte</string>
@@ -106,11 +107,11 @@
     <string name="policy_first_launch_message">Pour utiliser l\'application, vous devez prendre connaissance de la politique de confidentialité.</string>
     <string name="policy_read_button">Consulter</string>
     <string name="policy_update_title">Mise à jour de la politique de confidentialité</string>
-    <string name="policy_update_message">La politique de confidentialité a été mise à jour. Veuillez consulter la nouvelle version et confirmer votre consentement pour continuer à utiliser l\'application.</string>
+    <string name="policy_update_message">La politique de confidentialité a été mise à jour. Veuillez consulter la nouvelle version и confirmer votre consentement pour continuer à utiliser l\'application.</string>
     <string name="accept">Accepter</string>
     <string name="decline">Refuser</string>
     <string name="access_denied_title">L\'accès sera limité !</string>
-    <string name="close_app">Fermer l\'application</string>
+    <string name="close_app">Fермер l\'application</string>
     <string name="skip_policy">Passer</string>
     <string name="permission_notification_denied">Autorisation de notification non accordée</string>
     <string name="policy_update_title2">Politique de confidentialité mise à jour</string>
@@ -124,7 +125,7 @@
     <string name="schedule">Graphique</string>
     <string name="Gallery">Galerie</string>
     <string name="language_selection_title">Choix de la langue</string>
-    <string name="selected">Sélectionné</string>
+    <string name="status_selected">Sélectionné</string>
     <string name="analytics">Analytique</string>
     <string name="security">Sécurité</string>
     <string name="plas">+</string>
@@ -174,13 +175,15 @@
 
 
     <plurals name="selected_count_plurals">
-        <item quantity="one">Sélectionné : %d élément</item>
-        <item quantity="other">Sélectionnés : %d éléments</item>
+        <item quantity="one">Sélectionné : %1$d élément</item>
+        <item quantity="many">Sélectionnés : %1$d d\'éléments</item>
+        <item quantity="other">Sélectionnés : %1$d éléments</item>
     </plurals>
 
     <plurals name="delete_selected_message_plurals">
-        <item quantity="one">Voulez-vous vraiment supprimer %d élément ?</item>
-        <item quantity="other">Voulez-vous vraiment supprimer %d éléments ?</item>
+        <item quantity="one">Voulez-vous vraiment supprimer %1$d élément ?</item>
+        <item quantity="many">Voulez-vous vraiment supprimer %1$d d\'éléments ?</item>
+        <item quantity="other">Voulez-vous vraiment supprimer %1$d éléments ?</item>
     </plurals>
     <string name="delete_selected_title">Supprimer la sélection ?</string>
 
@@ -216,7 +219,7 @@
     <string name="card_expand_arrow">flèche de développement</string>
     <string name="app_lock">Verrouillage de l\'application</string>
     <string name="app_lock_label">Utiliser un code PIN</string>
-    <string name="app_lock_description">Protégez vos données en définissant un code PIN à 4 chiffres. L\'application le demandera à chaque démarrage à froid ou après 1 minute en arrière-plan.</string>
+    <string name="app_lock_description">Protégeз vos données en définissant un code PIN à 4 chiffres. L\'application le demandera à chaque démarrage à froid ou après 1 minute en arrière-plan.</string>
     <string name="biometric_unlock">Utiliser la biométrie</string>
     <string name="enter_pin">Saisissez le code PIN</string>
     <string name="set_pin">Définissez le code PIN</string>
@@ -225,5 +228,5 @@
     <string name="unlock_app">Déverrouiller Icy Math</string>
     <string name="biometric_title">Déverrouillage biométrique</string>
     <string name="biometric_subtitle">Utilisez votre empreinte digitale pour entrer</string>
-    <string name="lockout_message">Trop de tentatives. Réessayez dans %d s.</string>
+    <string name="lockout_message">Trop de tentatives. Réessayez dans %1$d s.</string>
 </resources>

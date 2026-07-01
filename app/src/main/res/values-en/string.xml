@@ -125,7 +125,7 @@
     <string name="schedule">Schedule</string>
     <string name="Gallery">Gallery</string>
     <string name="language_selection_title">Language Selection</string>
-    <string name="selected">Selected</string>
+    <string name="status_selected">Selected</string>
     <string name="analytics">Analytics</string>
     <string name="security">Security</string>
     <string name="plas">+</string>
@@ -225,5 +225,5 @@
     <string name="unlock_app">Unlock Icy Math</string>
     <string name="biometric_title">Biometric Unlock</string>
     <string name="biometric_subtitle">Use your fingerprint to log in</string>
-    <string name="lockout_message">Too many attempts. Try again in %d sec.</string>
+    <string name="lockout_message">Too many attempts. Try again in %1$d sec.</string>
 </resources>

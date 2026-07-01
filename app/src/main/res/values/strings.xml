@@ -20,6 +20,7 @@
     <string name="image">Изображение</string>
     <string name="language_app">Язык интерфейса</string>
     <string name="Russian_language">Русский</string>
+    <string name="French_language">Французский</string>
     <string name="Confirm">Продолжить</string>
     <string name="Clean">C</string>
     <string name="EnterPrimer">Подстановки</string>
@@ -124,7 +125,7 @@
     <string name="schedule">График</string>
     <string name="Gallery">Галерея</string>
     <string name="language_selection_title">Выбор языка</string>
-    <string name="selected">Выбрано</string>
+    <string name="status_selected">Выбрано</string>
     <string name="analytics">Аналитика</string>
     <string name="security">Безопасность</string>
     <string name="plas">+</string>
@@ -229,5 +230,5 @@
     <string name="unlock_app">Разблокировать Icy Math</string>
     <string name="biometric_title">Биометрическая разблокировка</string>
     <string name="biometric_subtitle">Используйте отпечаток пальца для входа</string>
-    <string name="lockout_message">Слишком много попыток. Попробуйте через %d сек.</string>
+    <string name="lockout_message">Слишком много попыток. Попробуйте через %1$d сек.</string>
 </resources>

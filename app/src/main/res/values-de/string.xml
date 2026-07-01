@@ -126,7 +126,7 @@
     <string name="schedule">Zeitplan</string>
     <string name="Gallery">Galerie</string>
     <string name="language_selection_title">Sprachauswahl</string>
-    <string name="selected">Ausgewählt</string>
+    <string name="status_selected">Ausgewählt</string>
     <string name="analytics">Analytik</string>
     <string name="security">Sicherheit</string>
     <string name="plas">+</string>
@@ -227,5 +227,5 @@
     <string name="unlock_app">Icy Math entsperren</string>
     <string name="biometric_title">Biometrische Entsperrung</string>
     <string name="biometric_subtitle">Verwenden Sie Ihren Fingerabdruck zum Anmelden</string>
-    <string name="lockout_message">Zu viele Versuche. Versuchen Sie es in %d Sek. erneut.</string>
+    <string name="lockout_message">Zu viele Versuche. Versuchen Sie es in %1$d Sek. erneut.</string>
 </resources>
