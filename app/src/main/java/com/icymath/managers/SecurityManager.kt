@@ -9,10 +9,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.nio.charset.StandardCharsets
+import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "security_settings")
@@ -23,13 +29,64 @@ data class SecuritySettings(
 )
 
 object SecurityManager {
+    private const val KEYSTORE_ALIAS = "security_pref_key"
+    
     private val PIN_HASH_KEY = stringPreferencesKey("pin_hash")
     private val PIN_SALT_KEY = stringPreferencesKey("pin_salt")
-    private val IS_APP_LOCK_ENABLED = booleanPreferencesKey("is_app_lock_enabled")
-    private val IS_BIOMETRIC_ENABLED = booleanPreferencesKey("is_biometric_enabled")
+    private val IS_APP_LOCK_ENABLED = stringPreferencesKey("is_app_lock_enabled_enc")
+    private val IS_BIOMETRIC_ENABLED = stringPreferencesKey("is_biometric_enabled_enc")
     private val LAST_BACKGROUND_TIME = longPreferencesKey("last_background_time")
     private val FAILED_ATTEMPTS = intPreferencesKey("failed_attempts")
     private val LOCKOUT_UNTIL = longPreferencesKey("lockout_until")
+
+    // --- Encryption Helpers ---
+
+    private fun getOrCreateKey(): SecretKey {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore")
+        keyStore.load(null)
+        val existing = keyStore.getEntry(KEYSTORE_ALIAS, null)
+        if (existing is KeyStore.SecretKeyEntry) return existing.secretKey
+
+        val keyGen = KeyGenerator.getInstance("AES", "AndroidKeyStore")
+        val spec = android.security.keystore.KeyGenParameterSpec.Builder(
+            KEYSTORE_ALIAS,
+            android.security.keystore.KeyProperties.PURPOSE_ENCRYPT or android.security.keystore.KeyProperties.PURPOSE_DECRYPT
+        )
+            .setBlockModes(android.security.keystore.KeyProperties.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(android.security.keystore.KeyProperties.ENCRYPTION_PADDING_NONE)
+            .setRandomizedEncryptionRequired(true)
+            .build()
+        keyGen.init(spec)
+        return keyGen.generateKey()
+    }
+
+    private fun encryptBoolean(value: Boolean): String {
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        cipher.init(Cipher.ENCRYPT_MODE, getOrCreateKey())
+        val iv = cipher.iv
+        val encrypted = cipher.doFinal(value.toString().toByteArray(StandardCharsets.UTF_8))
+        val combined = ByteArray(iv.size + encrypted.size)
+        System.arraycopy(iv, 0, combined, 0, iv.size)
+        System.arraycopy(encrypted, 0, combined, iv.size, encrypted.size)
+        return android.util.Base64.encodeToString(combined, android.util.Base64.NO_WRAP)
+    }
+
+    private fun decryptBoolean(encryptedData: String?): Boolean {
+        if (encryptedData == null) return false
+        return try {
+            val data = android.util.Base64.decode(encryptedData, android.util.Base64.NO_WRAP)
+            val iv = ByteArray(12)
+            System.arraycopy(data, 0, iv, 0, 12)
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.DECRYPT_MODE, getOrCreateKey(), GCMParameterSpec(128, iv))
+            val decrypted = cipher.doFinal(data, 12, data.size - 12)
+            String(decrypted, StandardCharsets.UTF_8).toBoolean()
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    // --- Original Logic ---
 
     private val isUnlockedSession = AtomicBoolean(false)
     private val isLockActivityVisible = AtomicBoolean(false)
@@ -92,11 +149,11 @@ object SecurityManager {
     }
 
     suspend fun isAppLockEnabled(context: Context): Boolean {
-        return context.dataStore.data.map { it[IS_APP_LOCK_ENABLED] ?: false }.first()
+        return context.dataStore.data.map { decryptBoolean(it[IS_APP_LOCK_ENABLED]) }.first()
     }
 
     suspend fun setAppLockEnabled(context: Context, enabled: Boolean) {
-        context.dataStore.edit { it[IS_APP_LOCK_ENABLED] = enabled }
+        context.dataStore.edit { it[IS_APP_LOCK_ENABLED] = encryptBoolean(enabled) }
         _securitySettings.value = _securitySettings.value.copy(isAppLockEnabled = enabled)
         
         // Reset state so that next time it's enabled, it performs a fresh check
@@ -105,11 +162,11 @@ object SecurityManager {
     }
 
     suspend fun isBiometricEnabled(context: Context): Boolean {
-        return context.dataStore.data.map { it[IS_BIOMETRIC_ENABLED] ?: false }.first()
+        return context.dataStore.data.map { decryptBoolean(it[IS_BIOMETRIC_ENABLED]) }.first()
     }
 
     suspend fun setBiometricEnabled(context: Context, enabled: Boolean) {
-        context.dataStore.edit { it[IS_BIOMETRIC_ENABLED] = enabled }
+        context.dataStore.edit { it[IS_BIOMETRIC_ENABLED] = encryptBoolean(enabled) }
         _securitySettings.value = _securitySettings.value.copy(isBiometricEnabled = enabled)
     }
 

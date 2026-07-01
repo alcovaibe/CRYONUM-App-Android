@@ -29,9 +29,9 @@ fun Keyboard(
     onNumberClick: (String) -> Unit,
     onBackspaceClick: () -> Unit,
     onClearClick: () -> Unit,
+    modifier: Modifier = Modifier,
     isBiometricEnabled: Boolean = false,
-    onBiometricClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onBiometricClick: () -> Unit = {}
 ) {
     val keys = listOf(
         listOf("7", "8", "9"),

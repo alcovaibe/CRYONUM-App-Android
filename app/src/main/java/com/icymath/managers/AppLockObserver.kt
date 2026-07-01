@@ -2,7 +2,6 @@ package com.icymath.managers
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.icymath.activity.ActivitySecurity
@@ -38,9 +37,7 @@ class AppLockObserver(context: Context) : DefaultLifecycleObserver {
         scope.launch {
             try {
                 SecurityManager.setLastBackgroundTime(appContext, System.currentTimeMillis())
-                Log.d("AppLockObserver", "Background time saved")
             } catch (e: Exception) {
-                Log.e("AppLockObserver", "Error in onStop handler", e)
             }
         }
     }

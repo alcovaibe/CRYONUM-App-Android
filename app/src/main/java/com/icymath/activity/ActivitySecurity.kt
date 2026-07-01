@@ -23,6 +23,7 @@ import com.icymath.managers.LocaleManager
 import com.icymath.managers.SecurityManager
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.activity.SecurityScreenBridge
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -143,13 +144,13 @@ class ActivitySecurity : AppCompatActivity() {
             } else {
                 var pin by remember { mutableStateOf("") }
                 var isBio by remember { mutableStateOf(false) }
-                var lockoutTime by remember { mutableStateOf(0L) }
+                var lockoutTime by remember { mutableLongStateOf(0L) }
                 
                 LaunchedEffect(Unit) {
                     isBio = SecurityManager.isBiometricEnabled(this@ActivitySecurity)
                     while(true) {
                         lockoutTime = SecurityManager.getRemainingLockoutTime(this@ActivitySecurity)
-                        if (lockoutTime > 0) delay(1000) else delay(5000)
+                        if (lockoutTime > 0) delay(1.seconds) else delay(5.seconds)
                     }
                 }
 
@@ -210,7 +211,7 @@ class ActivitySecurity : AppCompatActivity() {
                         finish()
                     } else {
                         onResult(getString(R.string.error_enter))
-                        delay(1000)
+                        delay(1.seconds)
                         onResult(getString(R.string.enter_pin))
                     }
                 }
@@ -230,7 +231,7 @@ class ActivitySecurity : AppCompatActivity() {
                         } else {
                             firstPin = ""
                             onResult(getString(R.string.pin_mismatch))
-                            delay(1000)
+                            delay(1.seconds)
                             onResult(getString(R.string.set_pin))
                         }
                     }
@@ -241,22 +242,23 @@ class ActivitySecurity : AppCompatActivity() {
 
     private fun showBiometricPrompt() {
         if (isBiometricDialogShowing) {
-            Log.d(TAG, "Biometric dialog is already showing, skipping duplicate request")
             return
         }
 
         val biometricManager = BiometricManager.from(this)
         when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)) {
-            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
-                Log.w(TAG, "No biometric hardware available")
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                // We can proceed
+            }
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE,
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE,
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED,
+            BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED,
+            BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED,
+            BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> {
                 return
             }
-            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
-                Log.w(TAG, "Biometric hardware is currently unavailable")
-                return
-            }
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                Log.w(TAG, "No biometric data enrolled")
+            else -> {
                 return
             }
         }
@@ -267,7 +269,6 @@ class ActivitySecurity : AppCompatActivity() {
         val authenticationCallback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
-                Log.d(TAG, "Biometric authentication succeeded")
                 isBiometricDialogShowing = false
                 SecurityManager.setUnlocked(true)
 
@@ -284,18 +285,15 @@ class ActivitySecurity : AppCompatActivity() {
                 
                 if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON ||
                     errorCode == BiometricPrompt.ERROR_USER_CANCELED) {
-                    Log.d(TAG, "User cancelled biometric authentication")
                     return
                 }
 
-                Log.e(TAG, "Biometric authentication error: Code=$errorCode, Message=$errString")
                 Toast.makeText(this@ActivitySecurity, errString, Toast.LENGTH_SHORT).show()
             }
 
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
                 isBiometricDialogShowing = false
-                Log.d(TAG, "Biometric authentication failed")
             }
         }
 
@@ -306,7 +304,7 @@ class ActivitySecurity : AppCompatActivity() {
             .setSubtitle(getString(R.string.biometric_subtitle))
             .setNegativeButtonText(getString(R.string.cancel)) // Now we can set it because we removed DEVICE_CREDENTIAL
 
-        // Only allow strong biometrics. If they fail/cancelled, user stays on our PIN screen.
+        // Only allow strong biometrics. If they fail/canceled, user stays on our PIN screen.
         promptInfoBuilder.setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
         
         val promptInfo = promptInfoBuilder.build()

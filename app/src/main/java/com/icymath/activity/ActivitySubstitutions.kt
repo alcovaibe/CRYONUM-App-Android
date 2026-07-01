@@ -7,8 +7,6 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.InputType
 import android.widget.EditText
 import android.widget.Toast
@@ -19,21 +17,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.icymath.R
 import com.icymath.managers.ImagePicker
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.PolicyManager
-import com.icymath.managers.ThemeManager
 import com.icymath.managers.SystemUiManager
-import com.icymath.managers.SecurityManager
-import com.icymath.managers.AppLockObserver
-import com.icymath.utils.SecurityUtils
+import com.icymath.managers.ThemeManager
 import com.icymath.math.PermutationUtils
 import com.icymath.ui.activity.SubstitutionsScreenBridge
 import com.icymath.utils.InputFilter
-import kotlinx.coroutines.launch
+import com.icymath.utils.SecurityUtils
 
 class ActivitySubstitutions : AppCompatActivity() {
 
@@ -166,7 +160,10 @@ class ActivitySubstitutions : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         imagePicker.clear()
-        policyCheckRunnable?.let { window.decorView.removeCallbacks(it) }
+        policyCheckRunnable?.let {
+            window.decorView.removeCallbacks(it)
+            policyCheckRunnable = null
+        }
     }
 
     private fun handleMenuAction(id: Int) {

@@ -9,6 +9,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import com.icymath.R
 import com.icymath.activity.ActivitySubstitutions
+import androidx.core.content.edit
 
 /**
  * ThemeManager — безопасная переработанная версия на Kotlin.
@@ -50,7 +51,7 @@ object ThemeManager {
     fun saveTheme(context: Context, theme: AppTheme) {
         val appCtx = context.applicationContext
         val prefs = appCtx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_CURRENT_THEME, theme.name).apply()
+        prefs.edit { putString(KEY_CURRENT_THEME, theme.name) }
 
         cachedTheme = theme
     }
@@ -107,7 +108,7 @@ object ThemeManager {
         saveTheme(appCtx, theme)
 
         val prefs = appCtx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putBoolean(KEY_SKIP_SPLASH, true).apply()
+        prefs.edit { putBoolean(KEY_SKIP_SPLASH, true) }
 
         // Keep session unlocked during restart
         SecurityManager.setUnlocked(SecurityManager.isSessionUnlocked())
