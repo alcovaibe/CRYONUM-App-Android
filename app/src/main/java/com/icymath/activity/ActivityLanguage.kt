@@ -49,6 +49,7 @@ class ActivityLanguage : AppCompatActivity() {
         addIfSupported(list, LanguageItem("ru", "Русский", "🇷🇺", "ru" == selected))
         addIfSupported(list, LanguageItem("en", "English", "🇬🇧", "en" == selected))
         addIfSupported(list, LanguageItem("de", "Deutsch", "🇩🇪", "de" == selected))
+        addIfSupported(list, LanguageItem("fr", "Français", "🇫🇷", "fr" == selected))
 
         return list
     }

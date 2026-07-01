@@ -235,7 +235,7 @@ class ActivitySubstitutions : AppCompatActivity() {
                         upperLineState.value = sb.toString()
                         Toast.makeText(this, getString(R.string.The_first_line_is_filled), Toast.LENGTH_SHORT).show()
                     }
-                } catch (ignored: Exception) {
+                } catch (_: Exception) {
                 }
                 dlg.dismiss()
             }
