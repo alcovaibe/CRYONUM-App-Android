@@ -1,20 +1,22 @@
 package com.icymath.activity
 
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
-import android.text.InputType
-import android.text.SpannableStringBuilder
 import android.util.Log
-import android.view.View
-import android.widget.*
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.ComposeView
 import com.icymath.BuildConfig
 import com.icymath.R
 import com.icymath.managers.HistoryManager
 import com.icymath.managers.PolicyManager
 import com.icymath.managers.SystemUiManager
 import com.icymath.managers.ThemeManager
+import com.icymath.ui.activity.CalculatorScreenBridge
 import com.icymath.utils.SecurityUtils
 import org.mariuszgromada.math.mxparser.Constant
 import org.mariuszgromada.math.mxparser.Expression
@@ -35,14 +37,11 @@ class ActivityCalculator : AppCompatActivity() {
         private const val KEY_RAD = "key_rad"
     }
 
-    // UI
-    private lateinit var inputDisplay: EditText
-    private lateinit var resultDisplay: TextView
-    private var btnDegRad: Button? = null
-
     // State
-    private var isInverted = false
-    private var isRadians = true
+    private val inputState = mutableStateOf("")
+    private val resultState = mutableStateOf("")
+    private val isInvertedState = mutableStateOf(false)
+    private val isRadiansState = mutableStateOf(true)
     private var memoryValue = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,157 +53,101 @@ class ActivityCalculator : AppCompatActivity() {
         // confirm non-commercial use of mXparser
         License.iConfirmNonCommercialUse("com.example.icymath")
 
-        setContentView(R.layout.activity_calculator)
-
+        val composeView = ComposeView(this)
+        setContentView(composeView)
         SystemUiManager.applyEdgeToEdge(this)
-
-        // find views
-        inputDisplay = findViewById(R.id.inputDisplay)
-        resultDisplay = findViewById(R.id.resultDisplay)
-
-        val btnInv = findViewById<Button>(R.id.btnInv)
-        btnDegRad = findViewById(R.id.btnDegRad)
-        val btnMenu = findViewById<Button>(R.id.btnMenu)
-        val btnEquals = findViewById<Button>(R.id.btnEquals)
-        val btnC = findViewById<Button>(R.id.btnC)
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
-        val btnSwitchMode = findViewById<ImageButton>(R.id.btnSwitchMode)
-
-        // Memory buttons
-        val btnMC = findViewById<Button>(R.id.btnMC)
-        val btnMPlus = findViewById<Button>(R.id.btnMPlus)
-        val btnMMinus = findViewById<Button>(R.id.btnMMinus)
-        val btnMR = findViewById<Button>(R.id.btnMR)
-
-        // disable system soft keyboard
-        try {
-            inputDisplay.showSoftInputOnFocus = false
-        } catch (_: Throwable) {
-        }
-        inputDisplay.isCursorVisible = true
-        inputDisplay.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
 
         restoreState()
 
-        btnBack?.setOnClickListener { finish() }
+        updateUi(composeView)
 
-        btnSwitchMode?.setOnClickListener { toggleOrientation() }
+        intent.getStringExtra("expression")?.let { inputState.value = it }
+        intent.getStringExtra("result")?.let { resultState.value = it }
+    }
 
-        btnMenu?.setOnClickListener { Toast.makeText(this, "Menu pressed", Toast.LENGTH_SHORT).show() }
-
-        btnInv?.setOnClickListener {
-            isInverted = !isInverted
-            updateInvButtonsText()
-            saveState()
-        }
-
-        btnDegRad?.setOnClickListener {
-            isRadians = !isRadians
-            updateDegRadText()
-            saveState()
-        }
-
-        btnC?.setOnClickListener {
-            inputDisplay.setText("")
-            resultDisplay.setText("")
-            saveState()
-        }
-
-        btnEquals?.setOnClickListener {
-            val raw = inputDisplay.text.toString()
-            if (raw.trim().isEmpty()) {
-                resultDisplay.text = ""
-                return@setOnClickListener
-            }
-            try {
-                val res = CalculatorEngine.evaluate(raw, isRadians)
-                inputDisplay.setText(res)
-                inputDisplay.setSelection(inputDisplay.text.length)
-                resultDisplay.text = ""
-                
-                HistoryManager.addHistoryEntry(
-                    this@ActivityCalculator,
-                    com.icymath.items.HistoryItem(raw, res)
-                )
-
-                saveState()
-            } catch (e: Exception) {
-                resultDisplay.text = "Ошибка"
-            }
-        }
-
-        btnMC?.setOnClickListener {
-            memoryValue = 0.0
-            Toast.makeText(this, "Memory cleared", Toast.LENGTH_SHORT).show()
-            saveState()
-        }
-        btnMPlus?.setOnClickListener {
-            val cur = tryParseDisplayToDouble(resultDisplay.text.toString(), inputDisplay.text)
-            memoryValue += cur
-            Toast.makeText(this, "M+ (added)", Toast.LENGTH_SHORT).show()
-            saveState()
-        }
-        btnMMinus?.setOnClickListener {
-            val cur = tryParseDisplayToDouble(resultDisplay.text.toString(), inputDisplay.text)
-            memoryValue -= cur
-            Toast.makeText(this, "M- (subtracted)", Toast.LENGTH_SHORT).show()
-            saveState()
-        }
-        btnMR?.setOnClickListener {
-            val memStr = CalculatorEngine.formatDoubleForDisplay(memoryValue)
-            insertTextAtCursor(memStr)
-        }
-
-        // numeric buttons 0..9
-        val numericIds = intArrayOf(
-            R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4,
-            R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9
+    private fun updateUi(composeView: ComposeView) {
+        CalculatorScreenBridge.setCalculatorContent(
+            composeView = composeView,
+            input = inputState.value,
+            result = resultState.value,
+            isInverted = isInvertedState.value,
+            isRadians = isRadiansState.value,
+            onBackClick = { finish() },
+            onToggleOrientation = { toggleOrientation() },
+            onKeyClick = { key -> handleKeyClick(key, composeView) }
         )
-        for (id in numericIds) {
-            findViewById<View>(id)?.let { b ->
-                if (b is Button) {
-                    b.setOnClickListener { insertTextAtCursor(b.text.toString()) }
+    }
+
+    private fun handleKeyClick(key: String, composeView: ComposeView) {
+        when (key) {
+            "C", getString(R.string.Clean) -> {
+                inputState.value = ""
+                resultState.value = ""
+            }
+            "inv" -> {
+                isInvertedState.value = !isInvertedState.value
+            }
+            "deg_rad" -> {
+                isRadiansState.value = !isRadiansState.value
+            }
+            "=" -> {
+                evaluateResult()
+            }
+            "MC" -> {
+                memoryValue = 0.0
+                Toast.makeText(this, "Memory cleared", Toast.LENGTH_SHORT).show()
+            }
+            "M+" -> {
+                memoryValue += tryParseDisplayToDouble(resultState.value, inputState.value)
+                Toast.makeText(this, "M+ (added)", Toast.LENGTH_SHORT).show()
+            }
+            "M-" -> {
+                memoryValue -= tryParseDisplayToDouble(resultState.value, inputState.value)
+                Toast.makeText(this, "M- (subtracted)", Toast.LENGTH_SHORT).show()
+            }
+            "MR" -> {
+                val memStr = CalculatorEngine.formatDoubleForDisplay(memoryValue)
+                inputState.value += memStr
+            }
+            "menu" -> {
+                Toast.makeText(this, "Menu pressed", Toast.LENGTH_SHORT).show()
+            }
+            "ⁿ√" -> inputState.value += "root("
+            getString(R.string.symbol_power2) -> inputState.value += "^2"
+            getString(R.string.symbol_percent) -> inputState.value += "%"
+            getString(R.string.module) -> inputState.value += "|"
+            else -> {
+                val toInsert = when(key) {
+                    "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot", "ln", "log" -> "$key("
+                    else -> key
                 }
+                inputState.value += toInsert
             }
         }
+        saveState()
+        updateUi(composeView)
+    }
 
-        // operator and other direct buttons
-        val directIds = intArrayOf(
-            R.id.btnPlus, R.id.btnMinus, R.id.btnMultiply, R.id.btnDivide,
-            R.id.btnParenLeft, R.id.btnParenRight, R.id.btnComma, R.id.btnPercent,
-            R.id.btnPi, R.id.btnE, R.id.btnMod, R.id.btnFactorial
-        )
-        for (id in directIds) {
-            findViewById<View>(id)?.let { v ->
-                if (v is Button) {
-                    v.setOnClickListener { insertTextAtCursor(v.text.toString()) }
-                }
-            }
+    private fun evaluateResult() {
+        val raw = inputState.value
+        if (raw.trim().isEmpty()) {
+            resultState.value = ""
+            return
         }
+        try {
+            val res = CalculatorEngine.evaluate(raw, isRadiansState.value)
+            inputState.value = res
+            resultState.value = ""
+            
+            HistoryManager.addHistoryEntry(
+                this@ActivityCalculator,
+                com.icymath.items.HistoryItem(raw, res)
+            )
 
-        // function buttons
-        val funcIds = intArrayOf(
-            R.id.btnSin, R.id.btnCos, R.id.btnTan, R.id.btnCot,
-            R.id.btnLn, R.id.btnLog, R.id.btnRootN
-        )
-        for (id in funcIds) {
-            findViewById<View>(id)?.let { v ->
-                if (v is Button) {
-                    v.setOnClickListener {
-                        val mapping = getFunctionInsert(v.text.toString())
-                        insertTextAtCursor(mapping)
-                    }
-                }
-            }
+            saveState()
+        } catch (e: Exception) {
+            resultState.value = "Ошибка"
         }
-
-        updateInvButtonsText()
-        updateDegRadText()
-
-        intent.getStringExtra("expression")?.let { inputDisplay.setText(it) }
-        intent.getStringExtra("result")?.let { resultDisplay.text = it }
-
-        inputDisplay.onFocusChangeListener = View.OnFocusChangeListener { _, _ -> saveState() }
     }
 
     override fun onResume() {
@@ -243,84 +186,35 @@ class ActivityCalculator : AppCompatActivity() {
         }, 400)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-    private fun updateInvButtonsText() {
-        findViewById<Button>(R.id.btnSin)?.text = if (isInverted) "asin" else "sin"
-        findViewById<Button>(R.id.btnCos)?.text = if (isInverted) "acos" else "cos"
-        findViewById<Button>(R.id.btnTan)?.text = if (isInverted) "atan" else "tan"
-        findViewById<Button>(R.id.btnLn)?.text = if (isInverted) "exp" else "ln"
-        findViewById<Button>(R.id.btnLog)?.text = if (isInverted) "10^" else "log"
-        findViewById<Button>(R.id.btnCot)?.text = if (isInverted) "acot" else "cot"
-        saveState()
-    }
-
-    private fun updateDegRadText() {
-        btnDegRad?.text = if (isRadians) "Rad" else "Deg"
-    }
-
-    private fun getFunctionInsert(buttonLabel: String?): String {
-        if (buttonLabel == null) return ""
-        return when (buttonLabel) {
-            "10^" -> "10^("
-            "Root" -> "root("
-            "√" -> "sqrt("
-            else -> "$buttonLabel("
-        }
-    }
-
-    private fun insertTextAtCursor(text: String) {
-        val start = inputDisplay.selectionStart.coerceAtLeast(0)
-        val end = inputDisplay.selectionEnd.coerceAtLeast(0)
-
-        val a = start.coerceAtMost(end)
-        val b = start.coerceAtLeast(end)
-
-        var editable = inputDisplay.text
-        if (editable == null) {
-            editable = SpannableStringBuilder()
-            inputDisplay.setText(editable)
-        }
-
-        editable.replace(a, b, text)
-
-        val pos = a + text.length
-        inputDisplay.setSelection(pos)
-
-        saveState()
-    }
-
-    private fun tryParseDisplayToDouble(resultText: String?, inputText: CharSequence?): Double {
-        var s = if (resultText.isNullOrBlank()) inputText?.toString() ?: "" else resultText
+    private fun tryParseDisplayToDouble(resultText: String, inputText: String): Double {
+        var s = if (resultText.isBlank()) inputText else resultText
         s = s.replace(',', '.')
         return s.toDoubleOrNull() ?: 0.0
-    }
-
-    private fun formatDoubleForDisplay(value: Double): String {
-        return CalculatorEngine.formatDoubleForDisplay(value)
     }
 
     private fun saveState() {
         val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         prefs.edit().apply {
-            putString(KEY_INPUT, inputDisplay.text.toString())
-            putString(KEY_RESULT, resultDisplay.text.toString())
+            putString(KEY_INPUT, inputState.value)
+            putString(KEY_RESULT, resultState.value)
             putString(KEY_MEM, memoryValue.toString())
-            putBoolean(KEY_INV, isInverted)
-            putBoolean(KEY_RAD, isRadians)
+            putBoolean(KEY_INV, isInvertedState.value)
+            putBoolean(KEY_RAD, isRadiansState.value)
             apply()
         }
     }
 
     private fun restoreState() {
         val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        inputDisplay.setText(prefs.getString(KEY_INPUT, ""))
-        resultDisplay.text = prefs.getString(KEY_RESULT, "")
+        inputState.value = prefs.getString(KEY_INPUT, "") ?: ""
+        resultState.value = prefs.getString(KEY_RESULT, "") ?: ""
         memoryValue = prefs.getString(KEY_MEM, "0.0")?.toDoubleOrNull() ?: 0.0
-        isInverted = prefs.getBoolean(KEY_INV, false)
-        isRadians = prefs.getBoolean(KEY_RAD, true)
+        isInvertedState.value = prefs.getBoolean(KEY_INV, false)
+        isRadiansState.value = prefs.getBoolean(KEY_RAD, true)
+    }
+
+    private fun formatDoubleForDisplay(value: Double): String {
+        return CalculatorEngine.formatDoubleForDisplay(value)
     }
 
     object CalculatorEngine {
