@@ -48,6 +48,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun PdfViewerScreen(
@@ -323,7 +324,7 @@ fun PdfViewerScreen(
             // Auto-hide zoom control after 4 seconds
             LaunchedEffect(isZoomControlVisible) {
                 if (isZoomControlVisible) {
-                    delay(4000)
+                    delay(4000.milliseconds)
                     isZoomControlVisible = false
                 }
             }

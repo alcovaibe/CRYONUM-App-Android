@@ -96,8 +96,6 @@ class ActivitySubstitutions : AppCompatActivity() {
 
         SubstitutionsScreenBridge.setContent(
             composeView = composeView,
-            activity = this,
-            imagePicker = imagePicker,
             upperLineState = upperLineState,
             lowerLineState = lowerLineState,
             isFirstSelectedState = isFirstSelectedState,

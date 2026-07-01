@@ -18,6 +18,10 @@ import android.content.Intent
 
 class ActivityAbout : AppCompatActivity() {
 
+    companion object {
+        private const val GITHUB_URL = "https://github.com/alcovaibe/Icy-Math"
+    }
+
     override fun attachBaseContext(newBase: Context) {
         val lang = LocaleManager.getSavedLanguage(newBase)
         super.attachBaseContext(LocaleManager.applyLocale(newBase, lang))
@@ -36,18 +40,16 @@ class ActivityAbout : AppCompatActivity() {
 
         // --- Подготовка данных ---
         val versionText = getString(R.string.app_version, BuildConfig.APP_VERSION)
-        var sourceText = ""
-
-        try {
+        val sourceText = try {
             InstallationInformationManager.processInstallationInfo(applicationContext)
             val info = InstallationInformationManager.loadPendingInfo(applicationContext)
-            sourceText = if (info?.source != null && info.source.isNotEmpty()) {
+            if (info?.source != null && info.source.isNotEmpty()) {
                 getString(R.string.install_source_via, info.source)
             } else {
                 getString(R.string.install_source_unknown)
             }
-        } catch (t: Throwable) {
-            sourceText = getString(R.string.install_source_unknown)
+        } catch (_: Throwable) {
+            getString(R.string.install_source_unknown)
         }
 
         // --- Инициализация Compose интерфейса ---
@@ -68,19 +70,17 @@ class ActivityAbout : AppCompatActivity() {
                         fromDialogViewAction = false,
                         isFirstLaunchMode = false
                     )
-                } catch (ignored: Exception) { }
+                } catch (_: Exception) { }
             },
-            onSourceCodeClick = {
-                openUrl("https://github.com/alcovaibe/Icy-Math")
-            }
+            onSourceCodeClick = { openGitHub() }
         )
 
         setContentView(composeView)
     }
 
-    private fun openUrl(url: String) {
+    private fun openGitHub() {
         try {
-            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+            val intent = Intent(Intent.ACTION_VIEW, GITHUB_URL.toUri())
             startActivity(intent)
         } catch (_: Exception) {
         }

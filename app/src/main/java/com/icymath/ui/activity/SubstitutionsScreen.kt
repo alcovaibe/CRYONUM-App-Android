@@ -1,6 +1,5 @@
 package com.icymath.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,8 +33,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubstitutionsScreen(
-    activity: AppCompatActivity,
-    imagePicker: com.icymath.managers.ImagePicker?,
     upperLine: String,
     lowerLine: String,
     onUpperChange: (String) -> Unit,
@@ -170,16 +167,6 @@ fun SubstitutionsScreen(
 }
 
 @Composable
-fun RowScope.BottomNavItem(titleRes: Int, icon: androidx.compose.ui.graphics.painter.Painter, onClick: () -> Unit) {
-    NavigationBarItem(
-        selected = false,
-        onClick = onClick,
-        icon = { Icon(icon, null, modifier = Modifier.size(24.dp)) },
-        label = { Text(stringResource(titleRes), fontSize = 10.sp) }
-    )
-}
-
-@Composable
 fun InputBox(text: String, isSelected: Boolean, onClick: () -> Unit, hint: String) {
     val colors = IcyMathTheme.colors
     Surface(
@@ -190,7 +177,7 @@ fun InputBox(text: String, isSelected: Boolean, onClick: () -> Unit, hint: Strin
     ) {
         Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = if (text.isEmpty()) hint else text,
+                text = text.ifEmpty { hint },
                 color = if (text.isEmpty()) colors.inputFieldText.copy(alpha = 0.5f) else colors.inputFieldText,
                 fontSize = 16.sp,
                 fontWeight = if (text.isEmpty()) FontWeight.Normal else FontWeight.Bold
@@ -205,8 +192,6 @@ fun InputBox(text: String, isSelected: Boolean, onClick: () -> Unit, hint: Strin
 fun SubstitutionsScreenPreview() {
     IcyMathTheme {
         SubstitutionsScreen(
-            activity = AppCompatActivity(),
-            imagePicker = null,
             upperLine = "12345",
             lowerLine = "54321",
             onUpperChange = {},
@@ -226,8 +211,6 @@ fun SubstitutionsScreenSandyPreview() {
     IcyMathTheme {
         CompositionLocalProvider(LocalAppTheme provides ThemeManager.AppTheme.SANDY_BROWN) {
             SubstitutionsScreen(
-                activity = AppCompatActivity(),
-                imagePicker = null,
                 upperLine = "12345",
                 lowerLine = "54321",
                 onUpperChange = {},
@@ -249,8 +232,6 @@ object SubstitutionsScreenBridge {
     @JvmStatic
     fun setContent(
         composeView: ComposeView,
-        activity: AppCompatActivity,
-        imagePicker: com.icymath.managers.ImagePicker?,
         upperLineState: MutableState<String>,
         lowerLineState: MutableState<String>,
         isFirstSelectedState: MutableState<Boolean>,
@@ -261,8 +242,6 @@ object SubstitutionsScreenBridge {
         composeView.setContent {
             IcyMathTheme {
                 SubstitutionsScreen(
-                    activity = activity,
-                    imagePicker = imagePicker,
                     upperLine = upperLineState.value,
                     lowerLine = lowerLineState.value,
                     onUpperChange = { upperLineState.value = InputFilter.filterOnlyDigits(it) },

@@ -42,7 +42,7 @@ class SplashActivity : ComponentActivity() {
         }
 
         // Apply splash theme
-        setTheme(ThemeManager.getSplashTheme(this))
+        setTheme(ThemeManager.getSplashTheme())
 
         // Apply System UI settings similar to SystemUiManager / UiManager
         try {

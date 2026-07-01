@@ -1,14 +1,8 @@
 package com.icymath.activity
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.text.Editable
 import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.util.Log
@@ -32,6 +26,15 @@ import java.util.regex.Pattern
 
 class ActivityCalculator : AppCompatActivity() {
 
+    companion object {
+        private const val PREFS_NAME = "calc_prefs_v1"
+        private const val KEY_INPUT = "key_input"
+        private const val KEY_RESULT = "key_result"
+        private const val KEY_MEM = "key_mem"
+        private const val KEY_INV = "key_inv"
+        private const val KEY_RAD = "key_rad"
+    }
+
     // UI
     private lateinit var inputDisplay: EditText
     private lateinit var resultDisplay: TextView
@@ -41,14 +44,6 @@ class ActivityCalculator : AppCompatActivity() {
     private var isInverted = false
     private var isRadians = true
     private var memoryValue = 0.0
-
-    // Pref keys
-    private val PREFS_NAME = "calc_prefs_v1"
-    private val KEY_INPUT = "key_input"
-    private val KEY_RESULT = "key_result"
-    private val KEY_MEM = "key_mem"
-    private val KEY_INV = "key_inv"
-    private val KEY_RAD = "key_rad"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
@@ -84,7 +79,7 @@ class ActivityCalculator : AppCompatActivity() {
         // disable system soft keyboard
         try {
             inputDisplay.showSoftInputOnFocus = false
-        } catch (ignored: Throwable) {
+        } catch (_: Throwable) {
         }
         inputDisplay.isCursorVisible = true
         inputDisplay.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
@@ -308,7 +303,7 @@ class ActivityCalculator : AppCompatActivity() {
     }
 
     private fun saveState() {
-        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         prefs.edit().apply {
             putString(KEY_INPUT, inputDisplay.text.toString())
             putString(KEY_RESULT, resultDisplay.text.toString())
@@ -320,7 +315,7 @@ class ActivityCalculator : AppCompatActivity() {
     }
 
     private fun restoreState() {
-        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         inputDisplay.setText(prefs.getString(KEY_INPUT, ""))
         resultDisplay.text = prefs.getString(KEY_RESULT, "")
         memoryValue = prefs.getString(KEY_MEM, "0.0")?.toDoubleOrNull() ?: 0.0

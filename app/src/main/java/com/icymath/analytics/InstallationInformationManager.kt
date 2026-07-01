@@ -14,6 +14,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import androidx.core.content.edit
 
 object InstallationInformationManager {
 
@@ -94,7 +95,7 @@ object InstallationInformationManager {
                 if (!doubleCheck.isNullOrEmpty()) return doubleCheck
 
                 val newId = UUID.randomUUID().toString()
-                prefs.edit().putString(KEY_INSTALL_ID, newId).apply()
+                prefs.edit { putString(KEY_INSTALL_ID, newId) }
                 Log.d(TAG, "Generated new install id: $newId")
                 newId
             }
@@ -119,7 +120,7 @@ object InstallationInformationManager {
             } else {
                 try {
                     @Suppress("DEPRECATION")
-                    pm.getInstallerPackageName(context.getPackageName())
+                    pm.getInstallerPackageName(context.packageName)
                 } catch (e: Throwable) {
                     Log.w(TAG, "getInstallerPackageName вызвал исключение", e)
                     null
@@ -149,11 +150,11 @@ object InstallationInformationManager {
     private fun savePendingInfo(context: Context, info: InstallInfo) {
         try {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            prefs.edit()
-                .putString(KEY_PENDING_SOURCE, info.source)
-                .putString(KEY_PENDING_VERSION, info.version)
-                .putString(KEY_PENDING_INSTALL_ID, info.androidId)
-                .apply()
+            prefs.edit {
+                putString(KEY_PENDING_SOURCE, info.source)
+                    .putString(KEY_PENDING_VERSION, info.version)
+                    .putString(KEY_PENDING_INSTALL_ID, info.androidId)
+            }
         } catch (t: Throwable) {
             Log.e(TAG, "savePendingInfo failed", t)
         }
@@ -162,11 +163,11 @@ object InstallationInformationManager {
     fun clearPendingInfo(context: Context) {
         try {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            prefs.edit()
-                .remove(KEY_PENDING_SOURCE)
-                .remove(KEY_PENDING_VERSION)
-                .remove(KEY_PENDING_INSTALL_ID)
-                .apply()
+            prefs.edit {
+                remove(KEY_PENDING_SOURCE)
+                    .remove(KEY_PENDING_VERSION)
+                    .remove(KEY_PENDING_INSTALL_ID)
+            }
         } catch (t: Throwable) {
             Log.e(TAG, "clearPendingInfo failed", t)
         }
@@ -175,9 +176,9 @@ object InstallationInformationManager {
     fun saveSentAndroidId(context: Context, androidId: String) {
         try {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            prefs.edit()
-                .putString(KEY_SENT_INSTALL_ID, androidId)
-                .apply()
+            prefs.edit {
+                putString(KEY_SENT_INSTALL_ID, androidId)
+            }
         } catch (t: Throwable) {
             Log.e(TAG, "saveSentAndroidId failed", t)
         }

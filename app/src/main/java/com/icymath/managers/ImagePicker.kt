@@ -10,7 +10,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -60,9 +59,8 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
             return
         }
         val cameraPerm = Manifest.permission.CAMERA
-        requestCameraPermissionLauncher?.let {
-            it.launch(cameraPerm)
-        } ?: run {
+        requestCameraPermissionLauncher?.launch(cameraPerm)
+        ?: run {
             ActivityCompat.requestPermissions(activity, arrayOf(cameraPerm), FALLBACK_CAMERA_REQUEST_CODE)
             Toast.makeText(activity, activity.getString(R.string.permission_explanation), Toast.LENGTH_LONG).show()
             Log.w(TAG, "requestCamera: no permission-launcher registered")
@@ -79,9 +77,8 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
                 putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            cameraLauncher?.let {
-                it.launch(intent)
-            } ?: run {
+            cameraLauncher?.launch(intent)
+            ?: run {
                 activity.startActivity(intent)
                 Toast.makeText(activity, activity.getString(R.string.permission_explanation), Toast.LENGTH_SHORT).show()
             }
@@ -96,9 +93,8 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
         val intent = Intent(Intent.ACTION_PICK).apply {
             setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
         }
-        galleryLauncher?.let {
-            it.launch(intent)
-        } ?: run {
+        galleryLauncher?.launch(intent)
+        ?: run {
             activity.startActivity(intent)
             Toast.makeText(activity, activity.getString(R.string.permission_explanation), Toast.LENGTH_SHORT).show()
         }
@@ -187,7 +183,7 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
                     Toast.makeText(activity, R.string.error_photo_galery, Toast.LENGTH_SHORT).show()
                     callback.onResult(null, null)
                 }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             cleanupTempFile(uri)
             Toast.makeText(activity, R.string.error_photo_galery, Toast.LENGTH_SHORT).show()
             callback.onResult(null, null)
@@ -207,7 +203,7 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
     }
 
     val isCameraPermissionGranted: Boolean
-        get() = activityRef.get()?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED } ?: false
+        get() = activityRef.get()?.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
     companion object {
         private const val TAG = "ImagePicker"

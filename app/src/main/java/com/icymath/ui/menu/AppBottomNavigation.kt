@@ -22,9 +22,6 @@ fun AppBottomNavigation(
 ) {
     val colors = IcyMathTheme.colors
     
-    // Получаем отступ системной навигации
-    val navigationBarsPadding = WindowInsets.navigationBars.asPaddingValues()
-    
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,14 +34,12 @@ fun AppBottomNavigation(
             modifier = Modifier.height(56.dp) // Уменьшил с 64 до 56
         ) {
             BottomNavItem(
-                id = R.id.nav_reference,
                 titleRes = R.string.reference_material,
                 iconRes = R.drawable.ic_reference_material,
                 isSelected = currentRoute == R.id.nav_reference,
                 onClick = { onItemSelected(R.id.nav_reference) }
             )
             BottomNavItem(
-                id = R.id.nav_camera,
                 titleRes = R.string.photo_camera,
                 iconRes = R.drawable.ic_camera,
                 isSelected = currentRoute == R.id.nav_camera,
@@ -53,7 +48,6 @@ fun AppBottomNavigation(
             
             if (showHome) {
                 BottomNavItem(
-                    id = R.id.nav_home,
                     titleRes = R.string.to_home,
                     iconRes = R.drawable.ic_home,
                     isSelected = currentRoute == R.id.nav_home,
@@ -62,14 +56,12 @@ fun AppBottomNavigation(
             }
 
             BottomNavItem(
-                id = R.id.nav_gallery,
                 titleRes = R.string.Gallery,
                 iconRes = R.drawable.ic_gallery,
                 isSelected = currentRoute == R.id.nav_gallery,
                 onClick = { onItemSelected(R.id.nav_gallery) }
             )
             BottomNavItem(
-                id = R.id.nav_history,
                 titleRes = R.string.history,
                 iconRes = R.drawable.ic_history,
                 isSelected = currentRoute == R.id.nav_history,
@@ -81,7 +73,6 @@ fun AppBottomNavigation(
 
 @Composable
 private fun RowScope.BottomNavItem(
-    id: Int,
     titleRes: Int,
     iconRes: Int,
     isSelected: Boolean,

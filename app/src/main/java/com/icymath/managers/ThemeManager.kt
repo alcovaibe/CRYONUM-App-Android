@@ -4,12 +4,11 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 import com.icymath.R
 import com.icymath.activity.ActivitySubstitutions
-import androidx.core.content.edit
 
 /**
  * ThemeManager — безопасная переработанная версия на Kotlin.
@@ -157,7 +156,7 @@ object ThemeManager {
     }
 
     @JvmStatic
-    fun getSplashTheme(context: Context): Int {
+    fun getSplashTheme(): Int {
         return R.style.Theme_IcyMath_Splash
     }
 
@@ -172,6 +171,6 @@ object ThemeManager {
     fun clearSkipSplashFlag(context: Context) {
         val appCtx = context.applicationContext
         val prefs = appCtx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().remove(KEY_SKIP_SPLASH).apply()
+        prefs.edit { remove(KEY_SKIP_SPLASH) }
     }
 }

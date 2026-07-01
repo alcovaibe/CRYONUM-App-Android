@@ -1,6 +1,5 @@
 package com.icymath.activity
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -36,7 +35,7 @@ class ActivitySecurity : AppCompatActivity() {
     private val setupAppLockLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             refreshSecuritySettings()
         }
     }
@@ -225,7 +224,7 @@ class ActivitySecurity : AppCompatActivity() {
                             SecurityManager.savePin(this@ActivitySecurity, pin)
                             SecurityManager.setAppLockEnabled(this@ActivitySecurity, true)
                             SecurityManager.setUnlocked(true)
-                            setResult(Activity.RESULT_OK)
+                            setResult(RESULT_OK)
                             Toast.makeText(this@ActivitySecurity, R.string.ok, Toast.LENGTH_SHORT).show()
                             finish()
                         } else {

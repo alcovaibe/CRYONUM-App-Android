@@ -10,11 +10,14 @@ import com.icymath.analytics.AnalyticsManager
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.activity.AnalyticsScreenBridge
+import androidx.core.content.edit
 
 class ActivityAnalytics : AppCompatActivity() {
 
-    private val PREFS_NAME = "settings"
-    private val KEY_ANALYTICS_ENABLED = "analytics_enabled"
+    companion object {
+        private const val PREFS_NAME = "settings"
+        private const val KEY_ANALYTICS_ENABLED = "analytics_enabled"
+    }
 
     override fun attachBaseContext(newBase: Context) {
         val lang = LocaleManager.getSavedLanguage(newBase)
@@ -40,10 +43,10 @@ class ActivityAnalytics : AppCompatActivity() {
             composeView = composeView,
             initialEnabled = enabled,
             onToggle = { isChecked ->
-                prefs.edit().putBoolean(KEY_ANALYTICS_ENABLED, isChecked).apply()
+                prefs.edit { putBoolean(KEY_ANALYTICS_ENABLED, isChecked) }
                 try {
                     AnalyticsManager.setAnalyticsEnabled(isChecked)
-                } catch (ignored: Throwable) {
+                } catch (_: Throwable) {
                 }
             },
             onBack = { finish() }
