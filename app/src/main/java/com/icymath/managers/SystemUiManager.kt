@@ -1,9 +1,6 @@
 package com.icymath.managers
 
-import android.app.Activity
-import android.graphics.Color
-import android.os.Build
-import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -17,23 +14,13 @@ object SystemUiManager {
 
     @JvmStatic
     fun applyEdgeToEdge(activity: AppCompatActivity) {
+        // Используем современный метод для включения Edge-to-Edge
+        activity.enableEdgeToEdge()
+
         val window = activity.window
         
-        // Включаем отрисовку под системными барами
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        // Делаем системные бары полностью прозрачными
-        window.statusBarColor = Color.TRANSPARENT
-        window.navigationBarColor = Color.TRANSPARENT
-
-        // Отключаем принудительный контраст для Navigation Bar (Android 10+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            window.isNavigationBarContrastEnforced = false
-        }
-
-        // Настройка цвета иконок (будет переопределяться в IcyMathTheme)
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        // По умолчанию ставим системное поведение
+        // Настройка поведения системных баров (например, скрытие по свайпу)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
         controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 }

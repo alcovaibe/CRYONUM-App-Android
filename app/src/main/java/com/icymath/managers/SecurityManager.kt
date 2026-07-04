@@ -131,8 +131,6 @@ object SecurityManager {
         isLockActivityVisible.set(visible)
     }
 
-    fun isLockActivityVisible(): Boolean = isLockActivityVisible.get()
-
     fun isFirstCheckPerformed(): Boolean = firstCheckPerformed.get()
 
     suspend fun clearPin(context: Context) {
@@ -220,10 +218,6 @@ object SecurityManager {
         val lockoutUntil = context.dataStore.data.map { it[LOCKOUT_UNTIL] ?: 0L }.first()
         val remaining = lockoutUntil - System.currentTimeMillis()
         return if (remaining > 0) remaining else 0L
-    }
-
-    suspend fun hasPin(context: Context): Boolean {
-        return context.dataStore.data.map { it[PIN_HASH_KEY] != null }.first()
     }
 
     suspend fun setLastBackgroundTime(context: Context, time: Long) {

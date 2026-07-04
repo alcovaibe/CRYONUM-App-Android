@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
@@ -58,7 +57,7 @@ class SplashActivity : ComponentActivity() {
             // Edge-to-edge convenience
             try {
                 enableEdgeToEdge()
-            } catch (ignored: Throwable) {
+            } catch (_: Throwable) {
             }
 
             // make navigation bar visually transparent where possible

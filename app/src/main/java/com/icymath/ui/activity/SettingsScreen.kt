@@ -150,10 +150,10 @@ object SettingsScreenBridge {
 @Composable
 fun SettingsScreenPreview() {
     val mockSettings = listOf(
-        SettingItemCompose(R.string.Themes, R.string.Themes, {}),
-        SettingItemCompose(R.string.language, R.string.language, {}),
-        SettingItemCompose(R.string.analytics, R.string.analytics, {}),
-        SettingItemCompose(R.string.security, R.string.security, {})
+        SettingItemCompose(R.string.Themes, R.string.Themes) {},
+        SettingItemCompose(R.string.language, R.string.language) {},
+        SettingItemCompose(R.string.analytics, R.string.analytics) {},
+        SettingItemCompose(R.string.security, R.string.security) {}
     )
     IcyMathTheme {
         Surface(color = MaterialTheme.colorScheme.background) {

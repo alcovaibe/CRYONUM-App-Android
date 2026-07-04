@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +12,7 @@ import androidx.compose.ui.platform.ComposeView
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.activity.HelpCenterScreenBridge
+import androidx.core.net.toUri
 
 class ActivityHelpCenter : AppCompatActivity() {
 
@@ -50,16 +50,16 @@ class ActivityHelpCenter : AppCompatActivity() {
         val channel = "icy_math"
         val tgIntent = Intent(
             Intent.ACTION_VIEW,
-            Uri.parse("tg://resolve?domain=$channel")
+            "tg://resolve?domain=$channel".toUri()
         )
 
         try {
             startActivity(tgIntent)
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             // Telegram не установлен — fallback на браузер
             val webIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://t.me/$channel")
+                "https://t.me/$channel".toUri()
             )
             startActivity(webIntent)
         } catch (e: Exception) {

@@ -226,11 +226,11 @@ object PolicyManager {
             } finally {
                 try {
                     inputStream?.close()
-                } catch (ignored: Exception) {
+                } catch (_: Exception) {
                 }
                 try {
                     outputStream?.close()
-                } catch (ignored: Exception) {
+                } catch (_: Exception) {
                 }
             }
         }
@@ -291,19 +291,4 @@ object PolicyManager {
         nm.notify(NOTIFICATION_ID, nb.build())
     }
 
-    @JvmStatic
-    fun showSimpleAcceptDeclineDialog(activity: Activity?) {
-        if (activity == null) return
-
-        val builder = MaterialAlertDialogBuilder(activity)
-            .setTitle(R.string.policy_update_title)
-            .setMessage(R.string.access_denied_message)
-            .setCancelable(false)
-            .setPositiveButton(R.string.accept) { _, _ -> acceptPolicy(activity) }
-            .setNegativeButton(R.string.decline) { _, _ -> showFinalDeclineDialog(activity) }
-
-        val dialog = builder.create()
-        dialog.window?.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
-        dialog.show()
-    }
 }

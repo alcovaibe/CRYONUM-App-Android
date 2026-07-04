@@ -1,14 +1,6 @@
 package com.icymath.ui.components
 
-import androidx.compose.ui.tooling.preview.Preview
-import com.icymath.ui.theme.IcyMathTheme
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.platform.LocalConfiguration
-import com.icymath.ui.theme.LocalAppTheme
-import com.icymath.managers.ThemeManager
-import java.util.Locale
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -16,17 +8,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.shadow
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.icymath.R
+import com.icymath.managers.ThemeManager
+import com.icymath.ui.theme.IcyMathTheme
+import com.icymath.ui.theme.LocalAppTheme
+import java.util.Locale
 
 @Composable
 fun FirstLaunchPolicyDialog(
@@ -80,7 +81,7 @@ fun FirstLaunchPolicyDialog(
 @Composable
 fun PreviewPolicyDialogLightRu() {
     val configuration = Configuration(LocalConfiguration.current).apply {
-        setLocale(Locale("ru"))
+        setLocale(Locale.forLanguageTag("ru"))
     }
     CompositionLocalProvider(
         LocalConfiguration provides configuration,
@@ -96,7 +97,7 @@ fun PreviewPolicyDialogLightRu() {
 @Composable
 fun PreviewPolicyDialogSandyDe() {
     val configuration = Configuration(LocalConfiguration.current).apply {
-        setLocale(Locale("de"))
+        setLocale(Locale.forLanguageTag("de"))
     }
     CompositionLocalProvider(
         LocalConfiguration provides configuration,
@@ -108,11 +109,11 @@ fun PreviewPolicyDialogSandyDe() {
     }
 }
 
-@Preview(name = "Amoled Theme - English", locale = "en", showBackground = true)
+@Preview(name = "AMOLED Theme - English", locale = "en", showBackground = true)
 @Composable
 fun PreviewPolicyDialogAmoledEn() {
     val configuration = Configuration(LocalConfiguration.current).apply {
-        setLocale(Locale("en"))
+        setLocale(Locale.forLanguageTag("en"))
     }
     CompositionLocalProvider(
         LocalConfiguration provides configuration,

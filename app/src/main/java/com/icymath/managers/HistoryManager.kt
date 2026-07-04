@@ -1,7 +1,7 @@
 package com.icymath.managers
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.icymath.items.HistoryItem
@@ -29,7 +29,7 @@ object HistoryManager {
         cachedHistory = trimmedHistory.toMutableList()
         val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val json = Gson().toJson(trimmedHistory)
-        prefs.edit().putString(KEY_HISTORY_LIST, json).apply()
+        prefs.edit { putString(KEY_HISTORY_LIST, json) }
     }
 
     @JvmStatic
@@ -51,7 +51,7 @@ object HistoryManager {
         val resultHistory = history ?: mutableListOf()
 
         val filtered = resultHistory.filter { 
-            now - it.lastAccessed <= NINETY_DAYS_MILLIS 
+            (now - it.lastAccessed) <= NINETY_DAYS_MILLIS 
         }.toMutableList()
 
         if (filtered.size != resultHistory.size) {
@@ -70,24 +70,6 @@ object HistoryManager {
 
         history.add(0, updated)
         saveHistory(context, history)
-    }
-
-    @JvmStatic
-    fun updateAccessTime(context: Context?, target: HistoryItem?) {
-        if (context == null || target == null) return
-
-        val history = loadHistory(context)
-        val now = System.currentTimeMillis()
-
-        val updated = history.map { item ->
-            if (sameRows(item, target)) {
-                item.copyWithLastAccessed(now)
-            } else {
-                item
-            }
-        }
-
-        saveHistory(context, updated)
     }
 
     @JvmStatic

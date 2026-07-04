@@ -161,7 +161,7 @@ object AnalyticsManager {
         executor.execute {
             try {
                 db?.analyticsDao()?.insertEvent(event)
-            } catch (ignored: Throwable) {
+            } catch (_: Throwable) {
             }
         }
     }
@@ -194,7 +194,7 @@ object AnalyticsManager {
             } else {
                 writeCrashToFileSync(crash)
             }
-        } catch (t: Throwable) {
+        } catch (_: Throwable) {
             writeCrashToFileSync(crash)
         }
     }
@@ -249,7 +249,7 @@ object AnalyticsManager {
             val memInfo = ActivityManager.MemoryInfo()
             activityManager.getMemoryInfo(memInfo)
             memInfo.totalMem / (1024L * 1024L)
-        } catch (ignored: Throwable) {
+        } catch (_: Throwable) {
             0L
         }
     }

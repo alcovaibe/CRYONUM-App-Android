@@ -6,12 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
+import androidx.core.content.edit
 import com.icymath.activity.ActivitySubstitutions
 import java.nio.charset.StandardCharsets
 import java.security.KeyStore
@@ -184,11 +184,11 @@ object LocaleManager {
     private fun persistLanguage(appCtx: Context, language: String) {
         try {
             val enc = encrypt(language)
-            getPrefs(appCtx).edit().putString(KEY_LANGUAGE, enc).apply()
+            getPrefs(appCtx).edit { putString(KEY_LANGUAGE, enc) }
         } catch (ex: Exception) {
             Log.w(TAG, "persistLanguage: encryption failed, saving plain. ${ex.message}")
             // fallback: save plain text (best effort). We avoid failing silently.
-            getPrefs(appCtx).edit().putString(KEY_LANGUAGE, language).apply()
+            getPrefs(appCtx).edit { putString(KEY_LANGUAGE, language) }
         }
     }
 

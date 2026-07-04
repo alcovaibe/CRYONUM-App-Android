@@ -37,7 +37,7 @@ class AppLockObserver(context: Context) : DefaultLifecycleObserver {
         scope.launch {
             try {
                 SecurityManager.setLastBackgroundTime(appContext, System.currentTimeMillis())
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
     }

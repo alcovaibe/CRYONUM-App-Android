@@ -3,12 +3,12 @@ package com.icymath.pdf
 import android.app.Activity
 import android.content.ContentUris
 import android.database.ContentObserver
-import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
 import android.os.Handler
 import android.os.HandlerThread
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -43,7 +43,9 @@ class ScreenProtection(private val activity: Activity) {
         // primary: prevent standard screenshots/recordings
         try {
             activity.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Failed to add FLAG_SECURE", e)
+        }
 
         // prepare overlay (inserted into activity content)
         try {
@@ -59,7 +61,9 @@ class ScreenProtection(private val activity: Activity) {
                 }
                 root.addView(blackOverlay)
             }
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Failed to prepare overlay", e)
+        }
 
         startObservers()
     }
@@ -106,13 +110,17 @@ class ScreenProtection(private val activity: Activity) {
             activity.contentResolver.registerContentObserver(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, imagesObserver!!
             )
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Failed to register images observer", e)
+        }
 
         try {
             activity.contentResolver.registerContentObserver(
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, videosObserver!!
             )
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Failed to register videos observer", e)
+        }
     }
 
     private fun stopObservers() {
@@ -121,20 +129,26 @@ class ScreenProtection(private val activity: Activity) {
                 activity.contentResolver.unregisterContentObserver(it)
                 imagesObserver = null
             }
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Failed to unregister images observer", e)
+        }
         try {
             videosObserver?.let {
                 activity.contentResolver.unregisterContentObserver(it)
                 videosObserver = null
             }
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Failed to unregister videos observer", e)
+        }
         try {
             observerThread?.let {
                 it.quitSafely()
                 observerThread = null
                 observerHandler = null
             }
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Failed to stop observer thread", e)
+        }
         stopRecordingMonitor()
     }
 
@@ -145,7 +159,9 @@ class ScreenProtection(private val activity: Activity) {
                 parent?.removeView(it)
                 blackOverlay = null
             }
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Failed to remove overlay", e)
+        }
     }
 
     // Images -> likely screenshot: show toast only
@@ -172,7 +188,7 @@ class ScreenProtection(private val activity: Activity) {
                     try {
                         val idx = c.getColumnIndex("relative_path")
                         if (idx != -1) rel = c.getString(idx)
-                    } catch (ignored: Throwable) {}
+                    } catch (_: Throwable) {}
 
                     var likely = name?.lowercase(Locale.ROOT)?.contains("screenshot") == true
                     if (!likely && rel?.lowercase(Locale.ROOT)?.contains("screenshot") == true) likely = true
@@ -186,7 +202,9 @@ class ScreenProtection(private val activity: Activity) {
                     }
                 }
             }
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Error in handleVideosChange", e)
+        }
     }
 
     // Videos -> possible screen recording: start monitoring the newest recent video for growth
@@ -215,14 +233,16 @@ class ScreenProtection(private val activity: Activity) {
                     try {
                         val idx = c.getColumnIndex("relative_path")
                         if (idx != -1) rel = c.getString(idx)
-                    } catch (ignored: Throwable) {}
+                    } catch (_: Throwable) {}
 
                     if (isLikelyScreenRecording(name, rel)) {
                         startRecordingMonitor(id)
                     }
                 }
             }
-        } catch (ignored: Throwable) {}
+        } catch (e: Throwable) {
+            Log.e("ScreenProtection", "Error in handleVideosChange", e)
+        }
     }
 
     private fun isLikelyScreenRecording(name: String?, rel: String?): Boolean {
@@ -258,7 +278,7 @@ class ScreenProtection(private val activity: Activity) {
                                 var size = -1L
                                 try {
                                     size = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE))
-                                } catch (ignored: Throwable) {}
+                                } catch (_: Throwable) {}
                                 val now = System.currentTimeMillis()
 
                                 if (lastSize[0] == -1L) {
@@ -280,10 +300,11 @@ class ScreenProtection(private val activity: Activity) {
                                 stopRecordingMonitor()
                             }
                         } ?: stopRecordingMonitor()
-                    } catch (se: SecurityException) {
-                        // lack of permission -> stop monitor
+                    } catch (e: SecurityException) {
+                        Log.w("ScreenProtection", "Lack of permission to monitor recording: ${e.message}")
                         stopRecordingMonitor()
-                    } catch (ignored: Throwable) {
+                    } catch (e: Throwable) {
+                        Log.e("ScreenProtection", "Error in recording monitor", e)
                     } finally {
                         synchronized(monitorLock) {
                             if (monitoredRecordingId != -1L && observerHandler != null) {
@@ -313,7 +334,9 @@ class ScreenProtection(private val activity: Activity) {
                 if (blackOverlay?.visibility == View.VISIBLE) {
                     blackOverlay?.visibility = View.GONE
                 }
-            } catch (ignored: Throwable) {}
+            } catch (e: Throwable) {
+                Log.e("ScreenProtection", "Failed to hide overlay", e)
+            }
         }
     }
 
@@ -326,7 +349,9 @@ class ScreenProtection(private val activity: Activity) {
                 }
                 val t = safeGetString(R.string.screen_recording_detected_toast, "Screen recording detected — content hidden")
                 Toast.makeText(activity, t, Toast.LENGTH_SHORT).show()
-            } catch (ignored: Throwable) {}
+            } catch (e: Throwable) {
+                Log.e("ScreenProtection", "Failed to show overlay or toast", e)
+            }
         }
     }
 
@@ -337,14 +362,16 @@ class ScreenProtection(private val activity: Activity) {
                     blackOverlay?.visibility = View.VISIBLE
                     blackOverlay?.bringToFront()
                 }
-            } catch (ignored: Throwable) {}
+            } catch (e: Throwable) {
+                Log.e("ScreenProtection", "Failed to ensure overlay visibility", e)
+            }
         }
     }
 
     private fun safeGetString(resId: Int, fallback: String): String {
         return try {
             activity.getString(resId)
-        } catch (t: Throwable) {
+        } catch (_: Throwable) {
             fallback
         }
     }

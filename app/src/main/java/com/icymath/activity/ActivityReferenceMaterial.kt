@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
@@ -16,11 +15,11 @@ import com.icymath.R
 import com.icymath.items.ItemType
 import com.icymath.items.LectureId
 import com.icymath.items.ReferenceItem
-import com.icymath.pdf.ActivityPdfViewer
 import com.icymath.managers.ImagePicker
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.SystemUiManager
 import com.icymath.managers.ThemeManager
+import com.icymath.pdf.ActivityPdfViewer
 import com.icymath.ui.activity.ReferenceMaterialScreenBridge
 import com.icymath.utils.SecurityUtils
 import java.io.File
@@ -195,7 +194,7 @@ class ActivityReferenceMaterial : AppCompatActivity() {
 
     private fun registerLaunchersAndBindToImagePicker() {
         val requestCameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (granted == true) imagePicker?.startCamera()
+            if (granted) imagePicker?.startCamera()
         }
         val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) imagePicker?.handleCameraResult()
