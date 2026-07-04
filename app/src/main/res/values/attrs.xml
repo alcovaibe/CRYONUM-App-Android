@@ -11,4 +11,5 @@
     <attr name="inputFieldTextColor" format="color" />
     <attr name="confirmButtonBackground" format="color" />
     <attr name="confirmButtonTextColor" format="color" />
+    <attr name="isLightTheme" format="boolean" />
 </resources>

@@ -1,10 +1,15 @@
 <resources>
 
     <!-- Базовая тема -->
-    <style name="Base.Theme.IcyMath" parent="Theme.Material3.Light.NoActionBar" />
+    <style name="Base.Theme.IcyMath" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Прозрачные системные панели (edge-to-edge) -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+    </style>
 
     <!-- Основная тема приложения -->
-    <style name="Theme.IcyMath" parent="Theme.IcyMath.Light" />
+    <style name="Theme.IcyMath" parent="Base.Theme.IcyMath" />
 
     <!-- Твой родной сплэш (КАК БЫЛО) -->
     <style name="Theme.IcyMath.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -19,6 +24,7 @@
         <item name="android:windowBackground">@color/white</item>
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="isLightTheme">true</item>
     </style>
 
     <!-- AMOLED Тема -->
@@ -26,6 +32,7 @@
         <item name="android:windowBackground">#000000</item>
         <item name="android:statusBarColor">#000000</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="isLightTheme">false</item>
     </style>
 
     <!-- Sandy Тема -->
@@ -33,11 +40,13 @@
         <item name="android:windowBackground">@color/SandyBrown</item>
         <item name="android:statusBarColor">@color/SandyBrown</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="isLightTheme">true</item>
     </style>
 
     <style name="Theme.IcyMath.System" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="isLightTheme">true</item>
     </style>
 </resources>
