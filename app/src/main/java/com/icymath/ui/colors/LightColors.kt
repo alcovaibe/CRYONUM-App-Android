@@ -2,12 +2,15 @@ package com.icymath.ui.colors
 
 import androidx.compose.ui.graphics.Color
 
+/**
+ * Светлая палитра (перенесено из res/values/colors.xml)
+ */
 val LightPalette = AppColors(
     primary = Black,
     onPrimary = White,
     background = White,
     onBackground = Black,
-    surface = Color(0xFFF2F2F2),
+    surface = Color(0xFFF2F2F2), // colorSurface_Light
     onSurface = Black,
     titleColor = Black,
     headerColor = SandyBrown,
@@ -23,15 +26,18 @@ val LightPalette = AppColors(
     dialogBackground = White,
     outlineActive = SandyBrown,
     outlineInactive = Color(0xFF808080),
-    historyCardTextPrimary = Color(0xFF000000),
+    historyCardTextPrimary = Black,
     historyCardTextSecondary = Color(0xFF666666),
-    historyCardBackground = Color(0xFFFFFFFF),
+    historyCardBackground = White,
     drawerBackground = Color(0xFFEBEBEB),
-    bgLight = Color(0xFFFFFFFF),
+    bgLight = White,
     bgDark = Color(0xFF121212),
     isLight = true
 )
 
+/**
+ * Песочная палитра
+ */
 val SandyPalette = AppColors(
     primary = Color(0xFF8A2BE2),
     onPrimary = White,
@@ -53,11 +59,11 @@ val SandyPalette = AppColors(
     dialogBackground = White,
     outlineActive = SandyBrown,
     outlineInactive = Color(0xFF808080),
-    historyCardTextPrimary = Color(0xFF000000),
+    historyCardTextPrimary = Black,
     historyCardTextSecondary = Color(0xFF666666),
-    historyCardBackground = Color(0xFFFFFFFF),
+    historyCardBackground = White,
     drawerBackground = Color(0xFFEBEBEB),
-    bgLight = Color(0xFFFFFFFF),
+    bgLight = White,
     bgDark = Color(0xFF121212),
     isLight = true
 )

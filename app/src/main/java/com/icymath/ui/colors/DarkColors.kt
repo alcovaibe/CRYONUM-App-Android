@@ -2,7 +2,7 @@ package com.icymath.ui.colors
 
 import androidx.compose.ui.graphics.Color
 
-// Базовые цвета из colors.xml
+// Базовые цвета и константы (общие для всех палитр)
 val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
 val SandyBrown = Color(0xFFF4A460)
@@ -62,15 +62,18 @@ data class AppColors(
     val isLight: Boolean
 )
 
+/**
+ * Темная палитра (перенесено из res/values-night/colors.xml)
+ */
 val AmoledPalette = AppColors(
     primary = White,
     onPrimary = Black,
     background = Black,
     onBackground = White,
-    surface = Color(0xFF1A1A1A),
+    surface = Color(0xFF696969), // colorSurface_Dark из XML
     onSurface = White,
     titleColor = Color(0xFFF8F8FF),
-    headerColor = Color(0xFF1A1A1A),
+    headerColor = Color(0xFF4E342E), // headerColor из XML-night
     bottomNavBackground = Color(0xFF202020),
     cardBackground = Color(0xFF1E1E1E),
     cardStroke = DarkGrey,
