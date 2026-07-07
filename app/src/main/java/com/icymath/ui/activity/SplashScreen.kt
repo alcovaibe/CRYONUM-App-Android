@@ -1,6 +1,6 @@
 package com.icymath.ui.activity
 
-import android.R
+import com.icymath.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
