@@ -31,8 +31,8 @@ fun SplashScreenContent() {
     }
 }
 
-@Preview(showBackground = true, name = "Splash Light")
-@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Splash Dark")
+@Preview(showBackground = true, name = "Splash Light", showSystemUi = true)
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Splash Dark", showSystemUi = true)
 @Composable
 fun SplashScreenPreview() {
     IcyMathTheme {

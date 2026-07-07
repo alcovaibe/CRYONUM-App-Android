@@ -110,7 +110,7 @@ fun ThemeCard(
             Text(
                 text = stringResource(item.nameResId),
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Normal,
                 color = IcyMathTheme.colors.titleColor,
                 modifier = Modifier.weight(1f)
             )
