@@ -11,7 +11,7 @@
     <!-- Основная тема приложения -->
     <style name="Theme.IcyMath" parent="Base.Theme.IcyMath" />
 
-    <!-- Твой родной сплэш (КАК БЫЛО) -->
+    <!-- Сплэш-тема для холодного старта (чистый фон) -->
     <style name="Theme.IcyMath.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">#FFFFFF</item>
         <item name="android:statusBarColor">#FFFFFF</item>

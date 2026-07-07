@@ -40,15 +40,18 @@ class SplashActivity : ComponentActivity() {
         // Apply System UI settings
         enableEdgeToEdge()
 
+        // Set Compose content immediately to avoid "empty" feel after XML splash
         setContent {
             IcyMathTheme {
                 SplashScreenContent()
             }
         }
 
-        // Delay and then launch main activity or lock screen
+        // Reduced delay for faster transition, but enough for splash feel
         CoroutineScope(Dispatchers.Main).launch {
+            // S-01: Delay long enough to show splash, but short enough to be fast
             delay(SPLASH_DELAY_MS)
+            
             if (!isFinishing) {
                 if (SecurityManager.shouldLock(this@SplashActivity)) {
                     if (SecurityManager.checkAndMarkLocking()) {
@@ -70,6 +73,6 @@ class SplashActivity : ComponentActivity() {
     }
 
     companion object {
-        private const val SPLASH_DELAY_MS = 600L
+        private const val SPLASH_DELAY_MS = 400L
     }
 }

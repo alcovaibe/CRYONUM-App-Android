@@ -7,12 +7,13 @@
         <item name="colorOnBackground">#FFFFFF</item>
         <item name="android:statusBarColor">#000000</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="isLightTheme">false</item>
         <item name="colorControlNormal">#FFFFFF</item>
         <item name="titleColor">#F8F8FF</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="cardStrokeColor">#696969</item>
-        <item name="headerColor">#000000</item>
-        <item name="bottomNavigationBackgroundColor">#202020</item>
+        <item name="headerColor">#1A1A1A</item>
+        <item name="bottomNavigationBackgroundColor">#000000</item>
         <item name="keyboardKeyBackground">#1A1A1A</item>
         <item name="keyboardKeyTextColor">#FFFFFF</item>
         <item name="inputFieldBackground">#141414</item>
@@ -25,8 +26,9 @@
         <!-- Наследуем всё от Amoled для системной темной темы -->
     </style>
 
-    <style name="Theme.IcyMath.Splash.Amoled" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.IcyMath.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">#000000</item>
         <item name="android:statusBarColor">#000000</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
