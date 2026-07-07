@@ -3,17 +3,17 @@
     <style name="Theme.IcyMath.Amoled" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">#000000</item>
         <item name="android:colorBackground">#000000</item>
-        <item name="colorPrimary">#FFFFFF</item>
-        <item name="colorOnBackground">#FFFFFF</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnBackground">@color/white</item>
         <item name="android:statusBarColor">#000000</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="isLightTheme">false</item>
-        <item name="colorControlNormal">#FFFFFF</item>
+        <item name="colorControlNormal">@color/white</item>
         <item name="titleColor">#F8F8FF</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorPrimary">@color/white</item>
         <item name="cardStrokeColor">#696969</item>
         <item name="headerColor">#1A1A1A</item>
-        <item name="bottomNavigationBackgroundColor">#000000</item>
+        <item name="bottomNavigationBackgroundColor">#1A1A1A</item>
         <item name="keyboardKeyBackground">#1A1A1A</item>
         <item name="keyboardKeyTextColor">#FFFFFF</item>
         <item name="inputFieldBackground">#141414</item>
@@ -27,7 +27,7 @@
     </style>
 
     <style name="Theme.IcyMath.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowBackground">#000000</item>
+        <item name="android:windowBackground">@drawable/splash_screen</item>
         <item name="android:statusBarColor">#000000</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>

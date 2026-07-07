@@ -1,28 +1,23 @@
 <resources>
 
     <!-- Базовая тема -->
-    <style name="Base.Theme.IcyMath" parent="Theme.Material3.Light.NoActionBar">
-        <!-- Прозрачные системные панели (edge-to-edge) -->
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
-    </style>
+    <style name="Base.Theme.IcyMath" parent="Theme.Material3.Light.NoActionBar" />
 
     <!-- Основная тема приложения -->
-    <style name="Theme.IcyMath" parent="Base.Theme.IcyMath" />
+    <style name="Theme.IcyMath" parent="Theme.IcyMath.Light" />
 
-    <!-- Сплэш-тема для холодного старта (чистый фон) -->
+    <!-- Твой родной сплэш (КАК БЫЛО) -->
     <style name="Theme.IcyMath.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowBackground">#FFFFFF</item>
-        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <!-- Светлая тема -->
     <style name="Theme.IcyMath.Light" parent="Theme.Material3.Light.NoActionBar">
-        <item name="colorPrimary">#000000</item>
-        <item name="android:windowBackground">#FFFFFF</item>
-        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="isLightTheme">true</item>
     </style>
@@ -37,15 +32,15 @@
 
     <!-- Sandy Тема -->
     <style name="Theme.IcyMath.SandyBrown" parent="Theme.Material3.Light.NoActionBar">
-        <item name="android:windowBackground">#F4A460</item>
-        <item name="android:statusBarColor">#F4A460</item>
+        <item name="android:windowBackground">@color/SandyBrown</item>
+        <item name="android:statusBarColor">@color/SandyBrown</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="isLightTheme">true</item>
     </style>
 
     <style name="Theme.IcyMath.System" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowBackground">#FFFFFF</item>
-        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="isLightTheme">true</item>
     </style>
