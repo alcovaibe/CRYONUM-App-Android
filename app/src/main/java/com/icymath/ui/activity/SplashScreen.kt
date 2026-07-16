@@ -40,3 +40,15 @@ fun SplashScreenPreview() {
     }
 }
 
+@Preview(showBackground = true, name = "Splash Sandy", showSystemUi = true)
+@Composable
+fun SplashScreenSandyPreview() {
+    androidx.compose.runtime.CompositionLocalProvider(
+        com.icymath.ui.theme.LocalAppTheme provides com.icymath.managers.ThemeManager.AppTheme.SANDY_BROWN
+    ) {
+        IcyMathTheme {
+            SplashScreenContent()
+        }
+    }
+}
+
