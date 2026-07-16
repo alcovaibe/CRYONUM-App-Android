@@ -24,7 +24,7 @@ fun SplashScreenContent() {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_logo_splash),
+            painter = painterResource(id = R.drawable.ic_logo),
             contentDescription = null,
             modifier = Modifier.size(160.dp)
         )
