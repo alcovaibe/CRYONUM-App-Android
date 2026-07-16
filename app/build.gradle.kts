@@ -15,8 +15,8 @@ android {
         applicationId = "com.icymath"
         minSdk = 26
         targetSdk = 36
-        versionCode = 432
-        versionName = "1.5.0.232"
+        versionCode = 433
+        versionName = "1.5.0.233"
 
         buildConfigField("String", "APP_VERSION", "\"$versionName\"")
 
