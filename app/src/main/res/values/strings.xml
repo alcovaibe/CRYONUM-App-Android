@@ -188,6 +188,7 @@
         <item quantity="other">Вы уверены, что хотите удалить %d?</item>
     </plurals>
     <string name="delete_selected_title">Удалить выбранные?</string>
+    <string name="select_all">Все</string>
 
     <string name="algebraic_structures">Основные алгебраические структуры</string>
     <string name="divisibility_in_integers">Делимость в кольце целых чисел нацело и с остатком</string>

@@ -1,6 +1,7 @@
 package com.icymath.ui.activity
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -89,9 +90,17 @@ fun HistoryScreen(
             if (isInSelectionMode) {
                 SelectionTopBar(
                     selectedCount = selectedItems.size,
+                    isAllSelected = selectedItems.size == historyItems.size,
                     onCloseClick = closeSelection,
                     onDeleteClick = {
                         showFirstDeleteDialog = true
+                    },
+                    onSelectAllClick = {
+                        if (selectedItems.size < historyItems.size) {
+                            selectedItems = historyItems.toSet()
+                        } else {
+                            selectedItems = emptySet()
+                        }
                     }
                 )
             } else {
@@ -176,8 +185,10 @@ fun NormalTopBar(onBackClick: () -> Unit) {
 @Composable
 fun SelectionTopBar(
     selectedCount: Int,
+    isAllSelected: Boolean,
     onCloseClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onSelectAllClick: () -> Unit
 ) {
     TopAppBar(
         modifier = Modifier.statusBarsPadding(),
@@ -202,6 +213,25 @@ fun SelectionTopBar(
             }
         },
         actions = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable { onSelectAllClick() }.padding(end = 8.dp)
+            ) {
+                Checkbox(
+                    checked = isAllSelected,
+                    onCheckedChange = null, // Handled by row click
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = IcyMathTheme.colors.confirmButtonBackground,
+                        uncheckedColor = IcyMathTheme.colors.titleColor.copy(alpha = 0.6f)
+                    )
+                )
+                Text(
+                    text = stringResource(R.string.select_all),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = IcyMathTheme.colors.titleColor
+                )
+            }
+
             IconButton(onClick = onDeleteClick) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_bin),

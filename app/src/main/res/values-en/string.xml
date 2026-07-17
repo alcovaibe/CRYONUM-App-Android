@@ -186,6 +186,7 @@
     </plurals>
 
     <string name="delete_selected_title">Delete selected items?</string>
+    <string name="select_all">All</string>
 
     <string name="algebraic_structures">Basic Algebraic Structures</string>
     <string name="divisibility_in_integers">Divisibility in the Ring of Integers</string>

@@ -187,6 +187,7 @@
     </plurals>
 
     <string name="delete_selected_title">Ausgewählte Elemente löschen?</string>
+    <string name="select_all">Alle</string>
 
 
     <string name="algebraic_structures">Grundlegende algebraische Strukturen</string>
