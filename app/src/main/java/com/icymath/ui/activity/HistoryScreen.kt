@@ -31,6 +31,7 @@ import com.icymath.ui.styles.AppStyles
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.ui.platform.LocalLocale
+import com.icymath.ui.components.DeleteHistoryDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,35 +53,14 @@ fun HistoryScreen(
     }
 
     if (showFirstDeleteDialog) {
-        val count = selectedItems.size
-        AlertDialog(
-            onDismissRequest = { showFirstDeleteDialog = false },
-            title = { Text(stringResource(R.string.delete_selected_title)) },
-            text = {
-                Text(
-                    androidx.compose.ui.res.pluralStringResource(
-                        R.plurals.delete_selected_message_plurals,
-                        count,
-                        count
-                    )
-                )
+        DeleteHistoryDialog(
+            count = selectedItems.size,
+            onConfirm = {
+                onDeleteSelected(selectedItems.toList())
+                showFirstDeleteDialog = false
+                closeSelection()
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteSelected(selectedItems.toList())
-                        showFirstDeleteDialog = false
-                        closeSelection()
-                    }
-                ) {
-                    Text(stringResource(R.string.delete), color = Color.Red)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showFirstDeleteDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
+            onDismiss = { showFirstDeleteDialog = false }
         )
     }
 
