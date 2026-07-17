@@ -44,7 +44,6 @@ fun HistoryScreen(
     var isInSelectionMode by remember { mutableStateOf(false) }
     
     var showFirstDeleteDialog by remember { mutableStateOf(false) }
-    var showSecondDeleteDialog by remember { mutableStateOf(false) }
 
     val closeSelection = {
         selectedItems = emptySet()
@@ -68,31 +67,8 @@ fun HistoryScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        showFirstDeleteDialog = false
-                        showSecondDeleteDialog = true
-                    }
-                ) {
-                    Text(stringResource(R.string.delete), color = Color.Red)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showFirstDeleteDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        )
-    }
-
-    if (showSecondDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showSecondDeleteDialog = false },
-            title = { Text(stringResource(R.string.delete_selected_title)) },
-            text = { Text(stringResource(R.string.delete_item_message)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
                         onDeleteSelected(selectedItems.toList())
-                        showSecondDeleteDialog = false
+                        showFirstDeleteDialog = false
                         closeSelection()
                     }
                 ) {
@@ -100,7 +76,7 @@ fun HistoryScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showSecondDeleteDialog = false }) {
+                TextButton(onClick = { showFirstDeleteDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
@@ -207,7 +183,11 @@ fun SelectionTopBar(
         modifier = Modifier.statusBarsPadding(),
         title = {
             Text(
-                text = selectedCount.toString(),
+                text = androidx.compose.ui.res.pluralStringResource(
+                    R.plurals.selected_count_plurals,
+                    selectedCount,
+                    selectedCount
+                ),
                 style = MaterialTheme.typography.titleLarge,
                 color = IcyMathTheme.colors.titleColor
             )

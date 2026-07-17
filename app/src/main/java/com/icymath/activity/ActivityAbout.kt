@@ -41,10 +41,9 @@ class ActivityAbout : AppCompatActivity() {
         // --- Подготовка данных ---
         val versionText = getString(R.string.app_version, BuildConfig.APP_VERSION)
         val sourceText = try {
-            InstallationInformationManager.processInstallationInfo(applicationContext)
-            val info = InstallationInformationManager.loadPendingInfo(applicationContext)
-            if (info?.source != null && info.source.isNotEmpty()) {
-                getString(R.string.install_source_via, info.source)
+            val source = InstallationInformationManager.getInstallSource(applicationContext)
+            if (source.isNotEmpty() && source != "unknown") {
+                getString(R.string.install_source_via, source)
             } else {
                 getString(R.string.install_source_unknown)
             }

@@ -61,11 +61,23 @@ object InstallationInformationManager {
         }
     }
 
-    private fun collectInstallInfo(context: Context): InstallInfo? {
+    /**
+     * Возвращает человекочитаемое название источника установки.
+     * Не зависит от состояния очереди отправки аналитики.
+     */
+    fun getInstallSource(context: Context): String {
         return try {
             val installerPackage = getInstallerPackageNameSafe(context)
-            val source = mapInstallerToStore(installerPackage)
+            mapInstallerToStore(installerPackage)
+        } catch (e: Exception) {
+            Log.e(TAG, "getInstallSource failed", e)
+            "unknown"
+        }
+    }
 
+    private fun collectInstallInfo(context: Context): InstallInfo? {
+        return try {
+            val source = getInstallSource(context)
             val version = try {
                 val pi = context.packageManager.getPackageInfo(context.packageName, 0)
                 pi.versionName ?: "unknown"
@@ -133,7 +145,7 @@ object InstallationInformationManager {
     }
 
     private fun mapInstallerToStore(installer: String?): String {
-        if (installer == null) return "Telegram"
+        if (installer == null) return "Инструменты ПК"
         return when (installer) {
             "com.android.vending" -> "Play Market"
             "com.huawei.appmarket" -> "Huawei AppGallery"
@@ -143,6 +155,10 @@ object InstallationInformationManager {
             "org.trashbox" -> "Trashbox"
             "com.apkpure.aegon" -> "ApkPure"
             "com.xiaomi.mipicks", "com.xiaomi.market" -> "Xiaomi GetApps"
+            "org.telegram.messenger" -> "Telegram"
+            "com.google.android.documentsui", "com.android.documentsui",
+            "com.google.android.apps.nbu.files", "com.android.filemanager" -> "Проводник"
+            "com.android.chrome", "org.mozilla.firefox", "com.opera.browser" -> "Браузер"
             else -> installer
         }
     }
