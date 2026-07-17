@@ -128,6 +128,7 @@
     <string name="status_selected">Выбрано</string>
     <string name="analytics">Аналитика</string>
     <string name="security">Безопасность</string>
+    <string name="accessibility">Спец. возможности</string>
     <string name="plas">+</string>
     <string name="minus">-</string>
     <string name="module">| |</string>

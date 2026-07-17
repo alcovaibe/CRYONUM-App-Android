@@ -129,6 +129,7 @@
     <string name="status_selected">Ausgewählt</string>
     <string name="analytics">Analytik</string>
     <string name="security">Sicherheit</string>
+    <string name="accessibility">Bedienungshilfen</string>
     <string name="plas">+</string>
     <string name="minus">-</string>
     <string name="module">| |</string>

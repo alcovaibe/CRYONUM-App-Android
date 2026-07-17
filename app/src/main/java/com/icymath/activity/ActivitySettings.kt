@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
 import com.icymath.R
@@ -32,10 +33,10 @@ class ActivitySettings : AppCompatActivity() {
         }
 
         // --- Инициализация списка настроек ---
-        val settings = listOf(
+        val rawSettings = listOf(
             SettingItemCompose(
                 R.string.Themes,
-                R.string.Themes, // Changed from R.string.ThemeSelection to remove description
+                R.string.Themes,
                 onClick = {
                     startActivity(Intent(this, ActivityThemeSelection::class.java))
                 }
@@ -63,8 +64,18 @@ class ActivitySettings : AppCompatActivity() {
                     }
                     startActivity(intent)
                 }
+            ),
+            SettingItemCompose(
+                R.string.accessibility,
+                R.string.accessibility,
+                onClick = {
+                    Toast.makeText(this, "Coming soon...", Toast.LENGTH_SHORT).show()
+                }
             )
         )
+
+        // Сортировка по алфавиту
+        val sortedSettings = rawSettings.sortedBy { getString(it.nameRes) }
 
         // --- Инициализация Compose интерфейса ---
         val composeView = ComposeView(this)
@@ -72,7 +83,7 @@ class ActivitySettings : AppCompatActivity() {
         SettingsScreenBridge.setSettingsContent(
             composeView = composeView,
             onBack = { finish() },
-            settings = settings
+            settings = sortedSettings
         )
 
         setContentView(composeView)
