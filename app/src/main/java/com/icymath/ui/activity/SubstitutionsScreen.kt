@@ -24,6 +24,8 @@ import com.icymath.managers.ThemeManager
 import com.icymath.ui.menu.AppBottomNavigation
 import com.icymath.ui.menu.AppDrawer
 import com.icymath.ui.components.Keyboard
+import com.icymath.ui.components.dialogs.SubstitutionsInputMethodDialog
+import com.icymath.ui.components.dialogs.SubstitutionsMaxValueDialog
 import com.icymath.ui.styles.AppStyles
 import com.icymath.ui.theme.IcyMathTheme
 import com.icymath.ui.theme.LocalAppTheme
@@ -40,12 +42,37 @@ fun SubstitutionsScreen(
     onMenuAction: (Int) -> Unit,
     onConfirmClick: () -> Unit,
     onInputBoxClick: (Boolean) -> Unit,
+    onGenerateLine: (Int) -> Unit,
     isFirstSelected: Boolean,
     onSelectionChange: (Boolean) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val colors = IcyMathTheme.colors
+
+    var showInputMethodDialog by remember { mutableStateOf(false) }
+    var showMaxValueDialog by remember { mutableStateOf(false) }
+
+    if (showInputMethodDialog) {
+        SubstitutionsInputMethodDialog(
+            onManualEntry = { showInputMethodDialog = false },
+            onMaxValueEntry = {
+                showInputMethodDialog = false
+                showMaxValueDialog = true
+            },
+            onDismiss = { showInputMethodDialog = false }
+        )
+    }
+
+    if (showMaxValueDialog) {
+        SubstitutionsMaxValueDialog(
+            onConfirm = { maxValue ->
+                showMaxValueDialog = false
+                onGenerateLine(maxValue)
+            },
+            onDismiss = { showMaxValueDialog = false }
+        )
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -105,6 +132,9 @@ fun SubstitutionsScreen(
                 )
                 InputBox(upperLine, isFirstSelected, onClick = { 
                     onSelectionChange(true)
+                    if (upperLine.isEmpty()) {
+                        showInputMethodDialog = true
+                    }
                     onInputBoxClick(true)
                 }, hint = stringResource(R.string.string_one))
 
@@ -199,6 +229,7 @@ fun SubstitutionsScreenPreview() {
             onMenuAction = {},
             onConfirmClick = {},
             onInputBoxClick = {},
+            onGenerateLine = {},
             isFirstSelected = true,
             onSelectionChange = {}
         )
@@ -218,6 +249,7 @@ fun SubstitutionsScreenSandyPreview() {
                 onMenuAction = {},
                 onConfirmClick = {},
                 onInputBoxClick = {},
+                onGenerateLine = {},
                 isFirstSelected = true,
                 onSelectionChange = {}
             )
@@ -237,7 +269,8 @@ object SubstitutionsScreenBridge {
         isFirstSelectedState: MutableState<Boolean>,
         onMenuAction: (Int) -> Unit,
         onConfirmClick: () -> Unit,
-        onInputBoxClick: (Boolean) -> Unit
+        onInputBoxClick: (Boolean) -> Unit,
+        onGenerateLine: (Int) -> Unit
     ) {
         composeView.setContent {
             IcyMathTheme {
@@ -249,6 +282,7 @@ object SubstitutionsScreenBridge {
                     onMenuAction = onMenuAction,
                     onConfirmClick = onConfirmClick,
                     onInputBoxClick = onInputBoxClick,
+                    onGenerateLine = onGenerateLine,
                     isFirstSelected = isFirstSelectedState.value,
                     onSelectionChange = { isFirstSelectedState.value = it }
                 )

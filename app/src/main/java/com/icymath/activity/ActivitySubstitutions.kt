@@ -7,8 +7,6 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.text.InputType
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContextCompat
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.icymath.R
 import com.icymath.managers.ImagePicker
 import com.icymath.managers.LocaleManager
@@ -104,7 +101,14 @@ class ActivitySubstitutions : AppCompatActivity() {
             onInputBoxClick = { isFirst ->
                 if (isFirst && !firstInputMethodDialogShown && upperLineState.value.isEmpty() && !firstConfirmed) {
                     firstInputMethodDialogShown = true
-                    showInputMethodDialog()
+                }
+            },
+            onGenerateLine = { maxValue ->
+                if (maxValue >= 1) {
+                    val sb = StringBuilder()
+                    for (i in 1..maxValue) sb.append(i)
+                    upperLineState.value = sb.toString()
+                    Toast.makeText(this@ActivitySubstitutions, getString(R.string.The_first_line_is_filled), Toast.LENGTH_SHORT).show()
                 }
             }
         )
@@ -214,49 +218,6 @@ class ActivitySubstitutions : AppCompatActivity() {
                     imagePicker.handleGalleryResult(result.data)
                 }
             }
-    }
-
-    private fun showMaxValueInputDialog() {
-        val input = EditText(this).apply {
-            inputType = InputType.TYPE_CLASS_NUMBER
-            hint = getString(R.string.Maximum_number)
-        }
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle(getString(R.string.enter_maximum))
-            .setView(input)
-            .setPositiveButton("OK") { dlg, _ ->
-                val txt = input.text.toString()
-                try {
-                    val maxValue = txt.toInt()
-                    if (maxValue >= 1) {
-                        val sb = StringBuilder()
-                        for (i in 1..maxValue) sb.append(i)
-                        upperLineState.value = sb.toString()
-                        Toast.makeText(this, getString(R.string.The_first_line_is_filled), Toast.LENGTH_SHORT).show()
-                    }
-                } catch (_: Exception) {
-                }
-                dlg.dismiss()
-            }
-            .setNegativeButton(getString(R.string.cancel)) { dlg, _ -> dlg.dismiss() }
-            .show()
-    }
-
-    private fun showInputMethodDialog() {
-        val options = arrayOf<CharSequence>(
-            getString(R.string.enter_the_string_manually_2),
-            getString(R.string.enter_maximum_2)
-        )
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.enter_quistion)
-            .setItems(options) { _, which ->
-                if (which == 1) {
-                    showMaxValueInputDialog()
-                }
-            }
-            .show()
     }
 
     private fun confirm() {
