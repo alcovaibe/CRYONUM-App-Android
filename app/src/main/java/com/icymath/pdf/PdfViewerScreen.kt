@@ -229,8 +229,8 @@ fun PdfViewerScreen(
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
                                     .padding(bottom = 40.dp)
-                                    .height(64.dp),
-                                shape = RoundedCornerShape(16.dp),
+                                    .height(56.dp),
+                                shape = RoundedCornerShape(28.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.primary,
                                     contentColor = MaterialTheme.colorScheme.onPrimary

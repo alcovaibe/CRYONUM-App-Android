@@ -176,12 +176,12 @@ fun SubstitutionsScreen(
 
                 Button(
                     onClick = onConfirmClick,
-                    modifier = Modifier.width(280.dp).height(52.dp),
+                    modifier = Modifier.width(280.dp).height(48.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.confirmButtonBackground,
                         contentColor = colors.confirmButtonText
                     ),
-                    shape = RoundedCornerShape(AppStyles.CardCornerRadius),
+                    shape = RoundedCornerShape(24.dp),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = AppStyles.CardElevation)
                 ) {
                     Text(
