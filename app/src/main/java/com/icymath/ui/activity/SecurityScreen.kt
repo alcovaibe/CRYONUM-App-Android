@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.icymath.R
 import com.icymath.managers.ThemeManager
-import com.icymath.ui.components.Keyboard
+import com.icymath.ui.components.keyboard.Keyboard
 import com.icymath.ui.theme.IcyMathTheme
 import com.icymath.ui.theme.LocalAppTheme
 

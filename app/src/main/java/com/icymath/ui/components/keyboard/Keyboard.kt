@@ -1,4 +1,4 @@
-package com.icymath.ui.components
+package com.icymath.ui.components.keyboard
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -13,7 +13,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -128,33 +127,34 @@ private fun KeyboardKey(
     }
 }
 
-@Preview(showBackground = true, name = "Light Theme")
+@Preview(showBackground = true, name = "Keyboard - Light")
 @Composable
 fun KeyboardPreviewLight() {
     IcyMathTheme {
-        Surface(color = Color.White) {
+        Box(modifier = Modifier.padding(16.dp)) {
             Keyboard({}, {}, {})
         }
     }
 }
 
-@Preview(showBackground = true, name = "Amoled Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, name = "Keyboard - Amoled", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun KeyboardPreviewAmoled() {
     IcyMathTheme {
-        Surface(color = Color.Black) {
+        Box(modifier = Modifier.padding(16.dp)) {
             Keyboard({}, {}, {})
         }
     }
 }
 
-@Preview(showBackground = true, name = "SandyBrown Theme")
+@Preview(showBackground = true, name = "Keyboard - SandyBrown")
 @Composable
 fun KeyboardPreviewSandy() {
-    // Явно задаем тему SANDY_BROWN через провайдер для превью
     CompositionLocalProvider(LocalAppTheme provides ThemeManager.AppTheme.SANDY_BROWN) {
-        Surface(color = Color(0xFFF4A460)) { // Цвет фона SandyBrown
-            Keyboard({}, {}, {})
+        IcyMathTheme {
+            Box(modifier = Modifier.padding(16.dp)) {
+                Keyboard({}, {}, {})
+            }
         }
     }
 }

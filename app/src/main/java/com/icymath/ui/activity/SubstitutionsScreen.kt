@@ -23,7 +23,7 @@ import com.icymath.R
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.menu.AppBottomNavigation
 import com.icymath.ui.menu.AppDrawer
-import com.icymath.ui.components.Keyboard
+import com.icymath.ui.components.keyboard.Keyboard
 import com.icymath.ui.components.dialogs.SubstitutionsInputMethodDialog
 import com.icymath.ui.components.dialogs.SubstitutionsMaxValueDialog
 import com.icymath.ui.styles.AppStyles
