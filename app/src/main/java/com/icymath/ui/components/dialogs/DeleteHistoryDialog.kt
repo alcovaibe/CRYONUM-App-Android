@@ -1,4 +1,4 @@
-package com.icymath.ui.components
+package com.icymath.ui.components.dialogs
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

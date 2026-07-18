@@ -31,7 +31,7 @@ import com.icymath.ui.styles.AppStyles
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.ui.platform.LocalLocale
-import com.icymath.ui.components.DeleteHistoryDialog
+import com.icymath.ui.components.dialogs.DeleteHistoryDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

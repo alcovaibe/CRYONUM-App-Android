@@ -14,8 +14,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.icymath.R
 import com.icymath.activity.ActivitySubstitutions
 import com.icymath.pdf.ActivityPdfViewer
-import com.icymath.ui.components.FirstLaunchPolicyDialog
-import com.icymath.ui.components.PolicyDialogContent
+import com.icymath.ui.components.dialogs.FirstLaunchPolicyDialog
+import com.icymath.ui.components.dialogs.PolicyDialogContent
 import com.icymath.ui.theme.IcyMathTheme
 import java.io.File
 import java.io.FileOutputStream

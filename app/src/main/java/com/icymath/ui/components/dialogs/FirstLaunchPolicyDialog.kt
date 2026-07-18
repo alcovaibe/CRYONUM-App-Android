@@ -1,4 +1,4 @@
-package com.icymath.ui.components
+package com.icymath.ui.components.dialogs
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
