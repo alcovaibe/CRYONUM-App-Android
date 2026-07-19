@@ -110,7 +110,11 @@ class ActivitySubstitutions : AppCompatActivity() {
                     upperLineState.value = sb.toString()
                     Toast.makeText(this@ActivitySubstitutions, getString(R.string.The_first_line_is_filled), Toast.LENGTH_SHORT).show()
                 }
-            }
+            },
+            onLaunchPolicyViewer = { isFirst ->
+                PolicyManager.launchPolicyViewer(this, isFirstLaunchMode = isFirst)
+            },
+            onExitApp = { finishAffinity() }
         )
 
         requestNotificationPermissionLauncher =
@@ -132,9 +136,9 @@ class ActivitySubstitutions : AppCompatActivity() {
     private fun checkPolicy() {
         val currentVersion = PolicyManager.getAcceptedVersion(this)
         if (currentVersion == 0) {
-            PolicyManager.showFirstLaunchDialog(this)
+            PolicyManager.requestFirstLaunchDialog()
         } else if (currentVersion < PolicyManager.REQUIRED_POLICY_VERSION) {
-            PolicyManager.showAcceptDialog(this)
+            PolicyManager.requestAcceptDialog()
             if (policyCheckRunnable == null) {
                 policyCheckRunnable = Runnable {
                     if (PolicyManager.isPolicyAccepted(this)) {

@@ -58,9 +58,17 @@ fun PdfViewerScreen(
     onShowAcceptDialog: () -> Unit,
     onPdfError: () -> Unit,
     isFirstLaunchMode: Boolean = false,
-    fromDialogViewAction: Boolean = false
+    fromDialogViewAction: Boolean = false,
+    onLaunchViewer: (Boolean) -> Unit = {},
+    onExitApp: () -> Unit = {}
 ) {
     val context = LocalContext.current
+
+    PolicyManager.PolicyDialogHandler(
+        onLaunchViewer = onLaunchViewer,
+        onExitApp = onExitApp
+    )
+
     val pages = remember(filePath) { mutableStateListOf<Bitmap>() }
     var isLoading by remember { mutableStateOf(true) }
     var showAcceptButton by remember { mutableStateOf(isFirstLaunchMode || fromDialogViewAction) }
@@ -232,8 +240,8 @@ fun PdfViewerScreen(
                                     .height(56.dp),
                                 shape = RoundedCornerShape(28.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                    containerColor = androidx.compose.ui.graphics.Color(0xFF4CAF50), // Green
+                                    contentColor = androidx.compose.ui.graphics.Color.White
                                 )
                             ) {
                                 Text(

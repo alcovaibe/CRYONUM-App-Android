@@ -74,7 +74,11 @@ class ActivityCalculator : AppCompatActivity() {
             isRadians = isRadiansState.value,
             onBackClick = { finish() },
             onToggleOrientation = { toggleOrientation() },
-            onKeyClick = { key -> handleKeyClick(key, composeView) }
+            onKeyClick = { key -> handleKeyClick(key, composeView) },
+            onLaunchPolicyViewer = { isFirst ->
+                PolicyManager.launchPolicyViewer(this, isFirstLaunchMode = isFirst)
+            },
+            onExitApp = { finishAffinity() }
         )
     }
 
@@ -160,9 +164,9 @@ class ActivityCalculator : AppCompatActivity() {
         if (!PolicyManager.isPolicyAccepted(this)) {
             val currentVersion = PolicyManager.getAcceptedVersion(this)
             if (currentVersion == 0) {
-                PolicyManager.showFirstLaunchDialog(this)
+                PolicyManager.requestFirstLaunchDialog()
             } else {
-                PolicyManager.showAcceptDialog(this)
+                PolicyManager.requestAcceptDialog()
             }
         }
     }

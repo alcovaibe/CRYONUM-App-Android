@@ -115,7 +115,6 @@
     <string name="policy_update_title2">Политика конфиденциальности обновлена</string>
     <string name="policy_update_text">Политика конфиденциальности изменилась. Нажмите, чтобы продолжить.</string>
     <string name="policy_channel_name">Обновления политики</string>
-    <string name="view_policy">Просмотреть</string>0
     <string name="error_rendering_pdf">Ошибка при отображении PDF документа.</string>
     <string name="view_policy_options_at_end">Ознакомиться с Условиями</string>
     <string name="policy_channel_description">Уведомления об изменениях в политике конфиденциальности.</string>

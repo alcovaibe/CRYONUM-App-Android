@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.icymath.R
+import com.icymath.managers.PolicyManager
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.menu.AppBottomNavigation
 import com.icymath.ui.menu.AppDrawer
@@ -43,6 +44,8 @@ fun SubstitutionsScreen(
     onConfirmClick: () -> Unit,
     onInputBoxClick: (Boolean) -> Unit,
     onGenerateLine: (Int) -> Unit,
+    onLaunchPolicyViewer: (Boolean) -> Unit,
+    onExitApp: () -> Unit,
     isFirstSelected: Boolean,
     onSelectionChange: (Boolean) -> Unit
 ) {
@@ -73,6 +76,11 @@ fun SubstitutionsScreen(
             onDismiss = { showMaxValueDialog = false }
         )
     }
+
+    PolicyManager.PolicyDialogHandler(
+        onLaunchViewer = onLaunchPolicyViewer,
+        onExitApp = onExitApp
+    )
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -230,6 +238,8 @@ fun SubstitutionsScreenPreview() {
             onConfirmClick = {},
             onInputBoxClick = {},
             onGenerateLine = {},
+            onLaunchPolicyViewer = {},
+            onExitApp = {},
             isFirstSelected = true,
             onSelectionChange = {}
         )
@@ -250,6 +260,8 @@ fun SubstitutionsScreenSandyPreview() {
                 onConfirmClick = {},
                 onInputBoxClick = {},
                 onGenerateLine = {},
+                onLaunchPolicyViewer = {},
+                onExitApp = {},
                 isFirstSelected = true,
                 onSelectionChange = {}
             )
@@ -270,7 +282,9 @@ object SubstitutionsScreenBridge {
         onMenuAction: (Int) -> Unit,
         onConfirmClick: () -> Unit,
         onInputBoxClick: (Boolean) -> Unit,
-        onGenerateLine: (Int) -> Unit
+        onGenerateLine: (Int) -> Unit,
+        onLaunchPolicyViewer: (Boolean) -> Unit,
+        onExitApp: () -> Unit
     ) {
         composeView.setContent {
             IcyMathTheme {
@@ -283,6 +297,8 @@ object SubstitutionsScreenBridge {
                     onConfirmClick = onConfirmClick,
                     onInputBoxClick = onInputBoxClick,
                     onGenerateLine = onGenerateLine,
+                    onLaunchPolicyViewer = onLaunchPolicyViewer,
+                    onExitApp = onExitApp,
                     isFirstSelected = isFirstSelectedState.value,
                     onSelectionChange = { isFirstSelectedState.value = it }
                 )

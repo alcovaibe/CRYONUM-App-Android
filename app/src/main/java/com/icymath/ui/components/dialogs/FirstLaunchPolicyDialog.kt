@@ -34,7 +34,7 @@ fun FirstLaunchPolicyDialog(
     onReadClick: () -> Unit
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.background,
+        color = IcyMathTheme.colors.dialogBackground,
         shape = RoundedCornerShape(28.dp),
         modifier = Modifier.fillMaxWidth()
     ) {

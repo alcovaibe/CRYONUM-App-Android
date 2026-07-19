@@ -7,13 +7,19 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.icymath.R
 import com.icymath.activity.ActivitySubstitutions
 import com.icymath.pdf.ActivityPdfViewer
+import com.icymath.ui.components.dialogs.FinalDeclineDialog
 import com.icymath.ui.components.dialogs.FirstLaunchPolicyDialog
 import com.icymath.ui.components.dialogs.PolicyDialogContent
 import com.icymath.ui.theme.IcyMathTheme
@@ -28,6 +34,10 @@ object PolicyManager {
 
     private const val TAG = "PolicyManager"
 
+    enum class PolicyDialogType { FIRST_LAUNCH, UPDATE, FINAL_DECLINE }
+    var currentDialogType by mutableStateOf<PolicyDialogType?>(null)
+        private set
+
     const val EXTRA_PDF_PATH = "pdf_path"
     const val EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END = "show_accept_dialog_on_scroll_end"
     const val EXTRA_FROM_NOTIFICATION = "from_notification"
@@ -39,8 +49,6 @@ object PolicyManager {
 
     private const val NOTIFICATION_CHANNEL_ID = "policy_update_channel"
     private const val NOTIFICATION_ID = 2025
-
-    private var currentDialog: android.app.Dialog? = null
 
     @JvmStatic
     fun getAcceptedVersion(context: Context?): Int {
@@ -60,138 +68,78 @@ object PolicyManager {
         if (context == null) return
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         prefs.edit { putInt(KEY_ACCEPTED_VERSION, REQUIRED_POLICY_VERSION) }
+        dismissDialog()
     }
 
     @JvmStatic
-    fun showFirstLaunchDialog(activity: Activity?) {
-        if (activity == null || (currentDialog?.isShowing == true)) return
+    fun requestFirstLaunchDialog() {
+        currentDialogType = PolicyDialogType.FIRST_LAUNCH
+    }
 
-        val composeView = ComposeView(activity).apply {
-            setContent {
-                IcyMathTheme {
-                    FirstLaunchPolicyDialog(
-                        onReadClick = {
-                            launchPolicyViewer(
-                                activity = activity,
-                                showAcceptDialogOnScrollEnd = true,
-                                fromNotification = false,
-                                fromDialogViewAction = false,
-                                isFirstLaunchMode = true
-                            )
-                        }
-                    )
+    @JvmStatic
+    fun requestAcceptDialog() {
+        currentDialogType = PolicyDialogType.UPDATE
+    }
+
+    @JvmStatic
+    fun requestFinalDeclineDialog() {
+        currentDialogType = PolicyDialogType.FINAL_DECLINE
+    }
+
+    @JvmStatic
+    fun dismissDialog() {
+        currentDialogType = null
+    }
+
+    @Composable
+    fun PolicyDialogHandler(
+        onLaunchViewer: (isFirstLaunch: Boolean) -> Unit,
+        onExitApp: () -> Unit
+    ) {
+        val dialogType = currentDialogType ?: return
+        val context = LocalContext.current
+
+        Dialog(
+            onDismissRequest = { /* Critical dialogs */ },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            IcyMathTheme {
+                when (dialogType) {
+                    PolicyDialogType.FIRST_LAUNCH -> {
+                        FirstLaunchPolicyDialog(
+                            onReadClick = {
+                                dismissDialog()
+                                onLaunchViewer(true)
+                            }
+                        )
+                    }
+                    PolicyDialogType.UPDATE -> {
+                        PolicyDialogContent(
+                            onViewPolicy = {
+                                dismissDialog()
+                                onLaunchViewer(false)
+                            },
+                            onAccept = {
+                                acceptPolicy(context)
+                            },
+                            onDecline = {
+                                requestFinalDeclineDialog()
+                            }
+                        )
+                    }
+                    PolicyDialogType.FINAL_DECLINE -> {
+                        FinalDeclineDialog(
+                            onAccept = {
+                                acceptPolicy(context)
+                            },
+                            onDecline = {
+                                onExitApp()
+                            }
+                        )
+                    }
                 }
             }
         }
-
-        val dialog = MaterialAlertDialogBuilder(activity)
-            .setView(composeView)
-            .setCancelable(false)
-            .create()
-
-        dialog.window?.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
-
-        // Update content with dismissal
-        composeView.setContent {
-            IcyMathTheme {
-                FirstLaunchPolicyDialog(
-                    onReadClick = {
-                        dialog.dismiss()
-                        launchPolicyViewer(
-                            activity = activity,
-                            showAcceptDialogOnScrollEnd = true,
-                            fromNotification = false,
-                            fromDialogViewAction = false,
-                            isFirstLaunchMode = true
-                        )
-                    }
-                )
-            }
-        }
-
-        dialog.setOnDismissListener { currentDialog = null }
-        currentDialog = dialog
-        dialog.show()
-    }
-
-    @JvmStatic
-    fun showAcceptDialog(activity: Activity?) {
-        if (activity == null || (currentDialog?.isShowing == true)) return
-
-        val composeView = ComposeView(activity).apply {
-            setContent {
-                IcyMathTheme {
-                    PolicyDialogContent(
-                        onViewPolicy = {
-                            launchPolicyViewer(
-                                activity = activity,
-                                showAcceptDialogOnScrollEnd = false,
-                                fromNotification = false,
-                                fromDialogViewAction = true
-                            )
-                        },
-                        onAccept = {
-                            acceptPolicy(activity)
-                        },
-                        onDecline = {
-                            showFinalDeclineDialog(activity)
-                        }
-                    )
-                }
-            }
-        }
-
-        val builder = MaterialAlertDialogBuilder(activity)
-            .setView(composeView)
-            .setCancelable(false)
-
-        val dialog = builder.create()
-        dialog.window?.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
-
-        // Re-wrap the callbacks to include dialog dismissal
-        composeView.setContent {
-            IcyMathTheme {
-                PolicyDialogContent(
-                    onViewPolicy = {
-                        dialog.dismiss()
-                        launchPolicyViewer(
-                            activity = activity,
-                            showAcceptDialogOnScrollEnd = false,
-                            fromNotification = false,
-                            fromDialogViewAction = true
-                        )
-                    },
-                    onAccept = {
-                        acceptPolicy(activity)
-                        dialog.dismiss()
-                    },
-                    onDecline = {
-                        dialog.dismiss()
-                        showFinalDeclineDialog(activity)
-                    }
-                )
-            }
-        }
-
-        dialog.setOnDismissListener { currentDialog = null }
-        currentDialog = dialog
-        dialog.show()
-    }
-
-    @JvmStatic
-    fun showFinalDeclineDialog(activity: Activity?) {
-        if (activity == null) return
-
-        val builder = MaterialAlertDialogBuilder(activity)
-            .setTitle(R.string.access_denied_title)
-            .setMessage(R.string.access_denied_message)
-            .setCancelable(false)
-            .setPositiveButton(R.string.accept) { _, _ -> acceptPolicy(activity) }
-            .setNegativeButton(R.string.decline) { _, _ -> activity.finishAffinity() }
-
-        val dialog = builder.create()
-        dialog.window?.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
-        dialog.show()
     }
 
     @JvmStatic

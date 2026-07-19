@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.icymath.R
+import com.icymath.managers.PolicyManager
 import com.icymath.ui.components.keyboard.CalculatorLandscapeKeyboard
 import com.icymath.ui.components.keyboard.CalculatorPortraitKeyboard
 import com.icymath.ui.theme.IcyMathTheme
@@ -47,11 +48,18 @@ fun CalculatorScreen(
     isRadians: Boolean,
     onBackClick: () -> Unit,
     onToggleOrientation: () -> Unit,
-    onKeyClick: (String) -> Unit
+    onKeyClick: (String) -> Unit,
+    onLaunchPolicyViewer: (Boolean) -> Unit = {},
+    onExitApp: () -> Unit = {}
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val colors = IcyMathTheme.colors
+
+    PolicyManager.PolicyDialogHandler(
+        onLaunchViewer = onLaunchPolicyViewer,
+        onExitApp = onExitApp
+    )
 
     Scaffold(
         topBar = {
@@ -202,11 +210,23 @@ object CalculatorScreenBridge {
         isRadians: Boolean,
         onBackClick: () -> Unit,
         onToggleOrientation: () -> Unit,
-        onKeyClick: (String) -> Unit
+        onKeyClick: (String) -> Unit,
+        onLaunchPolicyViewer: (Boolean) -> Unit,
+        onExitApp: () -> Unit
     ) {
         composeView.setContent {
             IcyMathTheme {
-                CalculatorScreen(input, result, isInverted, isRadians, onBackClick, onToggleOrientation, onKeyClick)
+                CalculatorScreen(
+                    input,
+                    result,
+                    isInverted,
+                    isRadians,
+                    onBackClick,
+                    onToggleOrientation,
+                    onKeyClick,
+                    onLaunchPolicyViewer,
+                    onExitApp
+                )
             }
         }
     }

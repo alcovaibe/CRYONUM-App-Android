@@ -56,7 +56,7 @@ class ActivityPdfViewer : AppCompatActivity() {
                 onBack = { handleBackPress() },
                 onShowAcceptDialog = {
                     if (!cameFromDialogViewAction && !PolicyManager.isPolicyAccepted(this)) {
-                        PolicyManager.showAcceptDialog(this)
+                        PolicyManager.requestAcceptDialog()
                     }
                 },
                 onPdfError = {
@@ -64,7 +64,11 @@ class ActivityPdfViewer : AppCompatActivity() {
                     finish()
                 },
                 isFirstLaunchMode = isFirstLaunchMode,
-                fromDialogViewAction = cameFromDialogViewAction
+                fromDialogViewAction = cameFromDialogViewAction,
+                onLaunchViewer = { isFirst ->
+                    PolicyManager.launchPolicyViewer(this, isFirstLaunchMode = isFirst)
+                },
+                onExitApp = { finishAffinity() }
             )
         }
 

@@ -115,7 +115,6 @@
     <string name="policy_update_title2">Datenschutzrichtlinie aktualisiert</string>
     <string name="policy_update_text">Datenschutzrichtlinie wurde geändert. Klicken Sie hier, um fortzufahren.</string>
     <string name="policy_channel_name">Richtlinienaktualisierungen</string>
-    <string name="view_policy">Anzeigen</string>
     <string name="error_rendering_pdf">Fehler beim Rendern des PDF-Dokuments.</string>
     <string name="view_policy_options_at_end">Nutzungsbedingungen anzeigen</string> <!-- Oder anderer geeigneter Text -->
     <string name="policy_channel_description">Benachrichtigungen über Änderungen der Datenschutzrichtlinie.</string>

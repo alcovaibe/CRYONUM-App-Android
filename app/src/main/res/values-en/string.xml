@@ -114,7 +114,6 @@
     <string name="policy_update_title2">Privacy Policy Updated</string>
     <string name="policy_update_text">Privacy Policy has changed. Click to continue.</string>
     <string name="policy_channel_name">Policy Updates</string>
-    <string name="view_policy">View</string>
     <string name="error_rendering_pdf">Error rendering PDF document.</string>
     <string name="view_policy_options_at_end">View Terms</string>
     <string name="policy_channel_description">Notifications about changes to the privacy policy.</string>
