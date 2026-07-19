@@ -278,6 +278,7 @@ class ActivityCalculator : AppCompatActivity() {
             s = s.replace('−', '-')
             s = s.replace("×", "*")
             s = s.replace("÷", "/")
+            s = s.replace(":", "/")
             s = s.replace("·", "*")
 
             s = s.replace(',', '.')
