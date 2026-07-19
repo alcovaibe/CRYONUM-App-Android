@@ -2,8 +2,6 @@
     <string name="app_name">Icy Math</string>
     <string name="app_version">Версия приложения: %1$s</string>
     <string name="about_app">О приложении</string>
-    <string name="install_source_unknown">Источник установки: неизвестен</string>
-    <string name="install_source_via">Источник установки: %s</string>
     <string name="history_empty_message">Пока что пусто, но добавьте первые вычисления, и они появятся здесь!</string>
     <string name="action_menu">Меню</string>
     <string name="photo_camera">Сфотографировать</string>

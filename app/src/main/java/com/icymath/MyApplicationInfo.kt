@@ -5,7 +5,7 @@ import android.app.Application
 import android.os.Bundle
 import android.view.WindowManager
 import com.icymath.activity.ActivitySecurity
-import com.icymath.analytics.AnalyticsManager
+import com.icymath.managers.AnalyticsManager
 import com.icymath.managers.AppLockObserver
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.SecurityManager

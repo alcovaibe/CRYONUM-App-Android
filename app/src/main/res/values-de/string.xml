@@ -2,8 +2,6 @@
 <resources>
     <string name="app_name">Icy Math</string>
     <string name="about_app">Über die App</string>
-    <string name="install_source_unknown">Installationsquelle: unbekannt</string>
-    <string name="install_source_via">Installationsquelle: %s</string>
     <string name="app_version">App-Version: %1$s</string>
     <string name="history_empty_message">Noch nichts hier – probiere etwas aus, und es wird angezeigt!</string>
     <string name="action_menu">Menü</string>

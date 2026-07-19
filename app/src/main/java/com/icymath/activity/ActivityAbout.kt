@@ -9,7 +9,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import com.icymath.BuildConfig
 import com.icymath.R
-import com.icymath.analytics.InstallationInformationManager
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.PolicyManager
 import com.icymath.managers.ThemeManager
@@ -40,16 +39,6 @@ class ActivityAbout : AppCompatActivity() {
 
         // --- Подготовка данных ---
         val versionText = getString(R.string.app_version, BuildConfig.APP_VERSION)
-        val sourceText = try {
-            val source = InstallationInformationManager.getInstallSource(applicationContext)
-            if (source.isNotEmpty() && source != "unknown") {
-                getString(R.string.install_source_via, source)
-            } else {
-                getString(R.string.install_source_unknown)
-            }
-        } catch (_: Throwable) {
-            getString(R.string.install_source_unknown)
-        }
 
         // --- Инициализация Compose интерфейса ---
         val composeView = ComposeView(this)
@@ -57,7 +46,6 @@ class ActivityAbout : AppCompatActivity() {
         setAboutContent(
             composeView = composeView,
             appVersion = versionText,
-            installSource = sourceText,
             onBackClick = { finish() },
             onPrivacyClick = {
                 try {

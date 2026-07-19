@@ -6,7 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
-import com.icymath.analytics.AnalyticsManager
+import com.icymath.managers.AnalyticsManager
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.ThemeManager
 import com.icymath.ui.activity.AnalyticsScreenBridge

@@ -112,8 +112,8 @@ private fun SelectionCard(text: String, onClick: () -> Unit) {
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, colors.cardStroke.copy(alpha = 0.5f)),
-        color = colors.surface.copy(alpha = 0.3f)
+        border = BorderStroke(1.dp, colors.cardStroke),
+        color = colors.keyboardKeyBackground
     ) {
         Box(
             modifier = Modifier

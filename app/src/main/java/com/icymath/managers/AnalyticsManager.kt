@@ -1,4 +1,4 @@
-package com.icymath.analytics
+package com.icymath.managers
 
 import android.app.ActivityManager
 import android.app.Application

@@ -2,8 +2,6 @@
     <string name="app_name">Icy Math</string>
     <string name="app_version">Version de l\'application : %1$s</string>
     <string name="about_app">À propos de l\'application</string>
-    <string name="install_source_unknown">Source d\'installation : inconnue</string>
-    <string name="install_source_via">Source d\'installation : %s</string>
     <string name="history_empty_message">C\'est encore vide, effectuez vos premiers calculs et ils apparaîtront ici !</string>
     <string name="action_menu">Menu</string>
     <string name="photo_camera">Prendre une photo</string>

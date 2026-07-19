@@ -41,14 +41,13 @@ import com.icymath.ui.theme.IcyMathTheme
 fun setAboutContent(
     composeView: ComposeView,
     appVersion: String,
-    installSource: String,
     onBackClick: () -> Unit,
     onPrivacyClick: () -> Unit,
     onSourceCodeClick: () -> Unit
 ) {
     composeView.setContent {
         IcyMathTheme {
-            AboutScreen(appVersion, installSource, onBackClick, onPrivacyClick, onSourceCodeClick)
+            AboutScreen(appVersion, onBackClick, onPrivacyClick, onSourceCodeClick)
         }
     }
 }
@@ -57,7 +56,6 @@ fun setAboutContent(
 @Composable
 fun AboutScreen(
     appVersion: String,
-    installSource: String,
     onBackClick: () -> Unit,
     onPrivacyClick: () -> Unit,
     onSourceCodeClick: () -> Unit
@@ -140,15 +138,6 @@ fun AboutScreen(
                 color = IcyMathTheme.colors.titleColor.copy(alpha = 0.9f)
             )
 
-            if (installSource.isNotEmpty() && installSource != stringResource(R.string.install_source_unknown)) {
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = installSource,
-                    fontSize = 14.sp,
-                    color = IcyMathTheme.colors.titleColor.copy(alpha = 0.5f)
-                )
-            }
-
             Spacer(modifier = Modifier.weight(0.88f))
         }
     }
@@ -166,7 +155,6 @@ fun AboutScreenPreview() {
         ) {
             AboutScreen(
                 appVersion = "1.0.0 (42)",
-                installSource = "Google Play Store",
                 onBackClick = {},
                 onPrivacyClick = {},
                 onSourceCodeClick = {}
