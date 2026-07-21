@@ -2,9 +2,7 @@
 
     <!-- Базовая тема -->
     <style name="Base.Theme.IcyMath" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Прозрачные системные панели (edge-to-edge) -->
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Системные бары управляются программно в Theme.kt -->
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
 
@@ -22,16 +20,12 @@
     <!-- Светлая тема -->
     <style name="Theme.IcyMath.Light" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:windowBackground">#FFFFFF</item>
-        <item name="android:statusBarColor">#FFFFFF</item>
-        <item name="android:windowLightStatusBar">true</item>
         <item name="isLightTheme">true</item>
     </style>
 
     <!-- AMOLED Тема -->
     <style name="Theme.IcyMath.Amoled" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">#000000</item>
-        <item name="android:statusBarColor">#000000</item>
-        <item name="android:windowLightStatusBar">false</item>
         <item name="isLightTheme">false</item>
         <item name="colorControlNormal">#FFFFFF</item>
     </style>
@@ -39,15 +33,11 @@
     <!-- Sandy Тема -->
     <style name="Theme.IcyMath.SandyBrown" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:windowBackground">#F4A460</item>
-        <item name="android:statusBarColor">#F4A460</item>
-        <item name="android:windowLightStatusBar">true</item>
         <item name="isLightTheme">true</item>
     </style>
 
     <!-- Системная тема -->
     <style name="Theme.IcyMath.System" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
         <item name="isLightTheme">true</item>
     </style>
 </resources>
