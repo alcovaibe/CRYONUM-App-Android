@@ -1,4 +1,4 @@
-package com.icymath.headband
+package com.icymath.activity
 
 import android.content.Context
 import android.content.Intent
@@ -7,8 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.icymath.activity.ActivitySecurity
-import com.icymath.activity.ActivitySubstitutions
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.SecurityManager
 import com.icymath.managers.ThemeManager
@@ -55,7 +53,7 @@ class SplashActivity : ComponentActivity() {
         // Delay long enough to show splash
         CoroutineScope(Dispatchers.Main).launch {
             delay(SPLASH_DELAY_MS)
-            
+
             if (!isFinishing) {
                 if (SecurityManager.shouldLock(this@SplashActivity)) {
                     if (SecurityManager.checkAndMarkLocking()) {

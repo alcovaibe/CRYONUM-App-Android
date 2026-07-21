@@ -84,7 +84,7 @@
             android:name=".activity.ActivityHistory"
             android:exported="false" />
         <activity
-            android:name=".headband.SplashActivity"
+            android:name=".activity.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
             <intent-filter>
