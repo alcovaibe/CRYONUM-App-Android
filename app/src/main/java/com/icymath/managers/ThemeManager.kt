@@ -157,7 +157,7 @@ object ThemeManager {
 
     @JvmStatic
     fun getSplashTheme(): Int {
-        return R.style.Theme_IcyMath_Splash
+        return R.style.Theme_App_Starting
     }
 
     @JvmStatic

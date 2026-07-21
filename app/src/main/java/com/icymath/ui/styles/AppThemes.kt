@@ -11,7 +11,7 @@ object AppThemes {
      * Возвращает ID ресурса темы Splash-экрана.
      */
     fun getSplashTheme(): Int {
-        return R.style.Theme_IcyMath_Splash
+        return R.style.Theme_App_Starting
     }
 
     /**

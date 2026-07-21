@@ -15,8 +15,8 @@ android {
         applicationId = "com.icymath"
         minSdk = 26
         targetSdk = 37
-        versionCode = 450
-        versionName = "1.5.0.250"
+        versionCode = 451
+        versionName = "1.5.0.251"
 
         buildConfigField("String", "APP_VERSION", "\"$versionName\"")
 
@@ -67,6 +67,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.core)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.gson)
     implementation(libs.mlkit.text.recognition)
     implementation(libs.material)

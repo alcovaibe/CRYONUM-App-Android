@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.icymath.activity.ActivitySecurity
 import com.icymath.activity.ActivitySubstitutions
 import com.icymath.managers.LocaleManager
@@ -27,6 +28,7 @@ class SplashActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
         // If skip flag passed -> go straight to main screen
@@ -40,7 +42,10 @@ class SplashActivity : ComponentActivity() {
         // Apply System UI settings
         enableEdgeToEdge()
 
-        // Set Compose content immediately to avoid "empty" feel
+        // Disable keeping on screen so Activity content shows immediately
+        splashScreen.setKeepOnScreenCondition { false }
+
+        // Set Compose content with the beautiful 160dp logo
         setContent {
             IcyMathTheme {
                 SplashScreenContent()
