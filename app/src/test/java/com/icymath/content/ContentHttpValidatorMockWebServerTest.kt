@@ -22,7 +22,7 @@ class ContentHttpValidatorMockWebServerTest {
     private val file = ContentManifestFile(
         "lecture-01", ContentCategory.LECTURE, 1,
         mapOf("ru" to "Лекция 1", "en" to "Lecture 1"),
-        "lectures/Basic Algebraic Structures.pdf", "1", body.toByteArray().size.toLong(), "a".repeat(64), "application/pdf"
+        "lectures/v1/lecture-01.pdf", "1", body.toByteArray().size.toLong(), "a".repeat(64), "application/pdf"
     )
 
     @Before

@@ -4,28 +4,65 @@ The Android client accepts content only from `https://download.icymath.com/` and
 
 ## Object keys
 
-Use the existing case-sensitive English lecture object keys below. Spaces and capitalization are part of each key and must not be changed:
+Use these versioned lowercase ASCII object keys:
 
 ```text
-lectures/Basic Algebraic Structures.pdf
-lectures/Divisibility in the Ring of Integers.pdf
-lectures/GCD and LCM. Coprime Integers.pdf
-lectures/Prime Numbers.pdf
-lectures/Numerical Congruences.pdf
-lectures/Solving Congruences.pdf
-lectures/Complex Numbers. Part 1.pdf
-lectures/Complex Numbers. Part 2.pdf
-lectures/Systems of Linear Equations. Gauss Method.pdf
-lectures/Matrices.pdf
-lectures/Determinants.pdf
-lectures/Permutations.pdf
-privacy-policy/privacy_policy.4.0.pdf
+lectures/v1/lecture-01.pdf
+lectures/v1/lecture-02.pdf
+...
+lectures/v1/lecture-12.pdf
+privacy-policy/v4.0/privacy-policy.pdf
 manifests/content-v1.signed.json
 ```
 
-`lecture-01` through `lecture-12` remain stable internal manifest IDs; they are not R2 file names. R2 object keys are case-sensitive. In an HTTP URL, clients encode each space as `%20`, but the stored object key still contains an ordinary space.
+`lecture-01` through `lecture-12` are both stable manifest IDs and stable file names. Human-readable Russian and English lecture names live only in each manifest entry's `displayName`. R2 object keys are case-sensitive.
 
-The confirmed policy key for version 4.0 is `privacy-policy/privacy_policy.4.0.pdf`. The underscore, dots, lowercase letters, and capitalization are part of the key. For a future version such as 5.0, upload a new immutable key such as `privacy-policy/privacy_policy.5.0.pdf`; never replace the bytes at the 4.0 key. For a future lecture revision, keep the English filenames but publish them under a deliberately planned new prefix, update the Android allowlist, increment the lecture `contentVersion` and manifest `revision`, then publish the new manifest last.
+For a future policy such as 5.0, upload `privacy-policy/v5.0/privacy-policy.pdf`; never replace the bytes at the 4.0 key. For a future lecture revision, upload `lectures/v2/lecture-01.pdf` through `lecture-12.pdf`, increment the lecture `contentVersion` and manifest `revision`, then publish the new manifest last.
+
+The old keys are migration sources only. Copy their bytes to the new keys, verify size and SHA-256, and keep the old objects until the website, signed manifest, and released Android client have all been verified:
+
+```text
+lectures/Basic Algebraic Structures.pdf -> lectures/v1/lecture-01.pdf
+lectures/Divisibility in the Ring of Integers.pdf -> lectures/v1/lecture-02.pdf
+lectures/GCD and LCM. Coprime Integers.pdf -> lectures/v1/lecture-03.pdf
+lectures/Prime Numbers.pdf -> lectures/v1/lecture-04.pdf
+lectures/Numerical Congruences.pdf -> lectures/v1/lecture-05.pdf
+lectures/Solving Congruences.pdf -> lectures/v1/lecture-06.pdf
+lectures/Complex Numbers. Part 1.pdf -> lectures/v1/lecture-07.pdf
+lectures/Complex Numbers. Part 2.pdf -> lectures/v1/lecture-08.pdf
+lectures/Systems of Linear Equations. Gauss Method.pdf -> lectures/v1/lecture-09.pdf
+lectures/Matrices.pdf -> lectures/v1/lecture-10.pdf
+lectures/Determinants.pdf -> lectures/v1/lecture-11.pdf
+lectures/Permutations.pdf -> lectures/v1/lecture-12.pdf
+privacy-policy/privacy_policy.4.0.pdf -> privacy-policy/v4.0/privacy-policy.pdf
+```
+
+The repository includes `tools/migrate_r2_layout.py` for this one-time copy. It never deletes objects, never lists the bucket, refuses to touch `releases/` or `manifests/`, and refuses to overwrite a target whose bytes or metadata differ. Create a temporary R2 API token restricted to **Object Read & Write** for the `icymath-download` bucket, keep its values out of chat, source control, and shell history, and revoke it after the migration.
+
+Install the official AWS SDK for Python and put the credentials into the process environment without typing the secret directly into a recorded command:
+
+```bash
+python3 -m pip install boto3
+read -r -p 'R2 account ID: ' R2_ACCOUNT_ID; export R2_ACCOUNT_ID
+read -r -p 'R2 access key ID: ' R2_ACCESS_KEY_ID; export R2_ACCESS_KEY_ID
+read -r -s -p 'R2 secret access key: ' R2_SECRET_ACCESS_KEY; export R2_SECRET_ACCESS_KEY; echo
+export R2_BUCKET='icymath-download'
+```
+
+First run the read-only preflight. Only if all 13 source keys are found and no conflicting target exists, apply the copies:
+
+```bash
+python3 tools/migrate_r2_layout.py
+python3 tools/migrate_r2_layout.py --apply
+```
+
+The apply run performs server-side `CopyObject`, replaces object metadata with the approved values, streams and compares the real source/target SHA-256 values, checks `%PDF-`, confirms each source still exists, and verifies public `HEAD` and `Range` responses through `download.icymath.com`. It prints the verified hashes for use when building the signed manifest. It does not create or publish the manifest.
+
+When finished, remove the variables from the shell and revoke the temporary token in Cloudflare:
+
+```bash
+unset R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET
+```
 
 The website publishes `/data/privacy-policy.json`. Its `versionCode`, `versionName`, `contentManifestRevision`, and `objectPath` must describe the same policy entry as the signed content manifest. `versionCode` is the monotonic integer used by Android acceptance logic; `versionName` is the user-facing value used in the R2 file name. Publish the signed manifest before changing the website config so the app never sees a config that refers to a not-yet-trusted manifest.
 
@@ -82,7 +119,7 @@ python3 tools/build_signed_content_manifest.py \
   --lectures-version 1 \
   --privacy-version-code 4 \
   --privacy-version-name 4.0 \
-  --privacy-object-path privacy-policy/privacy_policy.4.0.pdf \
+  --privacy-object-path privacy-policy/v4.0/privacy-policy.pdf \
   --key-id content-2026-01 \
   --private-key /secure/offline/content-2026-01-private.pem \
   --output /tmp/content-v1.signed.json
@@ -104,20 +141,20 @@ Allow only `GET` and `HEAD` on the download hostname. A Cloudflare WAF/custom ru
 Verify the custom domain against a real immutable object:
 
 ```bash
-curl --fail --silent --show-error --head 'https://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf'
-curl --fail --silent --show-error --head 'https://download.icymath.com/privacy-policy/privacy_policy.4.0.pdf'
-curl --fail --silent --show-error --output /tmp/lecture-01.pdf 'https://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf'
+curl --fail --silent --show-error --head 'https://download.icymath.com/lectures/v1/lecture-01.pdf'
+curl --fail --silent --show-error --head 'https://download.icymath.com/privacy-policy/v4.0/privacy-policy.pdf'
+curl --fail --silent --show-error --output /tmp/lecture-01.pdf 'https://download.icymath.com/lectures/v1/lecture-01.pdf'
 curl --fail --silent --show-error --dump-header /tmp/range.headers \
   --header 'Accept-Encoding: identity' \
   --header 'Range: bytes=0-1023' \
-  'https://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf' \
+  'https://download.icymath.com/lectures/v1/lecture-01.pdf' \
   --output /tmp/lecture-01.part
 etag=$(awk 'BEGIN{IGNORECASE=1} /^etag:/{sub(/\r$/, ""); print $2}' /tmp/range.headers)
 curl --fail --silent --show-error --dump-header - \
   --header 'Accept-Encoding: identity' \
   --header 'Range: bytes=1024-' \
   --header "If-Range: $etag" \
-  'https://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf' \
+  'https://download.icymath.com/lectures/v1/lecture-01.pdf' \
   --output /tmp/lecture-01.rest
 ```
 

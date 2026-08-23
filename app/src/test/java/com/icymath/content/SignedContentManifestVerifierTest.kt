@@ -72,7 +72,7 @@ class SignedContentManifestVerifierTest {
     @Test
     fun duplicatePathIsRejected() {
         val root = payloadObject()
-        root.getAsJsonArray("files")[1].asJsonObject.addProperty("path", "lectures/Basic Algebraic Structures.pdf")
+        root.getAsJsonArray("files")[1].asJsonObject.addProperty("path", "lectures/v1/lecture-01.pdf")
         assertSecurity { verifier.verify(envelope(gson.toJson(root).toByteArray()), 0) }
     }
 
@@ -107,27 +107,13 @@ class SignedContentManifestVerifierTest {
     private fun payload(revision: Long = 1): ByteArray = gson.toJson(payloadObject(revision)).toByteArray()
 
     private fun payloadObject(revision: Long = 1): JsonObject {
-        val lectureNames = listOf(
-            "Basic Algebraic Structures.pdf",
-            "Divisibility in the Ring of Integers.pdf",
-            "GCD and LCM. Coprime Integers.pdf",
-            "Prime Numbers.pdf",
-            "Numerical Congruences.pdf",
-            "Solving Congruences.pdf",
-            "Complex Numbers. Part 1.pdf",
-            "Complex Numbers. Part 2.pdf",
-            "Systems of Linear Equations. Gauss Method.pdf",
-            "Matrices.pdf",
-            "Determinants.pdf",
-            "Permutations.pdf"
-        )
         val files = (1..12).map { order ->
             mapOf(
                 "id" to "lecture-${order.toString().padStart(2, '0')}",
                 "category" to "lecture",
                 "order" to order,
                 "displayName" to mapOf("ru" to "Лекция $order", "en" to "Lecture $order"),
-                "path" to "lectures/${lectureNames[order - 1]}",
+                "path" to "lectures/v1/lecture-${order.toString().padStart(2, '0')}.pdf",
                 "contentVersion" to "1",
                 "sizeBytes" to 1000,
                 "sha256" to "a".repeat(64),
@@ -138,7 +124,7 @@ class SignedContentManifestVerifierTest {
             "category" to "privacy_policy",
             "order" to 1,
             "displayName" to mapOf("ru" to "Политика конфиденциальности", "en" to "Privacy Policy"),
-            "path" to "privacy-policy/privacy_policy.4.0.pdf",
+            "path" to "privacy-policy/v4.0/privacy-policy.pdf",
             "contentVersion" to "4",
             "sizeBytes" to 1000,
             "sha256" to "b".repeat(64),

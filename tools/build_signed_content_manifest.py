@@ -5,10 +5,10 @@ import argparse
 import base64
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import tempfile
-import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -74,7 +74,7 @@ def main() -> int:
         raise ValueError("revision and content version codes must be positive integers")
     if not re.fullmatch(r"[1-9][0-9]{0,8}(?:\.[0-9]{1,3}){1,2}", args.privacy_version_name):
         raise ValueError("privacy-version-name must look like 4.0 or 4.0.1")
-    expected_policy_path = f"privacy-policy/privacy_policy.{args.privacy_version_name}.pdf"
+    expected_policy_path = f"privacy-policy/v{args.privacy_version_name}/privacy-policy.pdf"
     if args.privacy_object_path != expected_policy_path:
         raise ValueError(f"privacy-object-path must be exactly {expected_policy_path}")
     if not args.private_key.is_file():
@@ -98,7 +98,7 @@ def main() -> int:
             "category": "lecture",
             "order": order,
             "displayName": {"ru": ru_name, "en": en_name},
-            "path": f"lectures/{object_name}",
+            "path": f"lectures/v{args.lectures_version}/{file_id}.pdf",
             "contentVersion": args.lectures_version,
             "sizeBytes": size,
             "sha256": sha256,

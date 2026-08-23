@@ -84,7 +84,7 @@ class SignedContentManifestVerifier(
         security(size in 1..maxFileBytes, "Invalid or excessive file size")
         security(sha256.matches(Regex("[0-9a-f]{64}")), "Invalid SHA-256")
         security(contentType == PDF_CONTENT_TYPE, "Unsupported content type")
-        ApprovedContentUrlPolicy.validateRelativePath(path, category, order, id)
+        ApprovedContentUrlPolicy.validateRelativePath(path, category, order, id, version)
 
         return ContentManifestFile(id, category, order, display, path, version, size, sha256, contentType)
     }

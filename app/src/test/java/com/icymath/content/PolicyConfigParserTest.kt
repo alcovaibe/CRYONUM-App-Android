@@ -12,7 +12,7 @@ class PolicyConfigParserTest {
         val config = PolicyConfigParser.parse(validConfig())
         assertEquals(4, config.versionCode)
         assertEquals("4.0", config.versionName)
-        assertEquals("privacy-policy/privacy_policy.4.0.pdf", config.objectPath)
+        assertEquals("privacy-policy/v4.0/privacy-policy.pdf", config.objectPath)
     }
 
     @Test
@@ -25,7 +25,7 @@ class PolicyConfigParserTest {
         assertSecurity {
             PolicyConfigParser.parse(
                 validConfig().decodeToString()
-                    .replace("privacy_policy.4.0.pdf", "privacy_policy.5.0.pdf")
+                    .replace("v4.0/privacy-policy.pdf", "v5.0/privacy-policy.pdf")
                     .encodeToByteArray()
             )
         }
@@ -48,7 +48,7 @@ class PolicyConfigParserTest {
     }
 
     private fun validConfig() = """
-        {"schemaVersion":1,"policy":{"versionCode":4,"versionName":"4.0","contentManifestRevision":1,"contentId":"privacy-policy","objectPath":"privacy-policy/privacy_policy.4.0.pdf","notificationEnabled":true,"requiresReaccept":true}}
+        {"schemaVersion":1,"policy":{"versionCode":4,"versionName":"4.0","contentManifestRevision":1,"contentId":"privacy-policy","objectPath":"privacy-policy/v4.0/privacy-policy.pdf","notificationEnabled":true,"requiresReaccept":true}}
     """.trimIndent().encodeToByteArray()
 
     private fun manifest() = ContentManifest(
@@ -60,7 +60,7 @@ class PolicyConfigParserTest {
                 category = ContentCategory.PRIVACY_POLICY,
                 order = 1,
                 displayName = mapOf("ru" to "Политика", "en" to "Policy"),
-                path = "privacy-policy/privacy_policy.4.0.pdf",
+                path = "privacy-policy/v4.0/privacy-policy.pdf",
                 contentVersion = "4",
                 sizeBytes = 100,
                 sha256 = "a".repeat(64),

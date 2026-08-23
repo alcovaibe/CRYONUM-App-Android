@@ -54,7 +54,7 @@ object PolicyConfigParser {
         security(versionNamePattern.matches(versionName), "Invalid policy versionName")
         security(manifestRevision > 0, "Invalid content manifest revision")
         security(contentId == "privacy-policy", "Invalid policy contentId")
-        security(objectPath == "privacy-policy/privacy_policy.$versionName.pdf", "Policy versionName/path mismatch")
+        security(objectPath == "privacy-policy/v$versionName/privacy-policy.pdf", "Policy versionName/path mismatch")
         ApprovedContentUrlPolicy.validateRelativePath(objectPath, ContentCategory.PRIVACY_POLICY, 1, contentId)
 
         return PolicyRemoteConfig(
