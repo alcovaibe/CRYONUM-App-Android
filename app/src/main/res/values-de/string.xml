@@ -114,6 +114,7 @@
     <string name="permission_notification_denied">Benachrichtigungsberechtigung wurde abgelehnt</string>
     <string name="policy_update_title2">Datenschutzrichtlinie aktualisiert</string>
     <string name="policy_update_text">Datenschutzrichtlinie wurde geändert. Klicken Sie hier, um fortzufahren.</string>
+    <string name="policy_update_notification_text">Version %1$s ist verfügbar. Tippen Sie, um sie herunterzuladen und zu lesen.</string>
     <string name="policy_channel_name">Richtlinienaktualisierungen</string>
     <string name="error_rendering_pdf">Fehler beim Rendern des PDF-Dokuments.</string>
     <string name="view_policy_options_at_end">Nutzungsbedingungen anzeigen</string> <!-- Oder anderer geeigneter Text -->

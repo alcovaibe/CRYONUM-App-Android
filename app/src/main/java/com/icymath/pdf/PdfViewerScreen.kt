@@ -59,6 +59,7 @@ fun PdfViewerScreen(
     onPdfError: () -> Unit,
     isFirstLaunchMode: Boolean = false,
     fromDialogViewAction: Boolean = false,
+    policyVersionToAccept: Int? = null,
     onLaunchViewer: (Boolean) -> Unit = {},
     onExitApp: () -> Unit = {}
 ) {
@@ -230,7 +231,11 @@ fun PdfViewerScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(
                                 onClick = {
-                                    PolicyManager.acceptPolicy(context)
+                                    if (policyVersionToAccept != null) {
+                                        PolicyManager.acceptPolicy(context, policyVersionToAccept)
+                                    } else {
+                                        PolicyManager.acceptPolicy(context)
+                                    }
                                     showAcceptButton = false
                                 },
                                 modifier = Modifier

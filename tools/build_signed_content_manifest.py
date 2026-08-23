@@ -8,6 +8,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -54,14 +55,28 @@ def main() -> int:
     parser.add_argument("--lectures-dir", required=True, type=Path)
     parser.add_argument("--privacy-pdf", required=True, type=Path)
     parser.add_argument("--revision", required=True, type=int)
-    parser.add_argument("--content-version", required=True)
+    parser.add_argument("--lectures-version", required=True)
+    parser.add_argument("--privacy-version-code", required=True)
+    parser.add_argument("--privacy-version-name", required=True)
+    parser.add_argument("--privacy-object-path", required=True)
     parser.add_argument("--key-id", required=True)
     parser.add_argument("--private-key", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
 
-    if args.revision <= 0 or not args.content_version.isdigit() or int(args.content_version) <= 0:
-        raise ValueError("revision and content-version must be positive integers")
+    if (
+        args.revision <= 0
+        or not args.lectures_version.isdigit()
+        or int(args.lectures_version) <= 0
+        or not args.privacy_version_code.isdigit()
+        or int(args.privacy_version_code) <= 0
+    ):
+        raise ValueError("revision and content version codes must be positive integers")
+    if not re.fullmatch(r"[1-9][0-9]{0,8}(?:\.[0-9]{1,3}){1,2}", args.privacy_version_name):
+        raise ValueError("privacy-version-name must look like 4.0 or 4.0.1")
+    expected_policy_path = f"privacy-policy/privacy_policy.{args.privacy_version_name}.pdf"
+    if args.privacy_object_path != expected_policy_path:
+        raise ValueError(f"privacy-object-path must be exactly {expected_policy_path}")
     if not args.private_key.is_file():
         raise ValueError("private key path does not exist")
 
@@ -84,7 +99,7 @@ def main() -> int:
             "order": order,
             "displayName": {"ru": ru_name, "en": en_name},
             "path": f"lectures/{object_name}",
-            "contentVersion": args.content_version,
+            "contentVersion": args.lectures_version,
             "sizeBytes": size,
             "sha256": sha256,
             "contentType": "application/pdf",
@@ -96,8 +111,8 @@ def main() -> int:
         "category": "privacy_policy",
         "order": 1,
         "displayName": {"ru": "Политика конфиденциальности", "en": "Privacy Policy"},
-        "path": f"privacy-policy/v{args.content_version}/privacy-policy.pdf",
-        "contentVersion": args.content_version,
+        "path": args.privacy_object_path,
+        "contentVersion": args.privacy_version_code,
         "sizeBytes": size,
         "sha256": sha256,
         "contentType": "application/pdf",

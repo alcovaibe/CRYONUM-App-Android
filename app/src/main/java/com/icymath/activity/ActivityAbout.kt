@@ -60,14 +60,30 @@ class ActivityAbout : AppCompatActivity() {
         )
 
         setContentView(composeView)
+        handlePolicyIntent(intent)
     }
 
-    private fun openVerifiedPdf(path: String) {
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handlePolicyIntent(intent)
+    }
+
+    private fun handlePolicyIntent(intent: Intent) {
+        if (intent.getBooleanExtra(PolicyManager.EXTRA_OPEN_POLICY_FROM_NOTIFICATION, false)) {
+            intent.removeExtra(PolicyManager.EXTRA_OPEN_POLICY_FROM_NOTIFICATION)
+            contentViewModel.requestPolicy()
+        }
+    }
+
+    private fun openVerifiedPdf(path: String, contentVersion: Int?) {
+        val versionToAccept = contentVersion?.takeIf { it > PolicyManager.getAcceptedVersion(this) }
         val intent = Intent(this, ActivityPdfViewer::class.java).apply {
             putExtra(PolicyManager.EXTRA_PDF_PATH, path)
             putExtra(PolicyManager.EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END, false)
             putExtra(PolicyManager.EXTRA_FROM_NOTIFICATION, false)
-            putExtra(PolicyManager.EXTRA_FROM_DIALOG_VIEW_ACTION, false)
+            putExtra(PolicyManager.EXTRA_FROM_DIALOG_VIEW_ACTION, versionToAccept != null)
+            versionToAccept?.let { putExtra(PolicyManager.EXTRA_POLICY_VERSION_TO_ACCEPT, it) }
         }
         startActivity(intent)
     }

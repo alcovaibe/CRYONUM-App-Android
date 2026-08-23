@@ -23,7 +23,8 @@ data class ContentDownloadUiState(
     val overallTotalBytes: Long = 0,
     val completedFiles: Int = 0,
     val errorCategory: ContentErrorCategory? = null,
-    val openPdfPath: String? = null
+    val openPdfPath: String? = null,
+    val openPdfContentVersion: Int? = null
 ) {
     val lecturesRemaining: Int get() = (lectureCount - lecturesDownloaded).coerceAtLeast(0)
     val workActive: Boolean get() = activeBundle != null && phase in setOf("PREPARING", "DOWNLOADING", "VERIFYING", "ENQUEUED")

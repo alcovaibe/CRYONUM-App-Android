@@ -56,7 +56,13 @@ class ContentDownloadViewModel(application: Application) : AndroidViewModel(appl
                 if (openPolicyAfterDownload && policy.current) {
                     repository.verifiedLocalFile(verified, verified.privacyPolicy)?.let { file ->
                         openPolicyAfterDownload = false
-                        mutableState.update { it.copy(openPdfPath = file.absolutePath, progressVisible = false) }
+                        mutableState.update {
+                            it.copy(
+                                openPdfPath = file.absolutePath,
+                                openPdfContentVersion = verified.privacyPolicy.contentVersion.toIntOrNull(),
+                                progressVisible = false
+                            )
+                        }
                     }
                 }
             } catch (e: ContentException) {
@@ -93,6 +99,7 @@ class ContentDownloadViewModel(application: Application) : AndroidViewModel(appl
                             checkingManifest = false,
                             manifestReady = true,
                             openPdfPath = local.absolutePath,
+                            openPdfContentVersion = file.contentVersion.toIntOrNull(),
                             policySizeBytes = file.sizeBytes,
                             activeBundle = null,
                             progressVisible = false,
@@ -157,7 +164,7 @@ class ContentDownloadViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun consumeOpenPdf() = mutableState.update { it.copy(openPdfPath = null) }
+    fun consumeOpenPdf() = mutableState.update { it.copy(openPdfPath = null, openPdfContentVersion = null) }
     fun hideProgress() = mutableState.update { it.copy(progressVisible = false) }
     fun showProgress() = mutableState.update {
         if (it.activeBundle != null) it.copy(progressVisible = true)

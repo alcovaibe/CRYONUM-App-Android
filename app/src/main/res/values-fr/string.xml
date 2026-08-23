@@ -114,6 +114,7 @@
     <string name="permission_notification_denied">Autorisation de notification non accordée</string>
     <string name="policy_update_title2">Politique de confidentialité mise à jour</string>
     <string name="policy_update_text">La politique de confidentialité a changé. Appuyez pour continuer.</string>
+    <string name="policy_update_notification_text">La version %1$s est disponible. Appuyez pour la télécharger et la consulter.</string>
     <string name="policy_channel_name">Mises à jour de la politique</string>
     <string name="error_rendering_pdf">Erreur lors de l\'affichage du document PDF.</string>
     <string name="view_policy_options_at_end">Consulter les Conditions</string>

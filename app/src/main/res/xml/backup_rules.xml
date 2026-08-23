@@ -9,4 +9,5 @@
     <!-- Downloaded content is reproducible and can be restored from the signed manifest. -->
     <exclude domain="file" path="icy_content/"/>
     <exclude domain="file" path="datastore/content_download.preferences_pb"/>
+    <exclude domain="file" path="datastore/policy_update.preferences_pb"/>
 </full-backup-content>

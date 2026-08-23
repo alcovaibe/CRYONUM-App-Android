@@ -16,6 +16,7 @@ import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContextCompat
 import com.icymath.R
+import com.icymath.content.ContentDependencies
 import com.icymath.managers.ImagePicker
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.PolicyManager
@@ -36,20 +37,11 @@ class ActivitySubstitutions : AppCompatActivity() {
     private var firstInputMethodDialogShown = false
 
     private lateinit var imagePicker: ImagePicker
-    private var policyCheckRunnable: Runnable? = null
 
     private lateinit var requestCameraPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
     private lateinit var requestNotificationPermissionLauncher: ActivityResultLauncher<String>
-
-    private fun getNotificationPermission(): String? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.POST_NOTIFICATIONS
-        } else {
-            null
-        }
-    }
 
     override fun attachBaseContext(newBase: Context) {
         val lang = LocaleManager.getSavedLanguage(newBase)
@@ -120,7 +112,7 @@ class ActivitySubstitutions : AppCompatActivity() {
         requestNotificationPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
                 if (granted) {
-                    PolicyManager.showPolicyUpdateNotification(this)
+                    ContentDependencies.get(this).policyUpdateCoordinator.checkNow()
                 }
             }
 
@@ -131,45 +123,33 @@ class ActivitySubstitutions : AppCompatActivity() {
         super.onResume()
         SecurityUtils.checkLock(this)
         checkPolicy()
+        requestPolicyNotificationPermissionOnce()
     }
 
     private fun checkPolicy() {
-        val currentVersion = PolicyManager.getAcceptedVersion(this)
-        if (currentVersion == 0) {
+        if (PolicyManager.getAcceptedVersion(this) == 0) {
             PolicyManager.requestFirstLaunchDialog()
-        } else if (currentVersion < PolicyManager.REQUIRED_POLICY_VERSION) {
-            PolicyManager.requestAcceptDialog()
-            if (policyCheckRunnable == null) {
-                policyCheckRunnable = Runnable {
-                    if (PolicyManager.isPolicyAccepted(this)) {
-                        val permission = getNotificationPermission()
-                        if (permission != null) {
-                            if (ContextCompat.checkSelfPermission(
-                                    this,
-                                    permission
-                                ) == PackageManager.PERMISSION_GRANTED
-                            ) {
-                                PolicyManager.showPolicyUpdateNotification(this)
-                            } else {
-                                requestNotificationPermissionLauncher.launch(permission)
-                            }
-                        } else {
-                            PolicyManager.showPolicyUpdateNotification(this)
-                        }
-                    }
-                }
-                window.decorView.postDelayed(policyCheckRunnable!!, 60_000)
-            }
+        }
+    }
+
+    private fun requestPolicyNotificationPermissionOnce() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            !PolicyManager.shouldRequestNotificationPermission(this)
+        ) return
+
+        PolicyManager.markNotificationPermissionRequested(this)
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         imagePicker.clear()
-        policyCheckRunnable?.let {
-            window.decorView.removeCallbacks(it)
-            policyCheckRunnable = null
-        }
     }
 
     private fun handleMenuAction(id: Int) {

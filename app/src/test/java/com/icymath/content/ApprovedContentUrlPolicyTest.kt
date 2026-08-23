@@ -21,6 +21,28 @@ class ApprovedContentUrlPolicyTest {
     }
 
     @Test
+    fun exactExistingR2PolicyKeyIsAccepted() {
+        val path = "privacy-policy/privacy_policy.4.0.pdf"
+        ApprovedContentUrlPolicy.validateRelativePath(path, ContentCategory.PRIVACY_POLICY, 1, "privacy-policy")
+        org.junit.Assert.assertEquals(
+            "https://download.icymath.com/privacy-policy/privacy_policy.4.0.pdf",
+            ApprovedContentUrlPolicy.resolve(policy(path)).toString()
+        )
+    }
+
+    @Test
+    fun mismatchedPolicyNamingIsRejected() {
+        assertThrows(ContentException::class.java) {
+            ApprovedContentUrlPolicy.validateRelativePath(
+                "privacy-policy/v4/privacy-policy.pdf",
+                ContentCategory.PRIVACY_POLICY,
+                1,
+                "privacy-policy"
+            )
+        }
+    }
+
+    @Test
     fun changedCaseOrDifferentLectureNameIsRejected() {
         rejectPath("lectures/basic algebraic structures.pdf")
         rejectPath("lectures/Lecture 01.pdf")
@@ -61,6 +83,18 @@ class ApprovedContentUrlPolicyTest {
         contentVersion = "1",
         sizeBytes = 1,
         sha256 = "a".repeat(64),
+        contentType = "application/pdf"
+    )
+
+    private fun policy(path: String) = ContentManifestFile(
+        id = "privacy-policy",
+        category = ContentCategory.PRIVACY_POLICY,
+        order = 1,
+        displayName = mapOf("ru" to "Политика конфиденциальности", "en" to "Privacy Policy"),
+        path = path,
+        contentVersion = "4",
+        sizeBytes = 1,
+        sha256 = "b".repeat(64),
         contentType = "application/pdf"
     )
 }

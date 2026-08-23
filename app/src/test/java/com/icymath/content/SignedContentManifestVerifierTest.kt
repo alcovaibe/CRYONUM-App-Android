@@ -138,8 +138,8 @@ class SignedContentManifestVerifierTest {
             "category" to "privacy_policy",
             "order" to 1,
             "displayName" to mapOf("ru" to "Политика конфиденциальности", "en" to "Privacy Policy"),
-            "path" to "privacy-policy/v1/privacy-policy.pdf",
-            "contentVersion" to "1",
+            "path" to "privacy-policy/privacy_policy.4.0.pdf",
+            "contentVersion" to "4",
             "sizeBytes" to 1000,
             "sha256" to "b".repeat(64),
             "contentType" to "application/pdf"

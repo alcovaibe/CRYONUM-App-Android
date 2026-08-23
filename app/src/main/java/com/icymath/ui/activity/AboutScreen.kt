@@ -52,7 +52,7 @@ fun setAboutContent(
     onPrivacyClick: () -> Unit,
     onSourceCodeClick: () -> Unit,
     downloadViewModel: ContentDownloadViewModel,
-    onOpenPdf: (String) -> Unit
+    onOpenPdf: (String, Int?) -> Unit
 ) {
     composeView.setContent {
         val downloadState by downloadViewModel.uiState.collectAsState()
@@ -90,12 +90,12 @@ fun AboutScreen(
     onCancelDownload: () -> Unit = {},
     onRetryDownload: () -> Unit = {},
     onRestartDownload: () -> Unit = {},
-    onOpenPdf: (String) -> Unit = {},
+    onOpenPdf: (String, Int?) -> Unit = { _, _ -> },
     onPdfOpened: () -> Unit = {}
 ) {
     LaunchedEffect(downloadState.openPdfPath) {
         downloadState.openPdfPath?.let {
-            onOpenPdf(it)
+            onOpenPdf(it, downloadState.openPdfContentVersion)
             onPdfOpened()
         }
     }

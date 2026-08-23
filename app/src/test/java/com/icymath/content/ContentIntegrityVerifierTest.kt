@@ -66,8 +66,8 @@ class ContentIntegrityVerifierTest {
         category = ContentCategory.PRIVACY_POLICY,
         order = 1,
         displayName = mapOf("ru" to "Политика", "en" to "Policy"),
-        path = "privacy-policy/v1/privacy-policy.pdf",
-        contentVersion = "1",
+        path = "privacy-policy/privacy_policy.4.0.pdf",
+        contentVersion = "4",
         sizeBytes = file.length(),
         sha256 = ContentStorage.sha256(file),
         contentType = "application/pdf"

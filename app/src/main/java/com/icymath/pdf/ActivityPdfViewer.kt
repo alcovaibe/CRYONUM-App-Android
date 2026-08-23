@@ -48,6 +48,7 @@ class ActivityPdfViewer : AppCompatActivity() {
         isFirstLaunchMode = intent.getBooleanExtra("is_first_launch_mode", false)
         val shouldShowAcceptDialogOnScrollEnd =
             intent.getBooleanExtra(PolicyManager.EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END, false)
+        val policyVersionToAccept = intent.getIntExtra(PolicyManager.EXTRA_POLICY_VERSION_TO_ACCEPT, 0)
 
         setContent {
             PdfViewerScreen(
@@ -65,6 +66,7 @@ class ActivityPdfViewer : AppCompatActivity() {
                 },
                 isFirstLaunchMode = isFirstLaunchMode,
                 fromDialogViewAction = cameFromDialogViewAction,
+                policyVersionToAccept = policyVersionToAccept.takeIf { it > 0 },
                 onLaunchViewer = { isFirst ->
                     PolicyManager.launchPolicyViewer(this, isFirstLaunchMode = isFirst)
                 },

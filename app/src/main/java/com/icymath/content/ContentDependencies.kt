@@ -12,6 +12,7 @@ class ContentDependencies private constructor(context: Context) {
 
     val storage = ContentStorage(appContext, gson)
     val metadataStore = ContentMetadataStore(appContext, gson)
+    val policyUpdateStore = PolicyUpdateStore(appContext)
 
     val downloadClient: OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
@@ -25,8 +26,10 @@ class ContentDependencies private constructor(context: Context) {
 
     private val verifier = SignedContentManifestVerifier(ProductionContentKeys.trustedKeys())
     private val service = ApprovedContentService(downloadClient, verifier, metadataStore, storage)
+    val policyConfigService = PolicyConfigService(downloadClient)
     val repository = ContentDownloadRepository(downloadClient, service, storage, metadataStore, ContentIntegrityVerifier())
     val coordinator = ContentDownloadCoordinator(appContext, repository)
+    val policyUpdateCoordinator = PolicyUpdateCoordinator(appContext)
 
     companion object {
         @Volatile private var instance: ContentDependencies? = null

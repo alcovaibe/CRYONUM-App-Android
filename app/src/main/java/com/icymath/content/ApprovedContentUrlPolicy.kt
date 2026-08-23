@@ -28,7 +28,9 @@ object ApprovedContentUrlPolicy {
         "Determinants.pdf",
         "Permutations.pdf"
     )
-    private val policyPath = Regex("privacy-policy/v[1-9][0-9]{0,8}/privacy-policy\\.pdf")
+    private val policyPath = Regex(
+        "privacy-policy/privacy_policy\\.[1-9][0-9]{0,8}(?:\\.[0-9]{1,3}){1,2}\\.pdf"
+    )
 
     fun validateRelativePath(path: String, category: ContentCategory, order: Int, id: String) {
         reject(path.isEmpty(), "Empty content path")

@@ -9,6 +9,7 @@
         <exclude domain="file" path="datastore/security_settings.preferences_pb"/>
         <exclude domain="file" path="icy_content/"/>
         <exclude domain="file" path="datastore/content_download.preferences_pb"/>
+        <exclude domain="file" path="datastore/policy_update.preferences_pb"/>
     </cloud-backup>
 
     <device-transfer>
@@ -20,5 +21,6 @@
         <exclude domain="file" path="datastore/security_settings.preferences_pb"/>
         <exclude domain="file" path="icy_content/"/>
         <exclude domain="file" path="datastore/content_download.preferences_pb"/>
+        <exclude domain="file" path="datastore/policy_update.preferences_pb"/>
     </device-transfer>
 </data-extraction-rules>

@@ -26,7 +26,7 @@ class MyApplicationInfo : Application() {
         LocaleManager.init(this)
         ThemeManager.init(this)
         AnalyticsManager.init(this)
-        ContentDependencies.get(this)
+        ContentDependencies.get(this).policyUpdateCoordinator.schedule()
 
         androidx.lifecycle.ProcessLifecycleOwner.get().lifecycle.addObserver(AppLockObserver(this))
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {

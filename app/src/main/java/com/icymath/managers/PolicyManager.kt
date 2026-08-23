@@ -4,8 +4,11 @@ import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,9 +18,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.icymath.R
-import com.icymath.activity.ActivitySubstitutions
+import com.icymath.activity.ActivityAbout
+import com.icymath.content.ContentDependencies
 import com.icymath.pdf.ActivityPdfViewer
 import com.icymath.ui.components.dialogs.FinalDeclineDialog
 import com.icymath.ui.components.dialogs.FirstLaunchPolicyDialog
@@ -42,10 +48,13 @@ object PolicyManager {
     const val EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END = "show_accept_dialog_on_scroll_end"
     const val EXTRA_FROM_NOTIFICATION = "from_notification"
     const val EXTRA_FROM_DIALOG_VIEW_ACTION = "from_dialog_view_action"
+    const val EXTRA_OPEN_POLICY_FROM_NOTIFICATION = "open_policy_from_notification"
+    const val EXTRA_POLICY_VERSION_TO_ACCEPT = "policy_version_to_accept"
 
-    const val REQUIRED_POLICY_VERSION = 4
+    private const val BUNDLED_POLICY_VERSION = 4
     private const val PREF_NAME = "policy_prefs"
     private const val KEY_ACCEPTED_VERSION = "accepted_policy_version"
+    private const val KEY_NOTIFICATION_PERMISSION_REQUESTED = "notification_permission_requested"
 
     private const val NOTIFICATION_CHANNEL_ID = "policy_update_channel"
     private const val NOTIFICATION_ID = 2025
@@ -60,15 +69,32 @@ object PolicyManager {
     @JvmStatic
     fun isPolicyAccepted(context: Context?): Boolean {
         if (context == null) return true
-        return getAcceptedVersion(context) >= REQUIRED_POLICY_VERSION
+        return getAcceptedVersion(context) > 0
     }
 
     @JvmStatic
-    fun acceptPolicy(context: Context?) {
+    @JvmOverloads
+    fun acceptPolicy(context: Context?, versionCode: Int = BUNDLED_POLICY_VERSION) {
         if (context == null) return
+        if (versionCode <= 0) return
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        prefs.edit { putInt(KEY_ACCEPTED_VERSION, REQUIRED_POLICY_VERSION) }
+        val acceptedVersion = maxOf(versionCode, getAcceptedVersion(context))
+        prefs.edit { putInt(KEY_ACCEPTED_VERSION, acceptedVersion) }
+        ContentDependencies.get(context).policyUpdateCoordinator.checkNow()
         dismissDialog()
+    }
+
+    @JvmStatic
+    fun shouldRequestNotificationPermission(context: Context): Boolean {
+        if (getAcceptedVersion(context) <= 0) return false
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return !prefs.getBoolean(KEY_NOTIFICATION_PERMISSION_REQUESTED, false)
+    }
+
+    @JvmStatic
+    fun markNotificationPermissionRequested(context: Context) {
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            .edit { putBoolean(KEY_NOTIFICATION_PERMISSION_REQUESTED, true) }
     }
 
     @JvmStatic
@@ -195,23 +221,29 @@ object PolicyManager {
     }
 
     @JvmStatic
-    fun showPolicyUpdateNotification(context: Context?) {
-        if (context == null) return
+    fun showPolicyUpdateNotification(context: Context?, versionCode: Int, versionName: String): Boolean {
+        if (context == null) return false
+        if (versionCode <= getAcceptedVersion(context)) return false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return false
+        }
 
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        val saved = prefs.getInt(KEY_ACCEPTED_VERSION, 0)
-        if (saved >= REQUIRED_POLICY_VERSION) return
+        val notificationManagerCompat = NotificationManagerCompat.from(context)
+        if (!notificationManagerCompat.areNotificationsEnabled()) return false
 
-        val intent = Intent(context, ActivitySubstitutions::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(EXTRA_FROM_NOTIFICATION, true)
+        val intent = Intent(context, ActivityAbout::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(EXTRA_OPEN_POLICY_FROM_NOTIFICATION, true)
+            putExtra(EXTRA_POLICY_VERSION_TO_ACCEPT, versionCode)
         }
 
         val pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
         val pending = PendingIntent.getActivity(
             context,
-            NOTIFICATION_ID,
+            versionName.hashCode(),
             intent,
             pendingFlags
         )
@@ -222,7 +254,7 @@ object PolicyManager {
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             context.getString(R.string.policy_channel_name),
-            NotificationManager.IMPORTANCE_HIGH
+            NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
             description = context.getString(R.string.policy_channel_description)
         }
@@ -231,12 +263,13 @@ object PolicyManager {
         val nb = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_logo) // Use appropriate icon
             .setContentTitle(context.getString(R.string.policy_update_title))
-            .setContentText(context.getString(R.string.policy_update_message))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentText(context.getString(R.string.policy_update_notification_text, versionName))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pending)
             .setAutoCancel(true)
 
-        nm.notify(NOTIFICATION_ID, nb.build())
+        notificationManagerCompat.notify(NOTIFICATION_ID, nb.build())
+        return true
     }
 
 }
