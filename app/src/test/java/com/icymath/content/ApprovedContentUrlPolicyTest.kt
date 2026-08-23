@@ -5,9 +5,26 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class ApprovedContentUrlPolicyTest {
-    @Test fun httpIsRejected() = rejectUrl("http://download.icymath.com/lectures/v1/lecture-01.pdf")
-    @Test fun otherHostIsRejected() = rejectUrl("https://evil.example/lectures/v1/lecture-01.pdf")
-    @Test fun nonStandardPortIsRejected() = rejectUrl("https://download.icymath.com:8443/lectures/v1/lecture-01.pdf")
+    @Test fun httpIsRejected() = rejectUrl("http://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf")
+    @Test fun otherHostIsRejected() = rejectUrl("https://evil.example/lectures/Basic%20Algebraic%20Structures.pdf")
+    @Test fun nonStandardPortIsRejected() = rejectUrl("https://download.icymath.com:8443/lectures/Basic%20Algebraic%20Structures.pdf")
+
+    @Test
+    fun exactExistingR2LectureKeyIsAccepted() {
+        val path = "lectures/Basic Algebraic Structures.pdf"
+        ApprovedContentUrlPolicy.validateRelativePath(path, ContentCategory.LECTURE, 1, "lecture-01")
+        val url = ApprovedContentUrlPolicy.resolve(lecture(path))
+        org.junit.Assert.assertEquals(
+            "https://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf",
+            url.toString()
+        )
+    }
+
+    @Test
+    fun changedCaseOrDifferentLectureNameIsRejected() {
+        rejectPath("lectures/basic algebraic structures.pdf")
+        rejectPath("lectures/Lecture 01.pdf")
+    }
 
     @Test
     fun absoluteUrlInPathIsRejected() {
@@ -34,4 +51,16 @@ class ApprovedContentUrlPolicyTest {
             ApprovedContentUrlPolicy.validateRelativePath(value, ContentCategory.LECTURE, 1, "lecture-01")
         }
     }
+
+    private fun lecture(path: String) = ContentManifestFile(
+        id = "lecture-01",
+        category = ContentCategory.LECTURE,
+        order = 1,
+        displayName = mapOf("ru" to "Основные алгебраические структуры", "en" to "Basic Algebraic Structures"),
+        path = path,
+        contentVersion = "1",
+        sizeBytes = 1,
+        sha256 = "a".repeat(64),
+        contentType = "application/pdf"
+    )
 }

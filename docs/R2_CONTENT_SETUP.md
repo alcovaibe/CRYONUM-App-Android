@@ -4,18 +4,28 @@ The Android client accepts content only from `https://download.icymath.com/` and
 
 ## Object keys
 
-Use these exact lowercase ASCII keys:
+Use the existing case-sensitive English lecture object keys below. Spaces and capitalization are part of each key and must not be changed:
 
 ```text
-lectures/v1/lecture-01.pdf
-lectures/v1/lecture-02.pdf
-...
-lectures/v1/lecture-12.pdf
+lectures/Basic Algebraic Structures.pdf
+lectures/Divisibility in the Ring of Integers.pdf
+lectures/GCD and LCM. Coprime Integers.pdf
+lectures/Prime Numbers.pdf
+lectures/Numerical Congruences.pdf
+lectures/Solving Congruences.pdf
+lectures/Complex Numbers. Part 1.pdf
+lectures/Complex Numbers. Part 2.pdf
+lectures/Systems of Linear Equations. Gauss Method.pdf
+lectures/Matrices.pdf
+lectures/Determinants.pdf
+lectures/Permutations.pdf
 privacy-policy/v1/privacy-policy.pdf
 manifests/content-v1.signed.json
 ```
 
-R2 object keys are case-sensitive. The current policy folder may be named `Privacy_policy` or something else; verify the real object key in R2 rather than guessing. Migrate it to `privacy-policy/` before publishing a manifest that names the recommended path. Do not overwrite an already published versioned object. Create `v2/`, increment `contentVersion` and the manifest `revision`, then publish the new manifest last.
+`lecture-01` through `lecture-12` remain stable internal manifest IDs; they are not R2 file names. R2 object keys are case-sensitive. In an HTTP URL, clients encode each space as `%20`, but the stored object key still contains an ordinary space.
+
+The policy path above is still the recommended production target, not a confirmed current key. The current policy folder may be named `Privacy_policy` or something else; verify the real object key in R2 rather than guessing. Migrate it to `privacy-policy/` before publishing a manifest that names the recommended path. Do not overwrite an already published object. For a future lecture revision, keep the English filenames but publish them under a new version prefix such as `lectures/v2/`, update the Android allowlist when that migration is planned, increment `contentVersion` and manifest `revision`, then publish the new manifest last.
 
 PDF metadata:
 
@@ -44,7 +54,7 @@ Never copy the private key into Git, R2, BuildConfig, CI artifacts, or the Andro
 openssl pkey -pubin -in /secure/offline/content-2026-01-public.pem -outform DER | openssl base64 -A
 ```
 
-Prepare a local directory containing exactly `lecture-01.pdf` through `lecture-12.pdf`, then run:
+Prepare a local directory containing exactly the 12 English filenames listed above, then run:
 
 ```bash
 python3 tools/build_signed_content_manifest.py \
@@ -57,13 +67,13 @@ python3 tools/build_signed_content_manifest.py \
   --output /tmp/content-v1.signed.json
 ```
 
-The helper checks the 12 expected local names, verifies `%PDF-`, calculates exact byte sizes and lowercase SHA-256 values, builds the raw compact UTF-8 payload, and writes an atomic envelope with a DER-encoded `SHA256withECDSA` signature represented as unpadded base64url. It does not generate or retain a private key.
+The helper checks that the directory contains exactly those 12 case-sensitive English PDF names, verifies `%PDF-`, calculates exact byte sizes and lowercase SHA-256 values, builds the raw compact UTF-8 payload, and writes an atomic envelope with a DER-encoded `SHA256withECDSA` signature represented as unpadded base64url. It does not generate or retain a private key.
 
 Individual hashes can also be checked with:
 
 ```bash
-sha256sum /path/to/lectures/lecture-01.pdf
-wc -c < /path/to/lectures/lecture-01.pdf
+sha256sum '/path/to/lectures/Basic Algebraic Structures.pdf'
+wc -c < '/path/to/lectures/Basic Algebraic Structures.pdf'
 ```
 
 ## Domain and Range verification
@@ -73,19 +83,19 @@ Allow only `GET` and `HEAD` on the download hostname. A Cloudflare WAF/custom ru
 Verify the custom domain against a real immutable object:
 
 ```bash
-curl --fail --silent --show-error --head https://download.icymath.com/lectures/v1/lecture-01.pdf
-curl --fail --silent --show-error --output /tmp/lecture-01.pdf https://download.icymath.com/lectures/v1/lecture-01.pdf
+curl --fail --silent --show-error --head 'https://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf'
+curl --fail --silent --show-error --output /tmp/lecture-01.pdf 'https://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf'
 curl --fail --silent --show-error --dump-header /tmp/range.headers \
   --header 'Accept-Encoding: identity' \
   --header 'Range: bytes=0-1023' \
-  https://download.icymath.com/lectures/v1/lecture-01.pdf \
+  'https://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf' \
   --output /tmp/lecture-01.part
 etag=$(awk 'BEGIN{IGNORECASE=1} /^etag:/{sub(/\r$/, ""); print $2}' /tmp/range.headers)
 curl --fail --silent --show-error --dump-header - \
   --header 'Accept-Encoding: identity' \
   --header 'Range: bytes=1024-' \
   --header "If-Range: $etag" \
-  https://download.icymath.com/lectures/v1/lecture-01.pdf \
+  'https://download.icymath.com/lectures/Basic%20Algebraic%20Structures.pdf' \
   --output /tmp/lecture-01.rest
 ```
 

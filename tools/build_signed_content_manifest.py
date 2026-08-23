@@ -12,6 +12,22 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
+LECTURES = (
+    ("lecture-01", "Основные алгебраические структуры", "Basic Algebraic Structures", "Basic Algebraic Structures.pdf"),
+    ("lecture-02", "Делимость в кольце целых чисел нацело и с остатком", "Divisibility in the Ring of Integers", "Divisibility in the Ring of Integers.pdf"),
+    ("lecture-03", "НОД и НОК целых чисел. Взаимно простые числа", "GCD and LCM. Coprime Integers", "GCD and LCM. Coprime Integers.pdf"),
+    ("lecture-04", "Простые числа", "Prime Numbers", "Prime Numbers.pdf"),
+    ("lecture-05", "Числовые сравнения", "Numerical Congruences", "Numerical Congruences.pdf"),
+    ("lecture-06", "Решение сравнений", "Solving Congruences", "Solving Congruences.pdf"),
+    ("lecture-07", "Комплексные числа. Часть 1", "Complex Numbers. Part 1", "Complex Numbers. Part 1.pdf"),
+    ("lecture-08", "Комплексные числа. Часть 2", "Complex Numbers. Part 2", "Complex Numbers. Part 2.pdf"),
+    ("lecture-09", "СЛУ. Метод Гаусса", "Systems of Linear Equations. Gauss Method", "Systems of Linear Equations. Gauss Method.pdf"),
+    ("lecture-10", "Матрицы", "Matrices", "Matrices.pdf"),
+    ("lecture-11", "Определители", "Determinants", "Determinants.pdf"),
+    ("lecture-12", "Подстановки", "Permutations", "Permutations.pdf"),
+)
+
+
 def b64url(data: bytes) -> str:
     return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
 
@@ -49,17 +65,25 @@ def main() -> int:
     if not args.private_key.is_file():
         raise ValueError("private key path does not exist")
 
+    if not args.lectures_dir.is_dir():
+        raise ValueError("lectures directory does not exist")
+    expected_names = {entry[3] for entry in LECTURES}
+    actual_names = {path.name for path in args.lectures_dir.iterdir() if path.is_file() and path.suffix.lower() == ".pdf"}
+    if actual_names != expected_names:
+        missing = sorted(expected_names - actual_names)
+        unexpected = sorted(actual_names - expected_names)
+        raise ValueError(f"lecture file names do not match; missing={missing}, unexpected={unexpected}")
+
     files = []
-    for order in range(1, 13):
-        file_id = f"lecture-{order:02d}"
-        source = args.lectures_dir / f"{file_id}.pdf"
+    for order, (file_id, ru_name, en_name, object_name) in enumerate(LECTURES, start=1):
+        source = args.lectures_dir / object_name
         size, sha256 = inspect_pdf(source)
         files.append({
             "id": file_id,
             "category": "lecture",
             "order": order,
-            "displayName": {"ru": f"Лекция {order}", "en": f"Lecture {order}"},
-            "path": f"lectures/v{args.content_version}/{file_id}.pdf",
+            "displayName": {"ru": ru_name, "en": en_name},
+            "path": f"lectures/{object_name}",
             "contentVersion": args.content_version,
             "sizeBytes": size,
             "sha256": sha256,

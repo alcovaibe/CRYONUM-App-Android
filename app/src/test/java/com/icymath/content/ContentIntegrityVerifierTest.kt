@@ -78,7 +78,7 @@ class ContentIntegrityVerifierTest {
         category = ContentCategory.LECTURE,
         order = 1,
         displayName = mapOf("ru" to "Лекция 1", "en" to "Lecture 1"),
-        path = "lectures/v1/lecture-01.pdf",
+        path = "lectures/Basic Algebraic Structures.pdf",
         contentVersion = "1",
         sizeBytes = size,
         sha256 = "a".repeat(64),
