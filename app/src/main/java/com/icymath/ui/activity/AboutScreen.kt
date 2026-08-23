@@ -21,6 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.icymath.R
+import com.icymath.content.ContentDownloadUiState
+import com.icymath.content.ContentDownloadViewModel
+import com.icymath.ui.components.dialogs.ContentOfferDialog
+import com.icymath.ui.components.dialogs.ContentProgressDialog
 import com.icymath.ui.theme.IcyMathTheme
 
 /**
@@ -43,11 +50,28 @@ fun setAboutContent(
     appVersion: String,
     onBackClick: () -> Unit,
     onPrivacyClick: () -> Unit,
-    onSourceCodeClick: () -> Unit
+    onSourceCodeClick: () -> Unit,
+    downloadViewModel: ContentDownloadViewModel,
+    onOpenPdf: (String) -> Unit
 ) {
     composeView.setContent {
+        val downloadState by downloadViewModel.uiState.collectAsState()
         IcyMathTheme {
-            AboutScreen(appVersion, onBackClick, onPrivacyClick, onSourceCodeClick)
+            AboutScreen(
+                appVersion,
+                onBackClick,
+                onPrivacyClick,
+                onSourceCodeClick,
+                downloadState = downloadState,
+                onStartPolicyDownload = downloadViewModel::startPolicy,
+                onDismissPolicyOffer = downloadViewModel::dismissPolicyPrompt,
+                onHideProgress = downloadViewModel::hideProgress,
+                onCancelDownload = downloadViewModel::cancel,
+                onRetryDownload = downloadViewModel::retry,
+                onRestartDownload = downloadViewModel::restart,
+                onOpenPdf = onOpenPdf,
+                onPdfOpened = downloadViewModel::consumeOpenPdf
+            )
         }
     }
 }
@@ -58,8 +82,23 @@ fun AboutScreen(
     appVersion: String,
     onBackClick: () -> Unit,
     onPrivacyClick: () -> Unit,
-    onSourceCodeClick: () -> Unit
+    onSourceCodeClick: () -> Unit,
+    downloadState: ContentDownloadUiState = ContentDownloadUiState(),
+    onStartPolicyDownload: () -> Unit = {},
+    onDismissPolicyOffer: () -> Unit = {},
+    onHideProgress: () -> Unit = {},
+    onCancelDownload: () -> Unit = {},
+    onRetryDownload: () -> Unit = {},
+    onRestartDownload: () -> Unit = {},
+    onOpenPdf: (String) -> Unit = {},
+    onPdfOpened: () -> Unit = {}
 ) {
+    LaunchedEffect(downloadState.openPdfPath) {
+        downloadState.openPdfPath?.let {
+            onOpenPdf(it)
+            onPdfOpened()
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -140,6 +179,21 @@ fun AboutScreen(
 
             Spacer(modifier = Modifier.weight(0.88f))
         }
+    }
+
+    if (downloadState.showPolicyPrompt) {
+        ContentOfferDialog(
+            title = stringResource(if (downloadState.policyIsUpdate) R.string.content_policy_update_offer_title else R.string.content_policy_offer_title),
+            message = stringResource(R.string.content_policy_offer_message) + "\n\n" + stringResource(R.string.content_storage_note),
+            sizeBytes = downloadState.policySizeBytes,
+            primaryText = stringResource(if (downloadState.policyIsUpdate) R.string.content_continue else R.string.content_download),
+            secondaryText = stringResource(R.string.cancel),
+            onPrimary = onStartPolicyDownload,
+            onDismiss = onDismissPolicyOffer
+        )
+    }
+    if (downloadState.progressVisible) {
+        ContentProgressDialog(downloadState, onHideProgress, onCancelDownload, onRetryDownload, onRestartDownload)
     }
 }
 

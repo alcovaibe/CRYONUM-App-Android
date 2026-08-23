@@ -27,6 +27,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,9 +42,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.icymath.R
+import com.icymath.content.ContentDownloadUiState
+import com.icymath.content.ContentDownloadViewModel
 import com.icymath.items.ItemType
 import com.icymath.items.ReferenceItem
 import com.icymath.ui.menu.AppBottomNavigation
+import com.icymath.ui.components.dialogs.ContentOfferDialog
+import com.icymath.ui.components.dialogs.ContentProgressDialog
 import com.icymath.ui.theme.IcyMathTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,8 +58,24 @@ fun ReferenceMaterialScreen(
     items: List<ReferenceItem>,
     onBackClick: () -> Unit,
     onItemClick: (ReferenceItem) -> Unit,
-    bottomBar: @Composable () -> Unit
+    bottomBar: @Composable () -> Unit,
+    downloadState: ContentDownloadUiState = ContentDownloadUiState(),
+    onStartDownload: () -> Unit = {},
+    onDismissOffer: () -> Unit = {},
+    onShowProgress: () -> Unit = {},
+    onHideProgress: () -> Unit = {},
+    onCancelDownload: () -> Unit = {},
+    onRetryDownload: () -> Unit = {},
+    onRestartDownload: () -> Unit = {},
+    onOpenPdf: (String) -> Unit = {},
+    onPdfOpened: () -> Unit = {}
 ) {
+    LaunchedEffect(downloadState.openPdfPath) {
+        downloadState.openPdfPath?.let {
+            onOpenPdf(it)
+            onPdfOpened()
+        }
+    }
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         topBar = {
@@ -99,11 +122,50 @@ fun ReferenceMaterialScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                if (downloadState.workActive || downloadState.errorCategory != null) {
+                    item {
+                        Card(
+                            onClick = onShowProgress,
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = IcyMathTheme.colors.cardBackground)
+                        ) {
+                            Text(
+                                text = when {
+                                    downloadState.errorCategory != null -> stringResource(R.string.content_retry)
+                                    downloadState.phase == "VERIFYING" -> stringResource(R.string.content_state_verifying)
+                                    downloadState.phase == "ENQUEUED" -> stringResource(R.string.content_state_waiting_network)
+                                    else -> stringResource(R.string.content_state_downloading)
+                                },
+                                modifier = Modifier.padding(16.dp),
+                                color = IcyMathTheme.colors.titleColor,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
                 items(items) { item ->
                     ReferenceCard(item, onItemClick)
                 }
             }
         }
+    }
+
+    if (downloadState.showLecturePrompt) {
+        ContentOfferDialog(
+            title = stringResource(R.string.content_lectures_offer_title),
+            message = stringResource(R.string.content_lectures_offer_message) + "\n\n" + stringResource(R.string.content_storage_note),
+            sizeBytes = downloadState.lecturesTotalBytes.takeIf { it > 0 },
+            downloaded = downloadState.lecturesDownloaded,
+            total = downloadState.lectureCount,
+            primaryText = stringResource(if (downloadState.lecturesDownloaded > 0) R.string.content_continue_download else R.string.content_download),
+            secondaryText = stringResource(R.string.content_later),
+            onPrimary = onStartDownload,
+            onDismiss = onDismissOffer
+        )
+    }
+    if (downloadState.progressVisible) {
+        ContentProgressDialog(downloadState, onHideProgress, onCancelDownload, onRetryDownload, onRestartDownload)
     }
 }
 
@@ -149,15 +211,28 @@ object ReferenceMaterialScreenBridge {
         items: List<ReferenceItem>,
         onBack: () -> Unit,
         onItemClick: (ReferenceItem) -> Unit,
-        onMenuAction: (Int) -> Unit
+        onMenuAction: (Int) -> Unit,
+        downloadViewModel: ContentDownloadViewModel,
+        onOpenPdf: (String) -> Unit
     ) {
         composeView.setContent {
+            val downloadState by downloadViewModel.uiState.collectAsState()
             IcyMathTheme {
                 ReferenceMaterialScreen(
                     title = title,
                     items = items,
                     onBackClick = onBack,
                     onItemClick = onItemClick,
+                    downloadState = downloadState,
+                    onStartDownload = downloadViewModel::startLectures,
+                    onDismissOffer = downloadViewModel::dismissLecturePrompt,
+                    onShowProgress = downloadViewModel::showProgress,
+                    onHideProgress = downloadViewModel::hideProgress,
+                    onCancelDownload = downloadViewModel::cancel,
+                    onRetryDownload = downloadViewModel::retry,
+                    onRestartDownload = downloadViewModel::restart,
+                    onOpenPdf = onOpenPdf,
+                    onPdfOpened = downloadViewModel::consumeOpenPdf,
                     bottomBar = {
                         AppBottomNavigation(
                             currentRoute = R.id.nav_reference,

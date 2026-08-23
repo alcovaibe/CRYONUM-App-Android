@@ -5,13 +5,14 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.compose.ui.platform.ComposeView
 import com.icymath.R
+import com.icymath.content.ContentDownloadViewModel
 import com.icymath.items.ItemType
 import com.icymath.items.LectureId
 import com.icymath.items.ReferenceItem
@@ -22,12 +23,11 @@ import com.icymath.managers.ThemeManager
 import com.icymath.pdf.ActivityPdfViewer
 import com.icymath.ui.activity.ReferenceMaterialScreenBridge
 import com.icymath.utils.SecurityUtils
-import java.io.File
-import java.io.FileOutputStream
 
 class ActivityReferenceMaterial : AppCompatActivity() {
 
     private lateinit var composeView: ComposeView
+    private val contentViewModel: ContentDownloadViewModel by viewModels()
     private var isLectureMode = false
     private var currentSubjectResId: Int? = null
     
@@ -74,6 +74,7 @@ class ActivityReferenceMaterial : AppCompatActivity() {
         registerLaunchersAndBindToImagePicker()
 
         updateUi()
+        contentViewModel.enterReferenceScreen()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -138,7 +139,7 @@ class ActivityReferenceMaterial : AppCompatActivity() {
                 if (item.type == ItemType.SUBJECT) {
                     showLectures(item.titleResId)
                 } else {
-                    item.lectureId?.let { openPdfForLecture(it) }
+                    item.lectureId?.let { contentViewModel.openLecture(it.ordinal + 1) }
                 }
             },
             onMenuAction = { id ->
@@ -155,7 +156,9 @@ class ActivityReferenceMaterial : AppCompatActivity() {
                         finish()
                     }
                 }
-            }
+            },
+            downloadViewModel = contentViewModel,
+            onOpenPdf = ::openVerifiedPdf
         )
     }
 
@@ -171,23 +174,9 @@ class ActivityReferenceMaterial : AppCompatActivity() {
         updateUi()
     }
 
-    private fun openPdfForLecture(lectureId: LectureId) {
-        val fileName = lectureId.assetFileName()
-        val outFile = File(cacheDir, fileName)
-        if (!outFile.exists()) {
-            try {
-                assets.open(fileName).use { input ->
-                    FileOutputStream(outFile).use { fos ->
-                        input.copyTo(fos)
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to copy asset: $fileName", e)
-                return
-            }
-        }
+    private fun openVerifiedPdf(path: String) {
         val intent = Intent(this, ActivityPdfViewer::class.java).apply {
-            putExtra("pdf_path", outFile.absolutePath)
+            putExtra("pdf_path", path)
         }
         startActivity(intent)
     }
@@ -205,7 +194,4 @@ class ActivityReferenceMaterial : AppCompatActivity() {
         imagePicker?.registerLaunchers(requestCameraPermissionLauncher, cameraLauncher, galleryLauncher)
     }
 
-    companion object {
-        private const val TAG = "ActivityReference"
-    }
 }

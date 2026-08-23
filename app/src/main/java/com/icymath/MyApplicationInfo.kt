@@ -10,6 +10,7 @@ import com.icymath.managers.AppLockObserver
 import com.icymath.managers.LocaleManager
 import com.icymath.managers.SecurityManager
 import com.icymath.managers.ThemeManager
+import com.icymath.content.ContentDependencies
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -25,6 +26,7 @@ class MyApplicationInfo : Application() {
         LocaleManager.init(this)
         ThemeManager.init(this)
         AnalyticsManager.init(this)
+        ContentDependencies.get(this)
 
         androidx.lifecycle.ProcessLifecycleOwner.get().lifecycle.addObserver(AppLockObserver(this))
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
