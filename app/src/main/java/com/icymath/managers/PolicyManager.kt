@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.icymath.R
 import com.icymath.activity.ActivityAbout
+import com.icymath.content.AtomicContentPublisher
 import com.icymath.content.ContentDependencies
 import com.icymath.pdf.ActivityPdfViewer
 import com.icymath.ui.components.dialogs.FinalDeclineDialog
@@ -180,23 +181,34 @@ object PolicyManager {
         if (activity == null) return
 
         val assetFile = "privacy_policy.4.0.pdf"
-        val outFile = File(activity.cacheDir, assetFile)
+        val privacyDirectory = File(activity.filesDir, "icy_content/privacy")
+        val outFile = File(privacyDirectory, "privacy-policy.pdf")
 
-        // copy asset to cache if missing
+        // Publish the trusted bundled bootstrap copy in persistent internal storage.
         if (!outFile.exists()) {
+            if (!privacyDirectory.exists() && !privacyDirectory.mkdirs()) {
+                Log.e(TAG, "Failed to create persistent policy directory")
+                return
+            }
+            val temporary = File(privacyDirectory, "privacy-policy.bootstrap.tmp")
             var inputStream: InputStream? = null
             var outputStream: FileOutputStream? = null
             try {
                 inputStream = activity.assets.open(assetFile)
-                outputStream = FileOutputStream(outFile)
+                outputStream = FileOutputStream(temporary)
                 val buf = ByteArray(4096)
                 var r: Int
                 while (inputStream.read(buf).also { r = it } != -1) {
                     outputStream.write(buf, 0, r)
                 }
                 outputStream.flush()
+                outputStream.fd.sync()
+                outputStream.close()
+                outputStream = null
+                AtomicContentPublisher.move(temporary, outFile)
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to copy asset to cache: $assetFile", e)
+                temporary.delete()
+                Log.e(TAG, "Failed to publish bundled policy: $assetFile", e)
             } finally {
                 try {
                     inputStream?.close()
