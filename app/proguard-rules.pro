@@ -37,7 +37,7 @@
 -keepclassmembers class * {
     @com.google.gson.annotations.SerializedName <fields>;
 }
--keep class com.icymath.analytics.InstallInfo { *; }
+-keep class com.cryonum.analytics.InstallInfo { *; }
 
 # Room (современные версии Room сами поставляют нужные правила)
 # -keep class androidx.room.** { *; }

@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.icymath"
+    namespace = "com.cryonum"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.icymath"
+        applicationId = "com.cryonum"
         minSdk = 26
         targetSdk = 37
         versionCode = 453
