@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
+    <!-- policy_prefs.xml intentionally remains eligible for legacy cloud backup.
+         Before API 31 Android does not expose separate cloud/transfer rules. -->
     <!-- Исключаем историю и настройки для старых версий Android (до API 31) -->
     <exclude domain="sharedpref" path="history_prefs.xml"/>
     <exclude domain="sharedpref" path="theme_prefs.xml"/>
