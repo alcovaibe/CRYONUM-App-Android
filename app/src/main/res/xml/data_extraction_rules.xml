@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
+        <!-- policy_prefs.xml intentionally remains in cloud backup so a reinstall
+             can restore the user's acceptance of the same policy version. -->
         <!-- Исключаем историю и настройки из облака -->
         <exclude domain="sharedpref" path="history_prefs.xml"/>
         <exclude domain="sharedpref" path="theme_prefs.xml"/>
@@ -13,6 +15,8 @@
     </cloud-backup>
 
     <device-transfer>
+        <!-- Require policy acceptance again after a device-to-device transfer. -->
+        <exclude domain="sharedpref" path="policy_prefs.xml"/>
         <!-- Исключаем историю и настройки при прямом переносе -->
         <exclude domain="sharedpref" path="history_prefs.xml"/>
         <exclude domain="sharedpref" path="theme_prefs.xml"/>
