@@ -260,7 +260,7 @@ object PolicyManager {
             pendingFlags
         )
 
-        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return false
 
         // Create notification channel
         val channel = NotificationChannel(

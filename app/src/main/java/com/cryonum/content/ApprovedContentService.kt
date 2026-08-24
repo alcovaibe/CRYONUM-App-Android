@@ -22,10 +22,10 @@ class ApprovedContentService(
             metadataStore.acceptRevision(manifest.revision)
             manifest
         } catch (e: ContentException) {
-            if (e.category == ContentErrorCategory.SECURITY) throw@withContext e
-            loadCached(lastRevision) ?: throw@withContext e
+            if (e.category == ContentErrorCategory.SECURITY) throw e
+            loadCached(lastRevision) ?: throw e
         } catch (e: IOException) {
-            loadCached(lastRevision) ?: throw@withContext ContentException(
+            loadCached(lastRevision) ?: throw ContentException(
                 ContentErrorCategory.NETWORK,
                 "Unable to fetch content manifest",
                 retryable = true,

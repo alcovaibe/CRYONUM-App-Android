@@ -56,9 +56,9 @@ class PolicyConfigService(private val client: OkHttpClient) {
                 PolicyConfigParser.parse(output.toByteArray())
             }
         } catch (e: ContentException) {
-            throw@withContext e
+            throw e
         } catch (e: IOException) {
-            throw@withContext ContentException(
+            throw ContentException(
                 ContentErrorCategory.NETWORK,
                 "Unable to fetch policy config",
                 retryable = true,

@@ -54,13 +54,9 @@ class ContentDownloadWorker(
         } catch (e: Exception) {
             Result.failure(errorData(ContentErrorCategory.FILE_SYSTEM, e.message))
         } finally {
+            if (isStopped) activeCall?.cancel()
             activeCall = null
         }
-    }
-
-    override fun onStopped() {
-        activeCall?.cancel()
-        super.onStopped()
     }
 
     private fun DownloadProgress.toData(): Data = Data.Builder()
