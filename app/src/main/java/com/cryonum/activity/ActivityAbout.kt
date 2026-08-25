@@ -1,6 +1,7 @@
 package com.cryonum.activity
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
@@ -10,16 +11,16 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import com.cryonum.BuildConfig
 import com.cryonum.R
+import com.cryonum.content.ContentDownloadViewModel
 import com.cryonum.managers.LocaleManager
 import com.cryonum.managers.PolicyManager
-import com.cryonum.content.ContentDownloadViewModel
-import com.cryonum.pdf.ActivityPdfViewer
 import com.cryonum.managers.ThemeManager
+import com.cryonum.pdf.ActivityPdfViewer
 import com.cryonum.ui.activity.setAboutContent
-import android.content.Intent
 
 class ActivityAbout : AppCompatActivity() {
     private val contentViewModel: ContentDownloadViewModel by viewModels()
+    private var pendingPolicyLaunch: PendingPolicyLaunch? = null
 
     companion object {
         private const val GITHUB_URL = "https://github.com/alcovaibe/CRYONUM-App-Android"
@@ -70,21 +71,60 @@ class ActivityAbout : AppCompatActivity() {
     }
 
     private fun handlePolicyIntent(intent: Intent) {
-        if (intent.getBooleanExtra(PolicyManager.EXTRA_OPEN_POLICY_FROM_NOTIFICATION, false)) {
-            intent.removeExtra(PolicyManager.EXTRA_OPEN_POLICY_FROM_NOTIFICATION)
-            contentViewModel.requestPolicy()
-        }
+        val fromNotification = intent.getBooleanExtra(
+            PolicyManager.EXTRA_OPEN_POLICY_FROM_NOTIFICATION,
+            false
+        )
+        val requestDownload = intent.getBooleanExtra(
+            PolicyManager.EXTRA_REQUEST_POLICY_DOWNLOAD,
+            false
+        )
+        if (!fromNotification && !requestDownload) return
+
+        pendingPolicyLaunch = PendingPolicyLaunch(
+            showAcceptDialogOnScrollEnd = intent.getBooleanExtra(
+                PolicyManager.EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END,
+                false
+            ),
+            fromNotification = fromNotification || intent.getBooleanExtra(
+                PolicyManager.EXTRA_FROM_NOTIFICATION,
+                false
+            ),
+            fromDialogViewAction = intent.getBooleanExtra(
+                PolicyManager.EXTRA_FROM_DIALOG_VIEW_ACTION,
+                false
+            ),
+            isFirstLaunchMode = intent.getBooleanExtra("is_first_launch_mode", false),
+            policyVersionToAccept = intent.getIntExtra(
+                PolicyManager.EXTRA_POLICY_VERSION_TO_ACCEPT,
+                0
+            )
+        )
+        intent.removeExtra(PolicyManager.EXTRA_OPEN_POLICY_FROM_NOTIFICATION)
+        intent.removeExtra(PolicyManager.EXTRA_REQUEST_POLICY_DOWNLOAD)
+        contentViewModel.requestPolicy()
     }
 
     private fun openVerifiedPdf(path: String, contentVersion: Int?) {
-        val versionToAccept = contentVersion?.takeIf { it > PolicyManager.getAcceptedVersion(this) }
+        val pending = pendingPolicyLaunch
+        val versionToAccept = pending?.policyVersionToAccept
+            ?.takeIf { it > 0 }
+            ?: contentVersion?.takeIf { it > PolicyManager.getAcceptedVersion(this) }
         val intent = Intent(this, ActivityPdfViewer::class.java).apply {
             putExtra(PolicyManager.EXTRA_PDF_PATH, path)
-            putExtra(PolicyManager.EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END, false)
-            putExtra(PolicyManager.EXTRA_FROM_NOTIFICATION, false)
-            putExtra(PolicyManager.EXTRA_FROM_DIALOG_VIEW_ACTION, versionToAccept != null)
+            putExtra(
+                PolicyManager.EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END,
+                pending?.showAcceptDialogOnScrollEnd ?: false
+            )
+            putExtra(PolicyManager.EXTRA_FROM_NOTIFICATION, pending?.fromNotification ?: false)
+            putExtra(
+                PolicyManager.EXTRA_FROM_DIALOG_VIEW_ACTION,
+                pending?.fromDialogViewAction ?: (versionToAccept != null)
+            )
+            putExtra("is_first_launch_mode", pending?.isFirstLaunchMode ?: false)
             versionToAccept?.let { putExtra(PolicyManager.EXTRA_POLICY_VERSION_TO_ACCEPT, it) }
         }
+        pendingPolicyLaunch = null
         startActivity(intent)
     }
 
@@ -95,4 +135,12 @@ class ActivityAbout : AppCompatActivity() {
         } catch (_: Exception) {
         }
     }
+
+    private data class PendingPolicyLaunch(
+        val showAcceptDialogOnScrollEnd: Boolean,
+        val fromNotification: Boolean,
+        val fromDialogViewAction: Boolean,
+        val isFirstLaunchMode: Boolean,
+        val policyVersionToAccept: Int
+    )
 }

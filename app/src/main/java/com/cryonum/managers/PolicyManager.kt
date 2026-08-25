@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +22,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.cryonum.R
 import com.cryonum.activity.ActivityAbout
-import com.cryonum.content.AtomicContentPublisher
 import com.cryonum.content.ContentDependencies
 import com.cryonum.pdf.ActivityPdfViewer
 import com.cryonum.ui.components.dialogs.FinalDeclineDialog
@@ -31,15 +29,11 @@ import com.cryonum.ui.components.dialogs.FirstLaunchPolicyDialog
 import com.cryonum.ui.components.dialogs.PolicyDialogContent
 import com.cryonum.ui.theme.IcyMathTheme
 import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 
 /**
  * PolicyManager — менеджер управления политикой конфиденциальности.
  */
 object PolicyManager {
-
-    private const val TAG = "PolicyManager"
 
     enum class PolicyDialogType { FIRST_LAUNCH, UPDATE, FINAL_DECLINE }
     var currentDialogType by mutableStateOf<PolicyDialogType?>(null)
@@ -50,9 +44,10 @@ object PolicyManager {
     const val EXTRA_FROM_NOTIFICATION = "from_notification"
     const val EXTRA_FROM_DIALOG_VIEW_ACTION = "from_dialog_view_action"
     const val EXTRA_OPEN_POLICY_FROM_NOTIFICATION = "open_policy_from_notification"
+    const val EXTRA_REQUEST_POLICY_DOWNLOAD = "request_policy_download"
     const val EXTRA_POLICY_VERSION_TO_ACCEPT = "policy_version_to_accept"
 
-    private const val BUNDLED_POLICY_VERSION = 4
+    private const val DEFAULT_POLICY_VERSION = 4
     private const val PREF_NAME = "policy_prefs"
     private const val KEY_ACCEPTED_VERSION = "accepted_policy_version"
     private const val KEY_NOTIFICATION_PERMISSION_REQUESTED = "notification_permission_requested"
@@ -75,7 +70,7 @@ object PolicyManager {
 
     @JvmStatic
     @JvmOverloads
-    fun acceptPolicy(context: Context?, versionCode: Int = BUNDLED_POLICY_VERSION) {
+    fun acceptPolicy(context: Context?, versionCode: Int = DEFAULT_POLICY_VERSION) {
         if (context == null) return
         if (versionCode <= 0) return
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -180,45 +175,17 @@ object PolicyManager {
     ) {
         if (activity == null) return
 
-        val assetFile = "privacy_policy.4.0.pdf"
-        val privacyDirectory = File(activity.filesDir, "icy_content/privacy")
-        val outFile = File(privacyDirectory, "privacy-policy.pdf")
-
-        // Publish the trusted bundled bootstrap copy in persistent internal storage.
-        if (!outFile.exists()) {
-            if (!privacyDirectory.exists() && !privacyDirectory.mkdirs()) {
-                Log.e(TAG, "Failed to create persistent policy directory")
-                return
+        val outFile = File(activity.filesDir, "icy_content/privacy/privacy-policy.pdf")
+        if (!outFile.isFile) {
+            val downloadIntent = Intent(activity, ActivityAbout::class.java).apply {
+                putExtra(EXTRA_REQUEST_POLICY_DOWNLOAD, true)
+                putExtra(EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END, showAcceptDialogOnScrollEnd)
+                putExtra(EXTRA_FROM_NOTIFICATION, fromNotification)
+                putExtra(EXTRA_FROM_DIALOG_VIEW_ACTION, fromDialogViewAction)
+                putExtra("is_first_launch_mode", isFirstLaunchMode)
             }
-            val temporary = File(privacyDirectory, "privacy-policy.bootstrap.tmp")
-            var inputStream: InputStream? = null
-            var outputStream: FileOutputStream? = null
-            try {
-                inputStream = activity.assets.open(assetFile)
-                outputStream = FileOutputStream(temporary)
-                val buf = ByteArray(4096)
-                var r: Int
-                while (inputStream.read(buf).also { r = it } != -1) {
-                    outputStream.write(buf, 0, r)
-                }
-                outputStream.flush()
-                outputStream.fd.sync()
-                outputStream.close()
-                outputStream = null
-                AtomicContentPublisher.move(temporary, outFile)
-            } catch (e: Exception) {
-                temporary.delete()
-                Log.e(TAG, "Failed to publish bundled policy: $assetFile", e)
-            } finally {
-                try {
-                    inputStream?.close()
-                } catch (_: Exception) {
-                }
-                try {
-                    outputStream?.close()
-                } catch (_: Exception) {
-                }
-            }
+            activity.startActivity(downloadIntent)
+            return
         }
 
         val intent = Intent(activity, ActivityPdfViewer::class.java).apply {
