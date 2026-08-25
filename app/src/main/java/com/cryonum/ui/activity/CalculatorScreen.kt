@@ -37,7 +37,7 @@ import com.cryonum.R
 import com.cryonum.managers.PolicyManager
 import com.cryonum.ui.components.keyboard.CalculatorLandscapeKeyboard
 import com.cryonum.ui.components.keyboard.CalculatorPortraitKeyboard
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +54,7 @@ fun CalculatorScreen(
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
 
     PolicyManager.PolicyDialogHandler(
         onLaunchViewer = onLaunchPolicyViewer,
@@ -116,7 +116,7 @@ private fun CalculatorPortrait(
     result: String,
     onKeyClick: (String) -> Unit
 ) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
 
     Column(
         modifier = modifier
@@ -163,7 +163,7 @@ private fun CalculatorLandscape(
     isRadians: Boolean,
     onKeyClick: (String) -> Unit
 ) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
 
     Column(modifier = modifier.fillMaxSize()) {
         // Display Area (Scrollable)
@@ -215,7 +215,7 @@ object CalculatorScreenBridge {
         onExitApp: () -> Unit
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 CalculatorScreen(
                     input,
                     result,
@@ -235,7 +235,7 @@ object CalculatorScreenBridge {
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun CalculatorPortraitPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         Surface(color = Color.White) {
             CalculatorScreen("2+2", "4", false, true, {}, {}, {})
         }
@@ -245,7 +245,7 @@ fun CalculatorPortraitPreview() {
 @Preview(showBackground = true, widthDp = 640, heightDp = 360)
 @Composable
 fun CalculatorLandscapePreview() {
-    IcyMathTheme {
+    CryonumTheme {
         Surface(color = Color.White) {
             CalculatorScreen("sin(45)", "0.707", false, true, {}, {}, {})
         }

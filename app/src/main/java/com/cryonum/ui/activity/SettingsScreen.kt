@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 data class SettingItemCompose(
     val nameRes: Int,
@@ -49,7 +49,7 @@ fun SettingsScreen(
                             textAlign = TextAlign.Center
                         ),
                         maxLines = if (fontScale > 1.1f) Int.MAX_VALUE else 1,
-                        color = IcyMathTheme.colors.titleColor
+                        color = CryonumTheme.colors.titleColor
                     )
                 },
                 navigationIcon = {
@@ -58,7 +58,7 @@ fun SettingsScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -90,7 +90,7 @@ fun SettingCard(item: SettingItemCompose) {
             .clickable { item.onClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = IcyMathTheme.colors.cardBackground
+            containerColor = CryonumTheme.colors.cardBackground
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -106,13 +106,13 @@ fun SettingCard(item: SettingItemCompose) {
                     text = stringResource(item.nameRes),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Normal,
-                    color = IcyMathTheme.colors.titleColor
+                    color = CryonumTheme.colors.titleColor
                 )
                 if (item.descriptionRes != 0 && item.descriptionRes != item.nameRes) {
                     Text(
                         text = stringResource(item.descriptionRes),
                         fontSize = 14.sp,
-                        color = IcyMathTheme.colors.titleColor.copy(alpha = 0.7f)
+                        color = CryonumTheme.colors.titleColor.copy(alpha = 0.7f)
                     )
                 }
             }
@@ -121,7 +121,7 @@ fun SettingCard(item: SettingItemCompose) {
                 painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(IcyMathTheme.colors.titleColor)
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(CryonumTheme.colors.titleColor)
             )
         }
     }
@@ -135,7 +135,7 @@ object SettingsScreenBridge {
         settings: List<SettingItemCompose>
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 SettingsScreen(
                     onBackClick = onBack,
                     settings = settings
@@ -155,7 +155,7 @@ fun SettingsScreenPreview() {
         SettingItemCompose(R.string.analytics, R.string.analytics) {},
         SettingItemCompose(R.string.security, R.string.security) {}
     )
-    IcyMathTheme {
+    CryonumTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             SettingsScreen(
                 onBackClick = {},

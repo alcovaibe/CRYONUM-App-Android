@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cryonum.R
 import com.cryonum.ui.styles.AppStyles
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @Composable
 fun AppBottomNavigation(
@@ -20,7 +20,7 @@ fun AppBottomNavigation(
     onItemSelected: (Int) -> Unit,
     showHome: Boolean = true
 ) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
     
     Column(
         modifier = Modifier
@@ -78,7 +78,7 @@ private fun RowScope.BottomNavItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
     
     NavigationBarItem(
         selected = isSelected,
@@ -105,7 +105,7 @@ private fun RowScope.BottomNavItem(
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
 @Composable
 fun AppBottomNavigationPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         AppBottomNavigation(
             currentRoute = R.id.nav_home,
             onItemSelected = {}

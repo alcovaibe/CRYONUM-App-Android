@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @Composable
 fun FinalDeclineDialog(
@@ -24,9 +24,9 @@ fun FinalDeclineDialog(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = IcyMathTheme.colors.dialogBackground,
+        color = CryonumTheme.colors.dialogBackground,
         shape = RoundedCornerShape(28.dp),
-        contentColor = IcyMathTheme.colors.onSurface
+        contentColor = CryonumTheme.colors.onSurface
     ) {
         Column(
             modifier = Modifier
@@ -38,7 +38,7 @@ fun FinalDeclineDialog(
                 text = stringResource(R.string.access_denied_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = IcyMathTheme.colors.titleColor,
+                color = CryonumTheme.colors.titleColor,
                 textAlign = TextAlign.Center
             )
 
@@ -50,7 +50,7 @@ fun FinalDeclineDialog(
                 fontSize = 16.sp,
                 lineHeight = 22.sp,
                 textAlign = TextAlign.Center,
-                color = IcyMathTheme.colors.titleColor.copy(alpha = 0.8f)
+                color = CryonumTheme.colors.titleColor.copy(alpha = 0.8f)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -96,7 +96,7 @@ fun FinalDeclineDialog(
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
 @Composable
 fun FinalDeclineDialogPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         FinalDeclineDialog(
             onAccept = {},
             onDecline = {}

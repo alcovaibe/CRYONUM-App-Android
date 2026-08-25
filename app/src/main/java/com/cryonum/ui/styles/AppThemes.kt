@@ -17,5 +17,5 @@ object AppThemes {
     /**
      * Основная тема приложения для Manifest.
      */
-    val MainAppTheme = R.style.Theme_IcyMath
+    val MainAppTheme = R.style.Theme_Cryonum
 }

@@ -27,7 +27,7 @@ import com.cryonum.pdf.ActivityPdfViewer
 import com.cryonum.ui.components.dialogs.FinalDeclineDialog
 import com.cryonum.ui.components.dialogs.FirstLaunchPolicyDialog
 import com.cryonum.ui.components.dialogs.PolicyDialogContent
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import java.io.File
 
 /**
@@ -125,7 +125,7 @@ object PolicyManager {
             onDismissRequest = { /* Critical dialogs */ },
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
-            IcyMathTheme {
+            CryonumTheme {
                 when (dialogType) {
                     PolicyDialogType.FIRST_LAUNCH -> {
                         FirstLaunchPolicyDialog(
@@ -175,7 +175,7 @@ object PolicyManager {
     ) {
         if (activity == null) return
 
-        val outFile = File(activity.filesDir, "icy_content/privacy/privacy-policy.pdf")
+        val outFile = File(ContentDependencies.get(activity).storage.root, "privacy/privacy-policy.pdf")
         if (!outFile.isFile) {
             val downloadIntent = Intent(activity, ActivityAbout::class.java).apply {
                 putExtra(EXTRA_REQUEST_POLICY_DOWNLOAD, true)

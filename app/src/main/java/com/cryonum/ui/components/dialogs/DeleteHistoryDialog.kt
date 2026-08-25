@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @Composable
 fun DeleteHistoryDialog(
@@ -33,7 +33,7 @@ fun DeleteHistoryDialog(
                 .fillMaxWidth()
                 .padding(16.dp),
             shape = RoundedCornerShape(28.dp),
-            color = IcyMathTheme.colors.dialogBackground,
+            color = CryonumTheme.colors.dialogBackground,
             tonalElevation = 6.dp
         ) {
             Column(
@@ -46,7 +46,7 @@ fun DeleteHistoryDialog(
                     text = stringResource(R.string.delete_selected_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = IcyMathTheme.colors.titleColor,
+                    color = CryonumTheme.colors.titleColor,
                     textAlign = TextAlign.Center
                 )
 
@@ -62,7 +62,7 @@ fun DeleteHistoryDialog(
                     fontSize = 16.sp,
                     lineHeight = 22.sp,
                     textAlign = TextAlign.Center,
-                    color = IcyMathTheme.colors.titleColor.copy(alpha = 0.8f)
+                    color = CryonumTheme.colors.titleColor.copy(alpha = 0.8f)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -92,7 +92,7 @@ fun DeleteHistoryDialog(
                 ) {
                     Text(
                         text = stringResource(R.string.cancel),
-                        color = IcyMathTheme.colors.titleColor.copy(alpha = 0.6f)
+                        color = CryonumTheme.colors.titleColor.copy(alpha = 0.6f)
                     )
                 }
             }
@@ -104,7 +104,7 @@ fun DeleteHistoryDialog(
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
 @Composable
 fun DeleteHistoryDialogPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         DeleteHistoryDialog(
             count = 5,
             onConfirm = {},

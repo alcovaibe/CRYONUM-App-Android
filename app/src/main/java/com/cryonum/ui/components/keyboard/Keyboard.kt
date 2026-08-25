@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
 import com.cryonum.managers.ThemeManager
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import com.cryonum.ui.theme.LocalAppTheme
 
 @Composable
@@ -73,7 +73,7 @@ private fun KeyboardKey(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
     
     val containerColor = colors.keyboardKeyBackground
     val contentColor = colors.keyboardKeyText
@@ -130,7 +130,7 @@ private fun KeyboardKey(
 @Preview(showBackground = true, name = "Keyboard - Light")
 @Composable
 fun KeyboardPreviewLight() {
-    IcyMathTheme {
+    CryonumTheme {
         Box(modifier = Modifier.padding(16.dp)) {
             Keyboard({}, {}, {})
         }
@@ -140,7 +140,7 @@ fun KeyboardPreviewLight() {
 @Preview(showBackground = true, name = "Keyboard - Amoled", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun KeyboardPreviewAmoled() {
-    IcyMathTheme {
+    CryonumTheme {
         Box(modifier = Modifier.padding(16.dp)) {
             Keyboard({}, {}, {})
         }
@@ -151,7 +151,7 @@ fun KeyboardPreviewAmoled() {
 @Composable
 fun KeyboardPreviewSandy() {
     CompositionLocalProvider(LocalAppTheme provides ThemeManager.AppTheme.SANDY_BROWN) {
-        IcyMathTheme {
+        CryonumTheme {
             Box(modifier = Modifier.padding(16.dp)) {
                 Keyboard({}, {}, {})
             }

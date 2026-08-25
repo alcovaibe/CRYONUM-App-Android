@@ -28,7 +28,7 @@ val LocalAppColors = staticCompositionLocalOf { LightPalette }
 
 val LocalAppTheme = staticCompositionLocalOf { ThemeManager.AppTheme.LIGHT }
 
-object IcyMathTheme {
+object CryonumTheme {
     val colors: AppColors
         @Composable
         @ReadOnlyComposable
@@ -41,7 +41,7 @@ object IcyMathTheme {
 }
 
 @Composable
-fun IcyMathTheme(
+fun CryonumTheme(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current

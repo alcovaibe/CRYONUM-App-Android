@@ -1,43 +1,43 @@
 <resources>
 
     <!-- Базовая тема -->
-    <style name="Base.Theme.IcyMath" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Cryonum" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Системные бары управляются программно в Theme.kt -->
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
 
     <!-- Основная тема приложения -->
-    <style name="Theme.IcyMath" parent="Base.Theme.IcyMath" />
+    <style name="Theme.Cryonum" parent="Base.Theme.Cryonum" />
 
     <!-- Тема для Splash Screen (Core SplashScreen API) -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#FFFFFF</item>
         <item name="android:windowBackground">#FFFFFF</item>
         <item name="windowSplashScreenAnimatedIcon">@android:color/transparent</item>
-        <item name="postSplashScreenTheme">@style/Theme.IcyMath</item>
+        <item name="postSplashScreenTheme">@style/Theme.Cryonum</item>
     </style>
 
     <!-- Светлая тема -->
-    <style name="Theme.IcyMath.Light" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.Cryonum.Light" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:windowBackground">#FFFFFF</item>
         <item name="isLightTheme">true</item>
     </style>
 
     <!-- AMOLED Тема -->
-    <style name="Theme.IcyMath.Amoled" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.Cryonum.Amoled" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">#000000</item>
         <item name="isLightTheme">false</item>
         <item name="colorControlNormal">#FFFFFF</item>
     </style>
 
     <!-- Sandy Тема -->
-    <style name="Theme.IcyMath.SandyBrown" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.Cryonum.SandyBrown" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:windowBackground">#F4A460</item>
         <item name="isLightTheme">true</item>
     </style>
 
     <!-- Системная тема -->
-    <style name="Theme.IcyMath.System" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Cryonum.System" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="isLightTheme">true</item>
     </style>
 </resources>

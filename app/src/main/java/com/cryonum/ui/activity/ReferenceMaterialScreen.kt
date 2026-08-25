@@ -49,7 +49,7 @@ import com.cryonum.items.ReferenceItem
 import com.cryonum.ui.menu.AppBottomNavigation
 import com.cryonum.ui.components.dialogs.ContentOfferDialog
 import com.cryonum.ui.components.dialogs.ContentProgressDialog
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,7 +91,7 @@ fun ReferenceMaterialScreen(
                             textAlign = TextAlign.Center
                         ),
                         maxLines = if (fontScale > 1.1f) Int.MAX_VALUE else 1,
-                        color = IcyMathTheme.colors.titleColor
+                        color = CryonumTheme.colors.titleColor
                     )
                 },
                 navigationIcon = {
@@ -100,7 +100,7 @@ fun ReferenceMaterialScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -112,7 +112,7 @@ fun ReferenceMaterialScreen(
     ) { padding ->
         if (items.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text(text = "No items", color = IcyMathTheme.colors.titleColor)
+                Text(text = "No items", color = CryonumTheme.colors.titleColor)
             }
         } else {
             LazyColumn(
@@ -128,7 +128,7 @@ fun ReferenceMaterialScreen(
                             onClick = onShowProgress,
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(containerColor = IcyMathTheme.colors.cardBackground)
+                            colors = CardDefaults.cardColors(containerColor = CryonumTheme.colors.cardBackground)
                         ) {
                             Text(
                                 text = when {
@@ -138,7 +138,7 @@ fun ReferenceMaterialScreen(
                                     else -> stringResource(R.string.content_state_downloading)
                                 },
                                 modifier = Modifier.padding(16.dp),
-                                color = IcyMathTheme.colors.titleColor,
+                                color = CryonumTheme.colors.titleColor,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -176,7 +176,7 @@ fun ReferenceCard(item: ReferenceItem, onClick: (ReferenceItem) -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = IcyMathTheme.colors.cardBackground
+            containerColor = CryonumTheme.colors.cardBackground
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -190,14 +190,14 @@ fun ReferenceCard(item: ReferenceItem, onClick: (ReferenceItem) -> Unit) {
             Text(
                 text = if (titleResId != null) stringResource(titleResId) else "",
                 fontSize = 17.sp,
-                color = IcyMathTheme.colors.titleColor,
+                color = CryonumTheme.colors.titleColor,
                 modifier = Modifier.weight(1f)
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
-                tint = IcyMathTheme.colors.titleColor.copy(0.5f)
+                tint = CryonumTheme.colors.titleColor.copy(0.5f)
             )
         }
     }
@@ -217,7 +217,7 @@ object ReferenceMaterialScreenBridge {
     ) {
         composeView.setContent {
             val downloadState by downloadViewModel.uiState.collectAsState()
-            IcyMathTheme {
+            CryonumTheme {
                 ReferenceMaterialScreen(
                     title = title,
                     items = items,
@@ -254,7 +254,7 @@ fun ReferenceMaterialScreenPreview() {
         ReferenceItem(ItemType.SUBJECT, null, R.string.algebra_and_number_theory),
         ReferenceItem(ItemType.SUBJECT, null, R.string.permutations)
     )
-    IcyMathTheme {
+    CryonumTheme {
         Surface(
             color = if (isSystemInDarkTheme()) Color(0xFF121212) else Color.White
         ) {

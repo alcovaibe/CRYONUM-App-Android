@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import com.cryonum.managers.ContentConfig
 import com.cryonum.R
 
@@ -49,7 +49,7 @@ fun PartnersScreen(
                             textAlign = TextAlign.Center
                         ),
                         maxLines = if (fontScale > 1.1f) Int.MAX_VALUE else 1,
-                        color = IcyMathTheme.colors.titleColor
+                        color = CryonumTheme.colors.titleColor
                     )
                 },
                 navigationIcon = {
@@ -58,7 +58,7 @@ fun PartnersScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -117,7 +117,7 @@ fun PartnerCard(
             .padding(top = 24.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = IcyMathTheme.colors.cardBackground
+            containerColor = CryonumTheme.colors.cardBackground
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -140,7 +140,7 @@ fun PartnerCard(
                 Text(
                     text = stringResource(nameResId),
                     fontSize = 18.sp,
-                    color = IcyMathTheme.colors.titleColor,
+                    color = CryonumTheme.colors.titleColor,
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 12.dp)
@@ -152,7 +152,7 @@ fun PartnerCard(
                     modifier = Modifier
                         .size(24.dp)
                         .rotate(rotation),
-                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(IcyMathTheme.colors.titleColor)
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(CryonumTheme.colors.titleColor)
                 )
             }
 
@@ -166,14 +166,14 @@ fun PartnerCard(
                     Text(
                         text = stringResource(descriptionResId),
                         fontSize = 16.sp,
-                        color = IcyMathTheme.colors.titleColor.copy(alpha = 0.7f)
+                        color = CryonumTheme.colors.titleColor.copy(alpha = 0.7f)
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = stringResource(linkTextResId),
-                        color = IcyMathTheme.colors.confirmButtonBackground,
+                        color = CryonumTheme.colors.confirmButtonBackground,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier
@@ -195,7 +195,7 @@ object PartnersScreenBridge {
         onKometLink: () -> Unit
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 PartnersScreen(
                     onBackClick = onBack,
                     onNafuLinkClick = onNafuLink,
@@ -209,7 +209,7 @@ object PartnersScreenBridge {
 @Preview(showBackground = true, locale = "ru")
 @Composable
 fun PartnersScreenPreviewLight() {
-    IcyMathTheme {
+    CryonumTheme {
         Surface(color = Color.White) {
             PartnersScreen(
                 onBackClick = {},
@@ -223,7 +223,7 @@ fun PartnersScreenPreviewLight() {
 @Preview(showBackground = true, locale = "ru", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PartnersScreenPreviewDark() {
-    IcyMathTheme {
+    CryonumTheme {
         Surface(color = Color.Black) {
             PartnersScreen(
                 onBackClick = {},

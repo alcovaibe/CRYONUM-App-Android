@@ -4,10 +4,10 @@
         <item name="windowSplashScreenBackground">#000000</item>
         <item name="android:windowBackground">#000000</item>
         <item name="windowSplashScreenAnimatedIcon">@android:color/transparent</item>
-        <item name="postSplashScreenTheme">@style/Theme.IcyMath</item>
+        <item name="postSplashScreenTheme">@style/Theme.Cryonum</item>
     </style>
 
-    <style name="Theme.IcyMath.System" parent="Theme.IcyMath.Amoled">
+    <style name="Theme.Cryonum.System" parent="Theme.Cryonum.Amoled">
         <item name="isLightTheme">false</item>
     </style>
 

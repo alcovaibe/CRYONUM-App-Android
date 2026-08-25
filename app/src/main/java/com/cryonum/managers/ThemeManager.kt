@@ -16,10 +16,10 @@ import com.cryonum.activity.ActivitySubstitutions
 object ThemeManager {
 
     enum class AppTheme(val styleResId: Int) {
-        LIGHT(R.style.Theme_IcyMath_Light),
-        AMOLED(R.style.Theme_IcyMath_Amoled),
-        SANDY_BROWN(R.style.Theme_IcyMath_SandyBrown),
-        SYSTEM(R.style.Theme_IcyMath_System);
+        LIGHT(R.style.Theme_Cryonum_Light),
+        AMOLED(R.style.Theme_Cryonum_Amoled),
+        SANDY_BROWN(R.style.Theme_Cryonum_SandyBrown),
+        SYSTEM(R.style.Theme_Cryonum_System);
 
         companion object {
             @JvmStatic

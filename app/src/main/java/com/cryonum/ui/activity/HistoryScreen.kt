@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.cryonum.R
 import com.cryonum.items.HistoryItem
 import com.cryonum.ui.menu.AppBottomNavigation
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import com.cryonum.ui.styles.AppStyles
 import java.text.SimpleDateFormat
 import java.util.*
@@ -144,7 +144,7 @@ fun NormalTopBar(onBackClick: () -> Unit) {
                     textAlign = TextAlign.Center
                 ),
                 maxLines = if (fontScale > 1.1f) Int.MAX_VALUE else 1,
-                color = IcyMathTheme.colors.titleColor
+                color = CryonumTheme.colors.titleColor
             )
         },
         navigationIcon = {
@@ -153,7 +153,7 @@ fun NormalTopBar(onBackClick: () -> Unit) {
                     painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = stringResource(R.string.back),
                     modifier = Modifier.size(32.dp),
-                    tint = IcyMathTheme.colors.titleColor
+                    tint = CryonumTheme.colors.titleColor
                 )
             }
         },
@@ -180,7 +180,7 @@ fun SelectionTopBar(
                     selectedCount
                 ),
                 style = MaterialTheme.typography.titleLarge,
-                color = IcyMathTheme.colors.titleColor
+                color = CryonumTheme.colors.titleColor
             )
         },
         navigationIcon = {
@@ -188,7 +188,7 @@ fun SelectionTopBar(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = null,
-                    tint = IcyMathTheme.colors.titleColor
+                    tint = CryonumTheme.colors.titleColor
                 )
             }
         },
@@ -201,14 +201,14 @@ fun SelectionTopBar(
                     checked = isAllSelected,
                     onCheckedChange = null, // Handled by row click
                     colors = CheckboxDefaults.colors(
-                        checkedColor = IcyMathTheme.colors.confirmButtonBackground,
-                        uncheckedColor = IcyMathTheme.colors.titleColor.copy(alpha = 0.6f)
+                        checkedColor = CryonumTheme.colors.confirmButtonBackground,
+                        uncheckedColor = CryonumTheme.colors.titleColor.copy(alpha = 0.6f)
                     )
                 )
                 Text(
                     text = stringResource(R.string.select_all),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = IcyMathTheme.colors.titleColor
+                    color = CryonumTheme.colors.titleColor
                 )
             }
 
@@ -216,11 +216,11 @@ fun SelectionTopBar(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_bin),
                     contentDescription = stringResource(R.string.delete),
-                    tint = IcyMathTheme.colors.titleColor
+                    tint = CryonumTheme.colors.titleColor
                 )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = if (IcyMathTheme.colors.isLight) Color(0xFFE0E0E0) else Color(0xFF333333))
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = if (CryonumTheme.colors.isLight) Color(0xFFE0E0E0) else Color(0xFF333333))
     )
 }
 
@@ -233,8 +233,8 @@ fun HistoryEntryCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
-    val textColor = IcyMathTheme.colors.titleColor
-    val cardBgColor = IcyMathTheme.colors.cardBackground
+    val textColor = CryonumTheme.colors.titleColor
+    val cardBgColor = CryonumTheme.colors.cardBackground
 
     Card(
         modifier = Modifier
@@ -345,7 +345,7 @@ fun EmptyHistoryMessage(padding: PaddingValues) {
             text = stringResource(R.string.history_empty_message),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = IcyMathTheme.colors.titleColor.copy(0.6f),
+            color = CryonumTheme.colors.titleColor.copy(0.6f),
             modifier = Modifier.padding(32.dp)
         )
     }
@@ -362,7 +362,7 @@ object HistoryScreenBridge {
         onMenuAction: (Int) -> Unit
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 HistoryScreen(
                     onBackClick = onBack,
                     historyItems = historyItems,
@@ -388,7 +388,7 @@ fun HistoryScreenPreview() {
         HistoryItem("1 2 3", "3 2 1", 3, "odd"),
         HistoryItem("2 + 2 * 2", "6")
     )
-    IcyMathTheme {
+    CryonumTheme {
         // Wrap the screen in a Surface with a background color for the preview.
         // This is necessary because the HistoryScreen Scaffold uses Color.Transparent
         // by default, which can lead to invisible text in the preview's Dark Mode.

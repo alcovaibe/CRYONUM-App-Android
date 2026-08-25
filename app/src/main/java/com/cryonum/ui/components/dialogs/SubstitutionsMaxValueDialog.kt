@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @Composable
 fun SubstitutionsMaxValueDialog(
@@ -54,7 +54,7 @@ fun SubstitutionsMaxValueDialog(
                         indication = null
                     ) { /* Consumes click */ },
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                color = IcyMathTheme.colors.dialogBackground,
+                color = CryonumTheme.colors.dialogBackground,
                 tonalElevation = 6.dp
             ) {
                 Column(
@@ -68,7 +68,7 @@ fun SubstitutionsMaxValueDialog(
                         text = stringResource(R.string.enter_maximum),
                         style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
                         fontWeight = FontWeight.Bold,
-                        color = IcyMathTheme.colors.titleColor,
+                        color = CryonumTheme.colors.titleColor,
                         textAlign = TextAlign.Start,
                         maxLines = 1,
                         modifier = Modifier.padding(bottom = 20.dp)
@@ -92,12 +92,12 @@ fun SubstitutionsMaxValueDialog(
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = IcyMathTheme.colors.inputFieldText,
-                            unfocusedTextColor = IcyMathTheme.colors.inputFieldText,
-                            focusedBorderColor = IcyMathTheme.colors.confirmButtonBackground,
-                            unfocusedBorderColor = IcyMathTheme.colors.cardStroke,
-                            focusedLabelColor = IcyMathTheme.colors.confirmButtonBackground,
-                            unfocusedLabelColor = IcyMathTheme.colors.inputFieldText.copy(alpha = 0.6f)
+                            focusedTextColor = CryonumTheme.colors.inputFieldText,
+                            unfocusedTextColor = CryonumTheme.colors.inputFieldText,
+                            focusedBorderColor = CryonumTheme.colors.confirmButtonBackground,
+                            unfocusedBorderColor = CryonumTheme.colors.cardStroke,
+                            focusedLabelColor = CryonumTheme.colors.confirmButtonBackground,
+                            unfocusedLabelColor = CryonumTheme.colors.inputFieldText.copy(alpha = 0.6f)
                         )
                     )
 
@@ -110,7 +110,7 @@ fun SubstitutionsMaxValueDialog(
                         TextButton(onClick = onDismiss) {
                             Text(
                                 text = stringResource(R.string.cancel),
-                                color = IcyMathTheme.colors.confirmButtonBackground,
+                                color = CryonumTheme.colors.confirmButtonBackground,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             )
@@ -129,7 +129,7 @@ fun SubstitutionsMaxValueDialog(
                         ) {
                             Text(
                                 text = stringResource(R.string.ok),
-                                color = if (textValue.isNotEmpty() && !isError) IcyMathTheme.colors.confirmButtonBackground else IcyMathTheme.colors.inputFieldText.copy(alpha = 0.38f),
+                                color = if (textValue.isNotEmpty() && !isError) CryonumTheme.colors.confirmButtonBackground else CryonumTheme.colors.inputFieldText.copy(alpha = 0.38f),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             )
@@ -145,7 +145,7 @@ fun SubstitutionsMaxValueDialog(
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
 @Composable
 fun SubstitutionsMaxValueDialogPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         SubstitutionsMaxValueDialog(
             onConfirm = {},
             onDismiss = {}

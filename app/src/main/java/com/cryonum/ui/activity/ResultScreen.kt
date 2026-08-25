@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +41,7 @@ fun ResultScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -51,7 +51,7 @@ fun ResultScreen(
                             painter = painterResource(id = R.drawable.ic_history),
                             contentDescription = stringResource(R.string.history),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -73,14 +73,14 @@ fun ResultScreen(
                 text = stringResource(R.string.inversions, inversions),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = IcyMathTheme.colors.titleColor,
+                color = CryonumTheme.colors.titleColor,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
             Text(
                 text = stringResource(R.string.history_parity, parityLocalized),
                 fontSize = 24.sp,
-                color = IcyMathTheme.colors.titleColor,
+                color = CryonumTheme.colors.titleColor,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
         }
@@ -97,7 +97,7 @@ object ResultScreenBridge {
         onHistory: () -> Unit
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 ResultScreen(
                     inversions = inversions,
                     parity = parity,
@@ -112,7 +112,7 @@ object ResultScreenBridge {
 @Preview(showBackground = true)
 @Composable
 fun ResultScreenPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         ResultScreen(
             inversions = 10,
             parity = "even",

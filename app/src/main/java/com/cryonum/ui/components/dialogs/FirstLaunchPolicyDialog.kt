@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
 import com.cryonum.managers.ThemeManager
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import com.cryonum.ui.theme.LocalAppTheme
 import java.util.Locale
 
@@ -34,7 +34,7 @@ fun FirstLaunchPolicyDialog(
     onReadClick: () -> Unit
 ) {
     Surface(
-        color = IcyMathTheme.colors.dialogBackground,
+        color = CryonumTheme.colors.dialogBackground,
         shape = RoundedCornerShape(28.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -87,7 +87,7 @@ fun PreviewPolicyDialogLightRu() {
         LocalConfiguration provides configuration,
         LocalAppTheme provides ThemeManager.AppTheme.LIGHT
     ) {
-        IcyMathTheme {
+        CryonumTheme {
             FirstLaunchPolicyDialog(onReadClick = {})
         }
     }
@@ -103,7 +103,7 @@ fun PreviewPolicyDialogSandyDe() {
         LocalConfiguration provides configuration,
         LocalAppTheme provides ThemeManager.AppTheme.SANDY_BROWN
     ) {
-        IcyMathTheme {
+        CryonumTheme {
             FirstLaunchPolicyDialog(onReadClick = {})
         }
     }
@@ -119,7 +119,7 @@ fun PreviewPolicyDialogAmoledEn() {
         LocalConfiguration provides configuration,
         LocalAppTheme provides ThemeManager.AppTheme.AMOLED
     ) {
-        IcyMathTheme {
+        CryonumTheme {
             FirstLaunchPolicyDialog(onReadClick = {})
         }
     }

@@ -51,7 +51,7 @@ class ActivityCalculator : AppCompatActivity() {
         SecurityUtils.checkLock(this)
 
         // confirm non-commercial use of mXparser
-        License.iConfirmNonCommercialUse("com.example.icymath")
+        License.iConfirmNonCommercialUse("CRYONUM")
 
         val composeView = ComposeView(this)
         setContentView(composeView)

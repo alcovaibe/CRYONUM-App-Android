@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
 import com.cryonum.managers.ThemeManager
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import com.cryonum.ui.theme.LocalAppTheme
 
@@ -28,7 +28,7 @@ fun AppDrawer(
     onItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
     
     ModalDrawerSheet(
         modifier = modifier.width(290.dp).fillMaxHeight(),
@@ -75,7 +75,7 @@ private data class MenuItem(
 
 @Composable
 private fun DrawerHeader() {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
     val headerBgColor = colors.headerColor
     val textColor = colors.titleColor
 
@@ -137,7 +137,7 @@ private fun DrawerItem(
 @Preview(name = "Sandy Mode - DE", locale = "de")
 @Composable
 fun AppDrawerPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         AppDrawer(onItemSelected = {})
     }
 }
@@ -146,7 +146,7 @@ fun AppDrawerPreview() {
 @Composable
 fun AppDrawerAmoledPreview() {
     CompositionLocalProvider(LocalAppTheme provides ThemeManager.AppTheme.AMOLED) {
-        IcyMathTheme {
+        CryonumTheme {
             AppDrawer(onItemSelected = {})
         }
     }
@@ -156,7 +156,7 @@ fun AppDrawerAmoledPreview() {
 @Composable
 fun AppDrawerSandyPreview() {
     CompositionLocalProvider(LocalAppTheme provides ThemeManager.AppTheme.SANDY_BROWN) {
-        IcyMathTheme {
+        CryonumTheme {
             AppDrawer(onItemSelected = {})
         }
     }

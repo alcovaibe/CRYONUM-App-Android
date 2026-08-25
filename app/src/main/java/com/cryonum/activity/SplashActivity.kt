@@ -11,7 +11,7 @@ import com.cryonum.managers.LocaleManager
 import com.cryonum.managers.SecurityManager
 import com.cryonum.managers.ThemeManager
 import com.cryonum.ui.activity.SplashScreenContent
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -45,7 +45,7 @@ class SplashActivity : ComponentActivity() {
 
         // Set Compose content with the beautiful 160dp logo
         setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 SplashScreenContent()
             }
         }

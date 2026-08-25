@@ -42,7 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +66,7 @@ fun AnalyticsScreen(
                             fontSize = 24.sp,
                             textAlign = TextAlign.Center
                         ),
-                        color = IcyMathTheme.colors.titleColor,
+                        color = CryonumTheme.colors.titleColor,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(end = 48.dp)
@@ -78,7 +78,7 @@ fun AnalyticsScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -106,7 +106,7 @@ fun AnalyticsScreen(
                         .padding(top = 12.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = IcyMathTheme.colors.cardBackground
+                        containerColor = CryonumTheme.colors.cardBackground
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
@@ -121,7 +121,7 @@ fun AnalyticsScreen(
                         Text(
                             text = stringResource(R.string.analytics_collection),
                             fontSize = 16.sp,
-                            color = IcyMathTheme.colors.titleColor,
+                            color = CryonumTheme.colors.titleColor,
                             modifier = Modifier.weight(1f)
                         )
 
@@ -142,7 +142,7 @@ fun AnalyticsScreen(
                 Text(
                     text = stringResource(R.string.analytics_info),
                     fontSize = 14.sp,
-                    color = IcyMathTheme.colors.titleColor.copy(alpha = 0.7f),
+                    color = CryonumTheme.colors.titleColor.copy(alpha = 0.7f),
                     modifier = Modifier.padding(horizontal = 4.dp),
                     lineHeight = 20.sp
                 )
@@ -163,7 +163,7 @@ object AnalyticsScreenBridge {
         onBack: () -> Unit
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 AnalyticsScreen(
                     initialIsAnalyticsEnabled = initialEnabled,
                     onToggleAnalytics = onToggle,
@@ -177,7 +177,7 @@ object AnalyticsScreenBridge {
 @Preview(showBackground = true, locale = "ru")
 @Composable
 fun AnalyticsScreenPreviewLight() {
-    IcyMathTheme {
+    CryonumTheme {
         Surface(color = Color.White) {
             AnalyticsScreen(
                 initialIsAnalyticsEnabled = true,
@@ -191,7 +191,7 @@ fun AnalyticsScreenPreviewLight() {
 @Preview(showBackground = true, locale = "ru", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun AnalyticsScreenPreviewDark() {
-    IcyMathTheme {
+    CryonumTheme {
         Surface(color = Color.Black) {
             AnalyticsScreen(
                 initialIsAnalyticsEnabled = false,

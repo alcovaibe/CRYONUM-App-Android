@@ -36,7 +36,7 @@ import com.cryonum.R
 import com.cryonum.content.ContentBundle
 import com.cryonum.content.ContentDownloadUiState
 import com.cryonum.content.ContentErrorCategory
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import java.text.DecimalFormat
 
 @Composable
@@ -58,36 +58,36 @@ fun ContentOfferDialog(
         Surface(
             modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("content_offer_dialog"),
             shape = RoundedCornerShape(28.dp),
-            color = IcyMathTheme.colors.dialogBackground,
+            color = CryonumTheme.colors.dialogBackground,
             tonalElevation = 6.dp
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = IcyMathTheme.colors.titleColor, textAlign = TextAlign.Center)
+                Text(title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = CryonumTheme.colors.titleColor, textAlign = TextAlign.Center)
                 Spacer(Modifier.height(16.dp))
-                Text(message, fontSize = 16.sp, lineHeight = 22.sp, color = IcyMathTheme.colors.titleColor.copy(alpha = 0.82f), textAlign = TextAlign.Center)
+                Text(message, fontSize = 16.sp, lineHeight = 22.sp, color = CryonumTheme.colors.titleColor.copy(alpha = 0.82f), textAlign = TextAlign.Center)
                 if (total != null && downloaded != null) {
                     Spacer(Modifier.height(16.dp))
-                    Text(stringResource(R.string.content_downloaded_count, downloaded, total), color = IcyMathTheme.colors.titleColor)
-                    Text(stringResource(R.string.content_remaining_count, (total - downloaded).coerceAtLeast(0)), color = IcyMathTheme.colors.titleColor)
+                    Text(stringResource(R.string.content_downloaded_count, downloaded, total), color = CryonumTheme.colors.titleColor)
+                    Text(stringResource(R.string.content_remaining_count, (total - downloaded).coerceAtLeast(0)), color = CryonumTheme.colors.titleColor)
                 }
                 if (sizeBytes != null && sizeBytes > 0) {
                     Spacer(Modifier.height(8.dp))
-                    Text(stringResource(R.string.content_total_size, formatBytes(sizeBytes)), color = IcyMathTheme.colors.titleColor.copy(alpha = 0.72f))
+                    Text(stringResource(R.string.content_total_size, formatBytes(sizeBytes)), color = CryonumTheme.colors.titleColor.copy(alpha = 0.72f))
                 }
                 Spacer(Modifier.height(24.dp))
                 Button(
                     onClick = onPrimary,
                     modifier = Modifier.fillMaxWidth().testTag("content_offer_primary"),
-                    colors = ButtonDefaults.buttonColors(containerColor = IcyMathTheme.colors.confirmButtonBackground),
+                    colors = ButtonDefaults.buttonColors(containerColor = CryonumTheme.colors.confirmButtonBackground),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(12.dp)
                 ) { Text(primaryText, fontWeight = FontWeight.SemiBold) }
                 Spacer(Modifier.height(8.dp))
                 TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth().testTag("content_offer_secondary")) {
-                    Text(secondaryText, color = IcyMathTheme.colors.titleColor.copy(alpha = 0.7f))
+                    Text(secondaryText, color = CryonumTheme.colors.titleColor.copy(alpha = 0.7f))
                 }
             }
         }
@@ -109,7 +109,7 @@ fun ContentProgressDialog(
         Surface(
             modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("content_progress_dialog"),
             shape = RoundedCornerShape(28.dp),
-            color = IcyMathTheme.colors.dialogBackground,
+            color = CryonumTheme.colors.dialogBackground,
             tonalElevation = 6.dp
         ) {
             Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(24.dp)) {
@@ -117,16 +117,16 @@ fun ContentProgressDialog(
                     text = if (state.activeBundle == ContentBundle.PRIVACY_POLICY) stringResource(R.string.content_policy_download_title) else stringResource(R.string.content_lectures_download_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = IcyMathTheme.colors.titleColor
+                    color = CryonumTheme.colors.titleColor
                 )
                 Spacer(Modifier.height(12.dp))
-                Text(phaseText(state), color = IcyMathTheme.colors.titleColor, fontWeight = FontWeight.SemiBold)
+                Text(phaseText(state), color = CryonumTheme.colors.titleColor, fontWeight = FontWeight.SemiBold)
                 if (state.currentFileCount > 0) {
                     Spacer(Modifier.height(8.dp))
                     Text(
                         if (state.activeBundle == ContentBundle.LECTURES) stringResource(R.string.content_current_lecture, state.currentFileIndex, state.currentFileCount)
                         else stringResource(R.string.content_privacy_policy),
-                        color = IcyMathTheme.colors.titleColor.copy(alpha = 0.82f)
+                        color = CryonumTheme.colors.titleColor.copy(alpha = 0.82f)
                     )
                 }
                 Spacer(Modifier.height(16.dp))
@@ -144,7 +144,7 @@ fun ContentProgressDialog(
                 Spacer(Modifier.height(8.dp))
                 Text(
                     stringResource(R.string.content_bytes_progress, formatBytes(state.overallBytes), formatBytes(state.overallTotalBytes)),
-                    color = IcyMathTheme.colors.titleColor.copy(alpha = 0.7f),
+                    color = CryonumTheme.colors.titleColor.copy(alpha = 0.7f),
                     fontSize = 14.sp
                 )
                 Spacer(Modifier.height(20.dp))
@@ -165,7 +165,7 @@ fun ContentProgressDialog(
 @Composable
 private fun ProgressBlock(label: String, current: Long, total: Long) {
     val progress = if (total > 0) (current.toFloat() / total.toFloat()).coerceIn(0f, 1f) else 0f
-    Text(label, color = IcyMathTheme.colors.titleColor.copy(alpha = 0.8f), fontSize = 14.sp)
+    Text(label, color = CryonumTheme.colors.titleColor.copy(alpha = 0.8f), fontSize = 14.sp)
     Spacer(Modifier.height(6.dp))
     LinearProgressIndicator(
         progress = { progress },

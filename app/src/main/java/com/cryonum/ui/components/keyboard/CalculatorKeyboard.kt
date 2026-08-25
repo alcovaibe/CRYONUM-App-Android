@@ -17,14 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @Composable
 fun CalculatorPortraitKeyboard(
     onKeyClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
 
     // Keyboard keys (exact same list from CalculatorScreen)
     val keys = listOf(
@@ -61,7 +61,7 @@ fun CalculatorLandscapeKeyboard(
     onKeyClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
 
     Column(
         modifier = modifier
@@ -134,8 +134,8 @@ private fun CalcButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = IcyMathTheme.colors.keyboardKeyBackground,
-    contentColor: Color = IcyMathTheme.colors.keyboardKeyText
+    containerColor: Color = CryonumTheme.colors.keyboardKeyBackground,
+    contentColor: Color = CryonumTheme.colors.keyboardKeyText
 ) {
     Button(
         onClick = onClick,

@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.cryonum.R
 import com.cryonum.items.ThemeItem
 import com.cryonum.managers.ThemeManager
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +47,7 @@ fun ThemeSelectionScreen(
                             textAlign = TextAlign.Center
                         ),
                         maxLines = if (fontScale > 1.1f) Int.MAX_VALUE else 1,
-                        color = IcyMathTheme.colors.titleColor
+                        color = CryonumTheme.colors.titleColor
                     )
                 },
                 navigationIcon = {
@@ -56,7 +56,7 @@ fun ThemeSelectionScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -96,7 +96,7 @@ fun ThemeCard(
             .clickable { onThemeSelected(item.theme) },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = IcyMathTheme.colors.cardBackground
+            containerColor = CryonumTheme.colors.cardBackground
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -111,7 +111,7 @@ fun ThemeCard(
                 text = stringResource(item.nameResId),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Normal,
-                color = IcyMathTheme.colors.titleColor,
+                color = CryonumTheme.colors.titleColor,
                 modifier = Modifier.weight(1f)
             )
 
@@ -120,7 +120,7 @@ fun ThemeCard(
                     painter = painterResource(id = R.drawable.ic_check),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = IcyMathTheme.colors.titleColor
+                    tint = CryonumTheme.colors.titleColor
                 )
             }
         }
@@ -137,7 +137,7 @@ object ThemeSelectionScreenBridge {
         onThemeSelected: (ThemeManager.AppTheme) -> Unit
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 ThemeSelectionScreen(
                     onBackClick = onBack,
                     themes = themes,
@@ -158,7 +158,7 @@ fun ThemeSelectionScreenPreviewLight() {
         ThemeItem(R.string.SandyBrown, R.string.desc_theme_sandybrown, ThemeManager.AppTheme.SANDY_BROWN),
         ThemeItem(R.string.SystemTheme, R.string.desc_theme_system, ThemeManager.AppTheme.SYSTEM)
     )
-    IcyMathTheme {
+    CryonumTheme {
         Surface(color = Color.White) {
             ThemeSelectionScreen(
                 onBackClick = {},
@@ -179,7 +179,7 @@ fun ThemeSelectionScreenPreviewDark() {
         ThemeItem(R.string.SandyBrown, R.string.desc_theme_sandybrown, ThemeManager.AppTheme.SANDY_BROWN),
         ThemeItem(R.string.SystemTheme, R.string.desc_theme_system, ThemeManager.AppTheme.SYSTEM)
     )
-    IcyMathTheme {
+    CryonumTheme {
         Surface(color = Color.Black) {
             ThemeSelectionScreen(
                 onBackClick = {},

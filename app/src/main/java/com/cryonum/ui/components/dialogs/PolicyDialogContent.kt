@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @Composable
 fun PolicyDialogContent(
@@ -32,8 +32,8 @@ fun PolicyDialogContent(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = IcyMathTheme.colors.dialogBackground,
-        contentColor = IcyMathTheme.colors.onSurface
+        color = CryonumTheme.colors.dialogBackground,
+        contentColor = CryonumTheme.colors.onSurface
     ) {
         Column(
             modifier = Modifier
@@ -46,15 +46,15 @@ fun PolicyDialogContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp),
-                color = IcyMathTheme.colors.onSurface
+                color = CryonumTheme.colors.onSurface
             )
 
             Button(
                 onClick = onViewPolicy,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = IcyMathTheme.colors.confirmButtonBackground,
-                    contentColor = IcyMathTheme.colors.confirmButtonText
+                    containerColor = CryonumTheme.colors.confirmButtonBackground,
+                    contentColor = CryonumTheme.colors.confirmButtonText
                 ),
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(12.dp)
@@ -110,7 +110,7 @@ fun PolicyDialogContent(
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
 @Composable
 fun PolicyDialogContentPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         PolicyDialogContent(
             onViewPolicy = {},
             onAccept = {},

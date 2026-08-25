@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import com.cryonum.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +60,7 @@ fun HelpCenterScreen(
                             textAlign = TextAlign.Center
                         ),
                         maxLines = if (fontScale > 1.1f) Int.MAX_VALUE else 1,
-                        color = IcyMathTheme.colors.titleColor
+                        color = CryonumTheme.colors.titleColor
                     )
                 },
                 navigationIcon = {
@@ -69,7 +69,7 @@ fun HelpCenterScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -98,7 +98,7 @@ fun HelpCenterScreen(
                         .clickable { onTelegramClick() },
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = IcyMathTheme.colors.cardBackground
+                        containerColor = CryonumTheme.colors.cardBackground
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
@@ -118,7 +118,7 @@ fun HelpCenterScreen(
                         Text(
                             text = stringResource(R.string.telegram_channel_developer),
                             fontSize = 18.sp,
-                            color = IcyMathTheme.colors.titleColor,
+                            color = CryonumTheme.colors.titleColor,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(horizontal = 12.dp)
@@ -128,7 +128,7 @@ fun HelpCenterScreen(
                             painter = painterResource(id = R.drawable.ic_arrow_right),
                             contentDescription = null,
                             modifier = Modifier.size(24.dp),
-                            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(IcyMathTheme.colors.titleColor)
+                            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(CryonumTheme.colors.titleColor)
                         )
                     }
                 }
@@ -148,7 +148,7 @@ object HelpCenterScreenBridge {
         onTelegram: () -> Unit
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 HelpCenterScreen(
                     onBackClick = onBack,
                     onTelegramClick = onTelegram
@@ -161,8 +161,8 @@ object HelpCenterScreenBridge {
 @Preview(showBackground = true, locale = "ru")
 @Composable
 fun HelpCenterScreenPreviewLight() {
-    IcyMathTheme {
-        Surface(color = if (IcyMathTheme.colors.isLight) Color.White else Color.Black) {
+    CryonumTheme {
+        Surface(color = if (CryonumTheme.colors.isLight) Color.White else Color.Black) {
             HelpCenterScreen(
                 onBackClick = {},
                 onTelegramClick = {}
@@ -174,8 +174,8 @@ fun HelpCenterScreenPreviewLight() {
 @Preview(showBackground = true, locale = "ru", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HelpCenterScreenPreviewDark() {
-    IcyMathTheme {
-        Surface(color = if (IcyMathTheme.colors.isLight) Color.White else Color.Black) {
+    CryonumTheme {
+        Surface(color = if (CryonumTheme.colors.isLight) Color.White else Color.Black) {
             HelpCenterScreen(
                 onBackClick = {},
                 onTelegramClick = {}

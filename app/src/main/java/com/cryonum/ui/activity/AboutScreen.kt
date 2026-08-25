@@ -40,7 +40,7 @@ import com.cryonum.content.ContentDownloadUiState
 import com.cryonum.content.ContentDownloadViewModel
 import com.cryonum.ui.components.dialogs.ContentOfferDialog
 import com.cryonum.ui.components.dialogs.ContentProgressDialog
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 /**
  * Мостик для вызова из Java кода.
@@ -56,7 +56,7 @@ fun setAboutContent(
 ) {
     composeView.setContent {
         val downloadState by downloadViewModel.uiState.collectAsState()
-        IcyMathTheme {
+        CryonumTheme {
             AboutScreen(
                 appVersion,
                 onBackClick,
@@ -111,7 +111,7 @@ fun AboutScreen(
                             fontSize = 24.sp,
                             textAlign = TextAlign.Center
                         ),
-                        color = IcyMathTheme.colors.titleColor,
+                        color = CryonumTheme.colors.titleColor,
                         modifier = Modifier.fillMaxWidth().padding(end = 48.dp) // Чуть увеличили отступ для центровки
                     )
                 },
@@ -121,7 +121,7 @@ fun AboutScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -174,7 +174,7 @@ fun AboutScreen(
             Text(
                 text = appVersion,
                 fontSize = 16.sp,
-                color = IcyMathTheme.colors.titleColor.copy(alpha = 0.9f)
+                color = CryonumTheme.colors.titleColor.copy(alpha = 0.9f)
             )
 
             Spacer(modifier = Modifier.weight(0.88f))
@@ -201,11 +201,11 @@ fun AboutScreen(
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode", locale = "ru", apiLevel = 34)
 @Composable
 fun AboutScreenPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         // Оборачиваем в Surface с фоном, так как экран и тема используют Color.Transparent.
         // Это заставит Preview отображать правильный цвет подложки.
         Surface(
-            color = if (IcyMathTheme.colors.isLight) Color.White else Color(0xFF121212)
+            color = if (CryonumTheme.colors.isLight) Color.White else Color(0xFF121212)
         ) {
             AboutScreen(
                 appVersion = "1.0.0 (42)",

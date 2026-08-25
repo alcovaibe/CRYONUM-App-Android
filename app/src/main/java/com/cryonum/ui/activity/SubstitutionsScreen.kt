@@ -28,7 +28,7 @@ import com.cryonum.ui.components.keyboard.Keyboard
 import com.cryonum.ui.components.dialogs.SubstitutionsInputMethodDialog
 import com.cryonum.ui.components.dialogs.SubstitutionsMaxValueDialog
 import com.cryonum.ui.styles.AppStyles
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import com.cryonum.ui.theme.LocalAppTheme
 import com.cryonum.utils.InputFilter
 import kotlinx.coroutines.launch
@@ -51,7 +51,7 @@ fun SubstitutionsScreen(
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
 
     var showInputMethodDialog by remember { mutableStateOf(false) }
     var showMaxValueDialog by remember { mutableStateOf(false) }
@@ -206,7 +206,7 @@ fun SubstitutionsScreen(
 
 @Composable
 fun InputBox(text: String, isSelected: Boolean, onClick: () -> Unit, hint: String) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
     Surface(
         modifier = Modifier.width(280.dp).height(52.dp).clickable { onClick() },
         shape = RoundedCornerShape(8.dp),
@@ -228,7 +228,7 @@ fun InputBox(text: String, isSelected: Boolean, onClick: () -> Unit, hint: Strin
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode", locale = "ru")
 @Composable
 fun SubstitutionsScreenPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         SubstitutionsScreen(
             upperLine = "12345",
             lowerLine = "54321",
@@ -249,7 +249,7 @@ fun SubstitutionsScreenPreview() {
 @Preview(showBackground = true, name = "Sandy Brown", locale = "ru")
 @Composable
 fun SubstitutionsScreenSandyPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         CompositionLocalProvider(LocalAppTheme provides ThemeManager.AppTheme.SANDY_BROWN) {
             SubstitutionsScreen(
                 upperLine = "12345",
@@ -287,7 +287,7 @@ object SubstitutionsScreenBridge {
         onExitApp: () -> Unit
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 SubstitutionsScreen(
                     upperLine = upperLineState.value,
                     lowerLine = lowerLineState.value,

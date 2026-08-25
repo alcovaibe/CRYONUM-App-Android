@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +45,7 @@ fun ScheduleScreen(
                             fontSize = 24.sp,
                             textAlign = TextAlign.Center
                         ),
-                        color = IcyMathTheme.colors.titleColor
+                        color = CryonumTheme.colors.titleColor
                     )
                 },
                 navigationIcon = {
@@ -54,7 +54,7 @@ fun ScheduleScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -83,7 +83,7 @@ object ScheduleScreenBridge {
         onBack: () -> Unit
     ) {
         composeView.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 ScheduleScreen(
                     onBackClick = onBack
                 )
@@ -95,7 +95,7 @@ object ScheduleScreenBridge {
 @Preview(showBackground = true, locale = "ru")
 @Composable
 fun ScheduleScreenPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         ScheduleScreen(onBackClick = {})
     }
 }

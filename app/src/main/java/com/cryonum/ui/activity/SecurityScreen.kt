@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.cryonum.R
 import com.cryonum.managers.ThemeManager
 import com.cryonum.ui.components.keyboard.Keyboard
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import com.cryonum.ui.theme.LocalAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +51,7 @@ fun SecurityScreen(
                             textAlign = TextAlign.Center
                         ),
                         maxLines = if (fontScale > 1.1f) Int.MAX_VALUE else 1,
-                        color = IcyMathTheme.colors.titleColor
+                        color = CryonumTheme.colors.titleColor
                     )
                 },
                 navigationIcon = {
@@ -61,7 +61,7 @@ fun SecurityScreen(
                                 painter = painterResource(id = R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.back),
                                 modifier = Modifier.size(32.dp),
-                                tint = IcyMathTheme.colors.titleColor
+                                tint = CryonumTheme.colors.titleColor
                             )
                         }
                     }
@@ -83,7 +83,7 @@ fun SecurityScreen(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.headlineSmall,
-                    color = IcyMathTheme.colors.titleColor,
+                    color = CryonumTheme.colors.titleColor,
                     textAlign = TextAlign.Center
                 )
                 
@@ -96,7 +96,7 @@ fun SecurityScreen(
                 ) {
                     repeat(4) { index ->
                         val isFilled = index < pin.length
-                        val color = if (showError) Color.Red else if (isFilled) IcyMathTheme.colors.titleColor else IcyMathTheme.colors.cardStroke
+                        val color = if (showError) Color.Red else if (isFilled) CryonumTheme.colors.titleColor else CryonumTheme.colors.cardStroke
                         
                         Box(
                             modifier = Modifier
@@ -143,7 +143,7 @@ fun SecuritySettingsScreen(
                             textAlign = TextAlign.Center
                         ),
                         maxLines = if (fontScale > 1.1f) Int.MAX_VALUE else 1,
-                        color = IcyMathTheme.colors.titleColor
+                        color = CryonumTheme.colors.titleColor
                     )
                 },
                 navigationIcon = {
@@ -152,7 +152,7 @@ fun SecuritySettingsScreen(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = stringResource(R.string.back),
                             modifier = Modifier.size(32.dp),
-                            tint = IcyMathTheme.colors.titleColor
+                            tint = CryonumTheme.colors.titleColor
                         )
                     }
                 },
@@ -180,7 +180,7 @@ fun SecuritySettingsScreen(
                         .padding(top = 12.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = IcyMathTheme.colors.cardBackground
+                        containerColor = CryonumTheme.colors.cardBackground
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
@@ -195,7 +195,7 @@ fun SecuritySettingsScreen(
                         Text(
                             text = stringResource(R.string.app_lock_label),
                             fontSize = 16.sp,
-                            color = IcyMathTheme.colors.titleColor,
+                            color = CryonumTheme.colors.titleColor,
                             modifier = Modifier.weight(1f)
                         )
 
@@ -212,7 +212,7 @@ fun SecuritySettingsScreen(
                 Text(
                     text = stringResource(R.string.app_lock_description),
                     fontSize = 14.sp,
-                    color = IcyMathTheme.colors.titleColor.copy(alpha = 0.7f),
+                    color = CryonumTheme.colors.titleColor.copy(alpha = 0.7f),
                     modifier = Modifier.padding(horizontal = 4.dp),
                     lineHeight = 20.sp
                 )
@@ -225,7 +225,7 @@ fun SecuritySettingsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = IcyMathTheme.colors.cardBackground
+                            containerColor = CryonumTheme.colors.cardBackground
                         ),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
@@ -240,7 +240,7 @@ fun SecuritySettingsScreen(
                             Text(
                                 text = stringResource(R.string.biometric_unlock),
                                 fontSize = 16.sp,
-                                color = IcyMathTheme.colors.titleColor,
+                                color = CryonumTheme.colors.titleColor,
                                 modifier = Modifier.weight(1f)
                             )
 
@@ -268,7 +268,7 @@ object SecurityScreenBridge {
         isModeUnlock: Boolean,
         onBack: () -> Unit
     ) {
-        IcyMathTheme {
+        CryonumTheme {
             SecurityScreen(
                 onBackClick = onBack,
                 title = title,
@@ -290,7 +290,7 @@ object SecurityScreenBridge {
         onBiometricToggle: (Boolean) -> Unit,
         onBack: () -> Unit
     ) {
-        IcyMathTheme {
+        CryonumTheme {
             SecuritySettingsScreen(
                 isAppLockEnabled = isAppLockEnabled,
                 onAppLockToggle = onAppLockToggle,
@@ -306,7 +306,7 @@ object SecurityScreenBridge {
 @Composable
 fun SecurityScreenPreviewLight() {
     CompositionLocalProvider(LocalAppTheme provides ThemeManager.AppTheme.LIGHT) {
-        IcyMathTheme {
+        CryonumTheme {
             Surface(color = Color.White) {
                 SecurityScreen(
                     onBackClick = {},
@@ -324,7 +324,7 @@ fun SecurityScreenPreviewLight() {
 @Composable
 fun SecurityScreenPreviewAmoled() {
     CompositionLocalProvider(LocalAppTheme provides ThemeManager.AppTheme.AMOLED) {
-        IcyMathTheme {
+        CryonumTheme {
             Surface(color = Color.Black) {
                 SecurityScreen(
                     onBackClick = {},
@@ -342,7 +342,7 @@ fun SecurityScreenPreviewAmoled() {
 @Composable
 fun SecurityScreenPreviewSandy() {
     CompositionLocalProvider(LocalAppTheme provides ThemeManager.AppTheme.SANDY_BROWN) {
-        IcyMathTheme {
+        CryonumTheme {
             Surface(color = Color(0xFFF4A460)) {
                 SecurityScreen(
                     onBackClick = {},

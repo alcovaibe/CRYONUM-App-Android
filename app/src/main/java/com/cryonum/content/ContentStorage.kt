@@ -29,7 +29,7 @@ data class PartialContentMetadata(
 }
 
 class ContentStorage(context: Context, private val gson: Gson) {
-    val root = File(context.filesDir, "icy_content")
+    val root = migrateLegacyRoot(context.filesDir)
     private val lectures = File(root, "lectures")
     private val privacy = File(root, "privacy")
     private val partial = File(root, "partial")
@@ -116,6 +116,43 @@ class ContentStorage(context: Context, private val gson: Gson) {
     }
 
     companion object {
+        private const val CONTENT_DIRECTORY = "cryonum_content"
+        private const val LEGACY_CONTENT_DIRECTORY = "icy_content"
+
+        internal fun migrateLegacyRoot(filesDir: File): File {
+            val target = File(filesDir, CONTENT_DIRECTORY)
+            val legacy = File(filesDir, LEGACY_CONTENT_DIRECTORY)
+            if (!legacy.isDirectory) return target
+
+            if (!target.exists()) {
+                val moved = runCatching {
+                    java.nio.file.Files.move(
+                        legacy.toPath(),
+                        target.toPath(),
+                        java.nio.file.StandardCopyOption.ATOMIC_MOVE
+                    )
+                }.isSuccess
+                if (moved) return target
+            }
+
+            runCatching {
+                legacy.walkTopDown().forEach { source ->
+                    val relativePath = source.relativeTo(legacy).path
+                    val destination = if (relativePath.isEmpty()) target else File(target, relativePath)
+                    if (source.isDirectory) {
+                        check(destination.isDirectory || destination.mkdirs()) {
+                            "Cannot create content migration directory"
+                        }
+                    } else if (!destination.exists()) {
+                        source.copyTo(destination, overwrite = false)
+                    }
+                }
+            }.onSuccess {
+                legacy.deleteRecursively()
+            }
+            return target
+        }
+
         fun hasSufficientSpace(availableBytes: Long, requiredBytes: Long, reserveBytes: Long): Boolean =
             availableBytes >= 0 && requiredBytes >= 0 && reserveBytes >= 0 &&
                 availableBytes >= requiredBytes && availableBytes - requiredBytes >= reserveBytes

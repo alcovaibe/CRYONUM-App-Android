@@ -17,11 +17,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @Composable
 fun SplashScreenContent() {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
     val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
@@ -51,7 +51,7 @@ fun SplashScreenContent() {
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Splash Dark", showSystemUi = true)
 @Composable
 fun SplashScreenPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         SplashScreenContent()
     }
 }

@@ -7,7 +7,7 @@ import com.cryonum.content.ContentDownloadUiState
 import com.cryonum.content.ContentErrorCategory
 import com.cryonum.ui.components.dialogs.ContentOfferDialog
 import com.cryonum.ui.components.dialogs.ContentProgressDialog
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 import org.junit.Rule
 import org.junit.Test
 
@@ -19,7 +19,7 @@ class ContentDownloadUiTests {
 
     @Test
     fun downloadedLecturesDoNotShowOffer() {
-        compose.setContent { IcyMathTheme { if (12 < 12) LectureOffer(12) } }
+        compose.setContent { CryonumTheme { if (12 < 12) LectureOffer(12) } }
         compose.onNodeWithTag("content_offer_dialog").assertDoesNotExist()
     }
 
@@ -30,14 +30,14 @@ class ContentDownloadUiTests {
     @Test fun policyUpdateOfferIsVisible() = showPolicyOffer()
 
     private fun showLectureOffer(downloaded: Int) {
-        compose.setContent { IcyMathTheme { LectureOffer(downloaded) } }
+        compose.setContent { CryonumTheme { LectureOffer(downloaded) } }
         compose.onNodeWithTag("content_offer_dialog").assertExists()
         compose.onNodeWithTag("content_offer_primary").assertExists()
     }
 
     private fun showPolicyOffer() {
         compose.setContent {
-            IcyMathTheme {
+            CryonumTheme {
                 ContentOfferDialog("Policy", "Download", 100, primaryText = "Download", secondaryText = "Cancel", onPrimary = {}, onDismiss = {})
             }
         }
@@ -45,7 +45,7 @@ class ContentDownloadUiTests {
     }
 
     private fun showProgress(state: ContentDownloadUiState, expectedActionTag: String) {
-        compose.setContent { IcyMathTheme { ContentProgressDialog(state, {}, {}, {}, {}) } }
+        compose.setContent { CryonumTheme { ContentProgressDialog(state, {}, {}, {}, {}) } }
         compose.onNodeWithTag("content_progress_dialog").assertExists()
         compose.onNodeWithTag(expectedActionTag).assertExists()
     }

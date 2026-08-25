@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.cryonum.R
-import com.cryonum.ui.theme.IcyMathTheme
+import com.cryonum.ui.theme.CryonumTheme
 
 @Composable
 fun SubstitutionsInputMethodDialog(
@@ -52,7 +52,7 @@ fun SubstitutionsInputMethodDialog(
                         indication = null
                     ) { /* Контейнер поглощает клики, чтобы не закрывать диалог при нажатии на него */ },
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp), // Закругления только сверху
-                color = IcyMathTheme.colors.dialogBackground,
+                color = CryonumTheme.colors.dialogBackground,
                 tonalElevation = 6.dp
             ) {
                 Column(
@@ -65,7 +65,7 @@ fun SubstitutionsInputMethodDialog(
                         text = stringResource(R.string.enter_quistion),
                         style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
                         fontWeight = FontWeight.Bold,
-                        color = IcyMathTheme.colors.titleColor,
+                        color = CryonumTheme.colors.titleColor,
                         textAlign = TextAlign.Start,
                         maxLines = 1,
                         modifier = Modifier.padding(bottom = 24.dp)
@@ -92,7 +92,7 @@ fun SubstitutionsInputMethodDialog(
                         TextButton(onClick = onDismiss) {
                             Text(
                                 text = stringResource(R.string.cancel),
-                                color = IcyMathTheme.colors.confirmButtonBackground,
+                                color = CryonumTheme.colors.confirmButtonBackground,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             )
@@ -106,7 +106,7 @@ fun SubstitutionsInputMethodDialog(
 
 @Composable
 private fun SelectionCard(text: String, onClick: () -> Unit) {
-    val colors = IcyMathTheme.colors
+    val colors = CryonumTheme.colors
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -134,7 +134,7 @@ private fun SelectionCard(text: String, onClick: () -> Unit) {
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
 @Composable
 fun SubstitutionsInputMethodDialogPreview() {
-    IcyMathTheme {
+    CryonumTheme {
         SubstitutionsInputMethodDialog(
             onManualEntry = {},
             onMaxValueEntry = {},
