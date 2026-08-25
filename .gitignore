@@ -5,6 +5,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+key.properties
 
 # App specific excludes
 *.keystore
