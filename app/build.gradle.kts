@@ -125,9 +125,10 @@ tasks.register("verifyReleaseSigning") {
             "Release signing is not configured. Use key.properties locally or the ANDROID_* " +
                 "environment variables in CI."
         }
-        check(requireNotNull(releaseKeystoreFile).isFile) {
+        val configuredKeystoreFile = requireNotNull(releaseKeystoreFile)
+        check(configuredKeystoreFile.isFile) {
             "Release keystore does not exist at the configured path: " +
-                releaseKeystoreFile.absolutePath
+                configuredKeystoreFile.absolutePath
         }
     }
 }
