@@ -4,7 +4,7 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 object ApprovedContentUrlPolicy {
-    val BASE_URL: HttpUrl = "https://download.icymath.com/".toHttpUrl()
+    val BASE_URL: HttpUrl = "https://download.cryonum.com/".toHttpUrl()
     val MANIFEST_URL: HttpUrl = BASE_URL.newBuilder()
         .addPathSegment("manifests")
         .addPathSegment("content-v1.signed.json")
@@ -52,7 +52,7 @@ object ApprovedContentUrlPolicy {
 
     fun validateResolvedUrl(url: HttpUrl) {
         reject(url.scheme != "https", "Only HTTPS is allowed")
-        reject(url.host != "download.icymath.com", "Unapproved content host")
+        reject(url.host != "download.cryonum.com", "Unapproved content host")
         reject(url.port != 443, "Non-standard port is forbidden")
         reject(url.username.isNotEmpty() || url.password.isNotEmpty(), "URL userinfo is forbidden")
         reject(url.query != null || url.fragment != null, "Query and fragment are forbidden")

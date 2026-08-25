@@ -5,9 +5,9 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class ApprovedContentUrlPolicyTest {
-    @Test fun httpIsRejected() = rejectUrl("http://download.icymath.com/lectures/v1/lecture-01.pdf")
+    @Test fun httpIsRejected() = rejectUrl("http://download.cryonum.com/lectures/v1/lecture-01.pdf")
     @Test fun otherHostIsRejected() = rejectUrl("https://evil.example/lectures/v1/lecture-01.pdf")
-    @Test fun nonStandardPortIsRejected() = rejectUrl("https://download.icymath.com:8443/lectures/v1/lecture-01.pdf")
+    @Test fun nonStandardPortIsRejected() = rejectUrl("https://download.cryonum.com:8443/lectures/v1/lecture-01.pdf")
 
     @Test
     fun exactExistingR2LectureKeyIsAccepted() {
@@ -15,7 +15,7 @@ class ApprovedContentUrlPolicyTest {
         ApprovedContentUrlPolicy.validateRelativePath(path, ContentCategory.LECTURE, 1, "lecture-01", "1")
         val url = ApprovedContentUrlPolicy.resolve(lecture(path))
         org.junit.Assert.assertEquals(
-            "https://download.icymath.com/lectures/v1/lecture-01.pdf",
+            "https://download.cryonum.com/lectures/v1/lecture-01.pdf",
             url.toString()
         )
     }
@@ -25,7 +25,7 @@ class ApprovedContentUrlPolicyTest {
         val path = "privacy-policy/v4.0/privacy-policy.pdf"
         ApprovedContentUrlPolicy.validateRelativePath(path, ContentCategory.PRIVACY_POLICY, 1, "privacy-policy")
         org.junit.Assert.assertEquals(
-            "https://download.icymath.com/privacy-policy/v4.0/privacy-policy.pdf",
+            "https://download.cryonum.com/privacy-policy/v4.0/privacy-policy.pdf",
             ApprovedContentUrlPolicy.resolve(policy(path)).toString()
         )
     }

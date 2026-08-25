@@ -68,6 +68,6 @@ class PolicyConfigService(private val client: OkHttpClient) {
     }
 
     companion object {
-        val CONFIG_URL: HttpUrl = "https://icymath.com/data/privacy-policy.json".toHttpUrl()
+        val CONFIG_URL: HttpUrl = "https://cryonum.com/data/privacy-policy.json".toHttpUrl()
     }
 }

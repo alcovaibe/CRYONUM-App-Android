@@ -1,6 +1,6 @@
 # Cloudflare R2 content setup
 
-The Android client accepts content only from `https://download.icymath.com/` and only after verifying `manifests/content-v1.signed.json`. It never lists the bucket and does not use `releases/`.
+The Android client accepts content only from `https://download.cryonum.com/` and only after verifying `manifests/content-v1.signed.json`. It never lists the bucket and does not use `releases/`.
 
 ## Object keys
 
@@ -56,7 +56,7 @@ python3 tools/migrate_r2_layout.py
 python3 tools/migrate_r2_layout.py --apply
 ```
 
-The apply run performs server-side `CopyObject`, replaces object metadata with the approved values, streams and compares the real source/target SHA-256 values, checks `%PDF-`, confirms each source still exists, and verifies public `HEAD` and `Range` responses through `download.icymath.com`. It prints the verified hashes for use when building the signed manifest. It does not create or publish the manifest.
+The apply run performs server-side `CopyObject`, replaces object metadata with the approved values, streams and compares the real source/target SHA-256 values, checks `%PDF-`, confirms each source still exists, and verifies public `HEAD` and `Range` responses through `download.cryonum.com`. It prints the verified hashes for use when building the signed manifest. It does not create or publish the manifest.
 
 When finished, remove the variables from the shell and revoke the temporary token in Cloudflare:
 
@@ -81,7 +81,12 @@ The website PDF.js viewer reads the policy from the R2 custom domain, so configu
 ```json
 [
   {
-    "AllowedOrigins": ["https://icymath.com", "https://www.icymath.com"],
+    "AllowedOrigins": [
+      "https://icymath.com",
+      "https://www.icymath.com",
+      "https://cryonum.com",
+      "https://www.cryonum.com"
+    ],
     "AllowedMethods": ["GET", "HEAD"],
     "AllowedHeaders": ["Range", "If-Range"],
     "ExposeHeaders": ["Accept-Ranges", "Content-Length", "Content-Range", "Content-Type", "ETag"],
@@ -90,7 +95,7 @@ The website PDF.js viewer reads the policy from the R2 custom domain, so configu
 ]
 ```
 
-Apply this as the bucket CORS policy in the Cloudflare dashboard or with Wrangler. CORS does not replace access control, signed-manifest verification, or object hashes; it only permits the browser viewer on `icymath.com` to read the response.
+Apply this as the bucket CORS policy in the Cloudflare dashboard or with Wrangler. CORS does not replace access control, signed-manifest verification, or object hashes. The `icymath.com` origins are retained only during the redirect migration and can be removed after the legacy domain stops serving the viewer.
 
 After the custom domain works, disable the public `r2.dev` development URL. Cloudflare documents `r2.dev` as a development-only, rate-limited endpoint; the custom domain remains available when that URL is disabled.
 
@@ -141,20 +146,20 @@ Allow only `GET` and `HEAD` on the download hostname. A Cloudflare WAF/custom ru
 Verify the custom domain against a real immutable object:
 
 ```bash
-curl --fail --silent --show-error --head 'https://download.icymath.com/lectures/v1/lecture-01.pdf'
-curl --fail --silent --show-error --head 'https://download.icymath.com/privacy-policy/v4.0/privacy-policy.pdf'
-curl --fail --silent --show-error --output /tmp/lecture-01.pdf 'https://download.icymath.com/lectures/v1/lecture-01.pdf'
+curl --fail --silent --show-error --head 'https://download.cryonum.com/lectures/v1/lecture-01.pdf'
+curl --fail --silent --show-error --head 'https://download.cryonum.com/privacy-policy/v4.0/privacy-policy.pdf'
+curl --fail --silent --show-error --output /tmp/lecture-01.pdf 'https://download.cryonum.com/lectures/v1/lecture-01.pdf'
 curl --fail --silent --show-error --dump-header /tmp/range.headers \
   --header 'Accept-Encoding: identity' \
   --header 'Range: bytes=0-1023' \
-  'https://download.icymath.com/lectures/v1/lecture-01.pdf' \
+  'https://download.cryonum.com/lectures/v1/lecture-01.pdf' \
   --output /tmp/lecture-01.part
 etag=$(awk 'BEGIN{IGNORECASE=1} /^etag:/{sub(/\r$/, ""); print $2}' /tmp/range.headers)
 curl --fail --silent --show-error --dump-header - \
   --header 'Accept-Encoding: identity' \
   --header 'Range: bytes=1024-' \
   --header "If-Range: $etag" \
-  'https://download.icymath.com/lectures/v1/lecture-01.pdf' \
+  'https://download.cryonum.com/lectures/v1/lecture-01.pdf' \
   --output /tmp/lecture-01.rest
 ```
 

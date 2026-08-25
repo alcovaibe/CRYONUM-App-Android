@@ -125,7 +125,7 @@ class ContentHttpValidatorMockWebServerTest {
 
     @Test
     fun redirectToHttpIsNotFollowedAndRejected() {
-        server.enqueue(MockResponse().setResponseCode(302).setHeader("Location", "http://download.icymath.com/file.pdf"))
+        server.enqueue(MockResponse().setResponseCode(302).setHeader("Location", "http://download.cryonum.com/file.pdf"))
         execute().use { response ->
             assertEquals(302, response.code)
             assertSecurity { ContentHttpValidator.validateStatus(response, false) }

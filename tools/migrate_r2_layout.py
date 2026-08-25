@@ -21,7 +21,7 @@ from typing import Any, Iterable
 
 
 BUCKET_DEFAULT = "icymath-download"
-PUBLIC_BASE_URL = "https://download.icymath.com/"
+PUBLIC_BASE_URL = "https://download.cryonum.com/"
 PDF_CONTENT_TYPE = "application/pdf"
 IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable"
 CHUNK_SIZE = 1024 * 1024

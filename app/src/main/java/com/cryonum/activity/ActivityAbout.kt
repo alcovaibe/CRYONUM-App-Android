@@ -22,7 +22,7 @@ class ActivityAbout : AppCompatActivity() {
     private val contentViewModel: ContentDownloadViewModel by viewModels()
 
     companion object {
-        private const val GITHUB_URL = "https://github.com/alcovaibe/Icy-Math"
+        private const val GITHUB_URL = "https://github.com/alcovaibe/CRYONUM-App-Android"
     }
 
     override fun attachBaseContext(newBase: Context) {
