@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +8,37 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
 }
+
+val keyPropertiesFile = rootProject.file("key.properties")
+val keyProperties = Properties().apply {
+    if (keyPropertiesFile.isFile) {
+        keyPropertiesFile.inputStream().use(::load)
+    }
+}
+
+fun releaseSigningValue(propertyName: String, environmentName: String): String? =
+    System.getenv(environmentName)?.trim()?.takeIf(String::isNotEmpty)
+        ?: keyProperties.getProperty(propertyName)?.trim()?.takeIf(String::isNotEmpty)
+
+val releaseKeystorePath = releaseSigningValue("storeFile", "ANDROID_KEYSTORE_PATH")
+val releaseStorePassword = releaseSigningValue("storePassword", "ANDROID_STORE_PASSWORD")
+val releaseKeyAlias = releaseSigningValue("keyAlias", "ANDROID_KEY_ALIAS")
+val releaseKeyPassword = releaseSigningValue("keyPassword", "ANDROID_KEY_PASSWORD")
+val releaseSigningValueCount = listOf(
+    releaseKeystorePath,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword
+).count { it != null }
+
+require(releaseSigningValueCount == 0 || releaseSigningValueCount == 4) {
+    "Release signing is only partially configured. Provide storeFile, storePassword, " +
+        "keyAlias and keyPassword in key.properties, or set ANDROID_KEYSTORE_PATH, " +
+        "ANDROID_STORE_PASSWORD, ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD."
+}
+
+val hasReleaseSigning = releaseSigningValueCount == 4
+val releaseKeystoreFile = releaseKeystorePath?.let(rootProject::file)
 
 android {
     namespace = "com.cryonum"
@@ -23,8 +56,26 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = releaseKeystoreFile
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+                enableV1Signing = true
+                enableV2Signing = true
+                enableV3Signing = true
+                enableV4Signing = true
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -61,6 +112,22 @@ android {
     bundle {
         language {
             enableSplit = false
+        }
+    }
+}
+
+tasks.register("verifyReleaseSigning") {
+    group = "verification"
+    description = "Fails unless a complete release signing configuration and keystore are available."
+
+    doLast {
+        check(hasReleaseSigning) {
+            "Release signing is not configured. Use key.properties locally or the ANDROID_* " +
+                "environment variables in CI."
+        }
+        check(requireNotNull(releaseKeystoreFile).isFile) {
+            "Release keystore does not exist at the configured path: " +
+                releaseKeystoreFile.absolutePath
         }
     }
 }
