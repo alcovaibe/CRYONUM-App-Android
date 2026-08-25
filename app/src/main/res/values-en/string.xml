@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Icy Math</string>
+    <string name="app_name">CRYONUM</string>
     <string name="about_app">About the app</string>
     <string name="app_version">App version: %1$s</string>
     <string name="history_empty_message">Nothing here yet—try solving something and it’ll appear!</string>
@@ -223,15 +223,15 @@
     <string name="set_pin">Set PIN</string>
     <string name="confirm_pin">Confirm PIN</string>
     <string name="pin_mismatch">PINs do not match</string>
-    <string name="unlock_app">Unlock Icy Math</string>
+    <string name="unlock_app">Unlock CRYONUM</string>
     <string name="biometric_title">Biometric Unlock</string>
     <string name="biometric_subtitle">Use your fingerprint to log in</string>
     <string name="lockout_message">Too many attempts. Try again in %1$d sec.</string>
     <string name="content_lectures_offer_title">Download reference materials</string>
-    <string name="content_lectures_offer_message">To use the reference materials, download 12 lectures from the official Icy Math website.</string>
+    <string name="content_lectures_offer_message">To use the reference materials, download 12 lectures from the official CRYONUM website.</string>
     <string name="content_policy_offer_title">Download Privacy Policy</string>
     <string name="content_policy_update_offer_title">Update Privacy Policy</string>
-    <string name="content_policy_offer_message">The PDF will be downloaded directly from the official Icy Math website and stored inside the app.</string>
+    <string name="content_policy_offer_message">The PDF will be downloaded directly from the official CRYONUM website and stored inside the app.</string>
     <string name="content_download">Download</string>
     <string name="content_continue_download">Continue download</string>
     <string name="content_continue">Continue</string>
@@ -265,5 +265,5 @@
     <string name="content_error_unknown">The download could not be completed</string>
     <string name="content_storage_note">Files are stored inside the app. Clearing cache does not remove them, but clearing app data or uninstalling the app does.</string>
     <string name="content_notification_channel">Content downloads</string>
-    <string name="content_notification_title">Icy Math is downloading content</string>
+    <string name="content_notification_title">CRYONUM is downloading content</string>
 </resources>

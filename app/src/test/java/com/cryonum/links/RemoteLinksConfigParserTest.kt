@@ -8,7 +8,7 @@ class RemoteLinksConfigParserTest {
     @Test
     fun parsesTelegramLinkAndIgnoresUnrelatedSiteFields() {
         val config = RemoteLinksConfigParser.parse(
-            json("https://t.me/cryonum", extra = ", \"site\": {\"name\": \"Icy Math\"}")
+            json("https://t.me/cryonum", extra = ", \"site\": {\"name\": \"CRYONUM\"}")
         )
 
         assertEquals(7L, config.revision)

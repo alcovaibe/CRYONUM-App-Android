@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and sign Icy Math's content manifest. This script never creates a private key."""
+"""Build and sign CRYONUM's content manifest. This script never creates a private key."""
 
 import argparse
 import base64

@@ -27,5 +27,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Icy Math"
+rootProject.name = "CRYONUM"
 include(":app")

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Icy Math</string>
+    <string name="app_name">CRYONUM</string>
     <string name="app_version">Version de l\'application : %1$s</string>
     <string name="about_app">À propos de l\'application</string>
     <string name="history_empty_message">C\'est encore vide, effectuez vos premiers calculs et ils apparaîtront ici !</string>
@@ -226,15 +226,15 @@
     <string name="set_pin">Définissez le code PIN</string>
     <string name="confirm_pin">Confirmez le code PIN</string>
     <string name="pin_mismatch">Les codes PIN ne correspondent pas</string>
-    <string name="unlock_app">Déverrouiller Icy Math</string>
+    <string name="unlock_app">Déverrouiller CRYONUM</string>
     <string name="biometric_title">Déverrouillage biométrique</string>
     <string name="biometric_subtitle">Utilisez votre empreinte digitale pour entrer</string>
     <string name="lockout_message">Trop de tentatives. Réessayez dans %1$d s.</string>
     <string name="content_lectures_offer_title">Télécharger les documents de référence</string>
-    <string name="content_lectures_offer_message">Pour utiliser les documents de référence, téléchargez 12 cours depuis le site officiel d’Icy Math.</string>
+    <string name="content_lectures_offer_message">Pour utiliser les documents de référence, téléchargez 12 cours depuis le site officiel de CRYONUM.</string>
     <string name="content_policy_offer_title">Télécharger la politique de confidentialité</string>
     <string name="content_policy_update_offer_title">Mettre à jour la politique de confidentialité</string>
-    <string name="content_policy_offer_message">Le PDF sera téléchargé directement depuis le site officiel d’Icy Math et stocké dans l’application.</string>
+    <string name="content_policy_offer_message">Le PDF sera téléchargé directement depuis le site officiel de CRYONUM et stocké dans l’application.</string>
     <string name="content_download">Télécharger</string>
     <string name="content_continue_download">Continuer le téléchargement</string>
     <string name="content_continue">Continuer</string>
@@ -268,5 +268,5 @@
     <string name="content_error_unknown">Le téléchargement n’a pas pu être terminé</string>
     <string name="content_storage_note">Les fichiers sont stockés dans l’application. Vider le cache ne les supprime pas, mais effacer les données ou désinstaller l’application les supprime.</string>
     <string name="content_notification_channel">Téléchargements de contenu</string>
-    <string name="content_notification_title">Icy Math télécharge du contenu</string>
+    <string name="content_notification_title">CRYONUM télécharge du contenu</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Icy Math</string>
+    <string name="app_name">CRYONUM</string>
     <string name="about_app">Über die App</string>
     <string name="app_version">App-Version: %1$s</string>
     <string name="history_empty_message">Noch nichts hier – probiere etwas aus, und es wird angezeigt!</string>
@@ -225,15 +225,15 @@
     <string name="set_pin">PIN festlegen</string>
     <string name="confirm_pin">PIN bestätigen</string>
     <string name="pin_mismatch">PINs stimmen nicht überein</string>
-    <string name="unlock_app">Icy Math entsperren</string>
+    <string name="unlock_app">CRYONUM entsperren</string>
     <string name="biometric_title">Biometrische Entsperrung</string>
     <string name="biometric_subtitle">Verwenden Sie Ihren Fingerabdruck zum Anmelden</string>
     <string name="lockout_message">Zu viele Versuche. Versuchen Sie es in %1$d Sek. erneut.</string>
     <string name="content_lectures_offer_title">Referenzmaterial herunterladen</string>
-    <string name="content_lectures_offer_message">Für die Referenzmaterialien müssen 12 Vorlesungen von der offiziellen Icy-Math-Website heruntergeladen werden.</string>
+    <string name="content_lectures_offer_message">Für die Referenzmaterialien müssen 12 Vorlesungen von der offiziellen CRYONUM-Website heruntergeladen werden.</string>
     <string name="content_policy_offer_title">Datenschutzerklärung herunterladen</string>
     <string name="content_policy_update_offer_title">Datenschutzerklärung aktualisieren</string>
-    <string name="content_policy_offer_message">Die PDF-Datei wird direkt von der offiziellen Icy-Math-Website geladen und in der App gespeichert.</string>
+    <string name="content_policy_offer_message">Die PDF-Datei wird direkt von der offiziellen CRYONUM-Website geladen und in der App gespeichert.</string>
     <string name="content_download">Herunterladen</string>
     <string name="content_continue_download">Download fortsetzen</string>
     <string name="content_continue">Fortsetzen</string>
@@ -267,5 +267,5 @@
     <string name="content_error_unknown">Download konnte nicht abgeschlossen werden</string>
     <string name="content_storage_note">Dateien werden in der App gespeichert. Beim Leeren des Caches bleiben sie erhalten; beim Löschen der App-Daten oder der App werden sie entfernt.</string>
     <string name="content_notification_channel">Material-Downloads</string>
-    <string name="content_notification_title">Icy Math lädt Materialien herunter</string>
+    <string name="content_notification_title">CRYONUM lädt Materialien herunter</string>
 </resources>

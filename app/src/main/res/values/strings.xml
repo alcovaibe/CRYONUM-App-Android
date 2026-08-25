@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Icy Math</string>
+    <string name="app_name">CRYONUM</string>
     <string name="app_version">Версия приложения: %1$s</string>
     <string name="about_app">О приложении</string>
     <string name="history_empty_message">Пока что пусто, но добавьте первые вычисления, и они появятся здесь!</string>
@@ -228,15 +228,15 @@
     <string name="set_pin">Установите PIN-код</string>
     <string name="confirm_pin">Подтвердите PIN-код</string>
     <string name="pin_mismatch">PIN-коды не совпадают</string>
-    <string name="unlock_app">Разблокировать Icy Math</string>
+    <string name="unlock_app">Разблокировать CRYONUM</string>
     <string name="biometric_title">Биометрическая разблокировка</string>
     <string name="biometric_subtitle">Используйте отпечаток пальца для входа</string>
     <string name="lockout_message">Слишком много попыток. Попробуйте через %1$d сек.</string>
     <string name="content_lectures_offer_title">Скачать справочные материалы</string>
-    <string name="content_lectures_offer_message">Для использования справочных материалов необходимо скачать 12 лекций с официального сайта Icy Math.</string>
+    <string name="content_lectures_offer_message">Для использования справочных материалов необходимо скачать 12 лекций с официального сайта CRYONUM.</string>
     <string name="content_policy_offer_title">Скачать политику конфиденциальности</string>
     <string name="content_policy_update_offer_title">Обновить политику конфиденциальности</string>
-    <string name="content_policy_offer_message">PDF будет напрямую скачан с официального сайта Icy Math и сохранён внутри приложения.</string>
+    <string name="content_policy_offer_message">PDF будет напрямую скачан с официального сайта CRYONUM и сохранён внутри приложения.</string>
     <string name="content_download">Скачать</string>
     <string name="content_continue_download">Продолжить скачивание</string>
     <string name="content_continue">Продолжить</string>
@@ -270,5 +270,5 @@
     <string name="content_error_unknown">Не удалось завершить загрузку</string>
     <string name="content_storage_note">Файлы сохраняются внутри приложения. Они останутся после очистки кэша, но будут удалены при очистке данных или удалении приложения.</string>
     <string name="content_notification_channel">Загрузки материалов</string>
-    <string name="content_notification_title">Icy Math загружает материалы</string>
+    <string name="content_notification_title">CRYONUM загружает материалы</string>
 </resources>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Safely copy Icy Math PDFs to the versioned R2 object-key layout.
+"""Safely copy CRYONUM PDFs to the versioned R2 object-key layout.
 
 The script never deletes objects, never lists the bucket, and never touches
 ``releases/`` or ``manifests/``. Credentials are read only from environment
