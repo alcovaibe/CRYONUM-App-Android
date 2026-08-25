@@ -96,6 +96,7 @@
     <string name="desc_theme_amoled">AMOLED-Design auswählen</string>
     <string name="desc_theme_sandybrown">Sandy-Braun-Design auswählen</string>
     <string name="open_telegram_channel">Telegram-Kanal öffnen</string>
+    <string name="telegram_link_unavailable">Der aktuelle Telegram-Link konnte nicht abgerufen werden</string>
     <string name="contact_icon_description">Symbol eines sozialen Netzwerks</string>
     <string name="permission_explanation">Für die Nutzung von Kamera und Galerie ist eine Berechtigung erforderlich. Bitte erlauben Sie den Zugriff in den Einstellungen.</string>
     <string name="left_icon">Linkes Symbol der Karte</string>

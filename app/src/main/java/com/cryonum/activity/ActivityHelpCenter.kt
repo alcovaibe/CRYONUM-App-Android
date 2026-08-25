@@ -7,14 +7,24 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
+import androidx.lifecycle.lifecycleScope
+import com.cryonum.R
+import com.cryonum.content.ContentDependencies
+import com.cryonum.links.TelegramUrlPolicy
 import com.cryonum.managers.LocaleManager
 import com.cryonum.managers.ThemeManager
 import com.cryonum.ui.activity.HelpCenterScreenBridge
 import androidx.core.net.toUri
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
+import okhttp3.HttpUrl
 
 class ActivityHelpCenter : AppCompatActivity() {
+    private var telegramOpenJob: Job? = null
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(
@@ -47,7 +57,27 @@ class ActivityHelpCenter : AppCompatActivity() {
     }
 
     private fun openTelegram() {
-        val channel = "icy_math"
+        if (telegramOpenJob?.isActive == true) return
+        telegramOpenJob = lifecycleScope.launch {
+            val url = try {
+                ContentDependencies.get(this@ActivityHelpCenter).remoteLinksRepository.telegramUrl()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "Unable to resolve Telegram link", e)
+                Toast.makeText(
+                    this@ActivityHelpCenter,
+                    R.string.telegram_link_unavailable,
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@launch
+            }
+            openTelegramUrl(url)
+        }
+    }
+
+    private fun openTelegramUrl(url: HttpUrl) {
+        val channel = TelegramUrlPolicy.username(url)
         val tgIntent = Intent(
             Intent.ACTION_VIEW,
             "tg://resolve?domain=$channel".toUri()
@@ -56,14 +86,19 @@ class ActivityHelpCenter : AppCompatActivity() {
         try {
             startActivity(tgIntent)
         } catch (_: ActivityNotFoundException) {
-            // Telegram не установлен — fallback на браузер
-            val webIntent = Intent(
-                Intent.ACTION_VIEW,
-                "https://t.me/$channel".toUri()
-            )
-            startActivity(webIntent)
+            openTelegramInBrowser(url)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to open Telegram", e)
+            Log.w(TAG, "Unable to open Telegram app", e)
+            openTelegramInBrowser(url)
+        }
+    }
+
+    private fun openTelegramInBrowser(url: HttpUrl) {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, url.toString().toUri()))
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to open Telegram link", e)
+            Toast.makeText(this, R.string.error_opening_link, Toast.LENGTH_SHORT).show()
         }
     }
 

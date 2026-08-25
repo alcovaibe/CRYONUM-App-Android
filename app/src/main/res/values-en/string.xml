@@ -95,6 +95,7 @@
     <string name="desc_theme_amoled">Select AMOLED Theme</string>
     <string name="desc_theme_sandybrown">Select Sandy Brown Theme</string>
     <string name="open_telegram_channel">Open Telegram channel</string>
+    <string name="telegram_link_unavailable">Could not get the current Telegram link</string>
     <string name="contact_icon_description">Social media icon</string>
     <string name="permission_explanation">Camera and gallery access requires permission. Please allow access in settings.</string>
     <string name="left_icon">Left icon of the card</string>

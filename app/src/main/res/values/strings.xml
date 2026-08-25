@@ -95,6 +95,7 @@
     <string name="desc_theme_amoled">Выбрать AMOLED-тему</string>
     <string name="desc_theme_sandybrown">Выбрать тему Sandy Brown</string>
     <string name="open_telegram_channel">Открыть канал Telegram</string>
+    <string name="telegram_link_unavailable">Не удалось получить актуальную ссылку Telegram</string>
     <string name="contact_icon_description">Иконка социальной сети</string>
     <string name="permission_explanation">Для работы камеры и галереи требуется разрешение. Разрешите доступ в настройках.</string>
     <string name="left_icon">Левая иконка карточки</string>

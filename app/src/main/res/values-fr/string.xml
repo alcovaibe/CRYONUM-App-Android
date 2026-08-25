@@ -95,6 +95,7 @@
     <string name="desc_theme_amoled">Choisir le thème AMOLED</string>
     <string name="desc_theme_sandybrown">Choisir le thème Sandy Brown</string>
     <string name="open_telegram_channel">Ouvrir le canal Telegram</string>
+    <string name="telegram_link_unavailable">Impossible d’obtenir le lien Telegram actuel</string>
     <string name="contact_icon_description">Icône de réseau social</string>
     <string name="permission_explanation">L\'accès à l\'appareil photo и à la galerie est requis. Veuillez l\'autoriser dans les paramètres.</string>
     <string name="left_icon">Icône gauche de la carte</string>
