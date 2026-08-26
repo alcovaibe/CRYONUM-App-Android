@@ -48,8 +48,8 @@ android {
         applicationId = "com.cryonum"
         minSdk = 26
         targetSdk = 37
-        versionCode = 453
-        versionName = "1.5.0.253"
+        versionCode = 454
+        versionName = "1.5.0.254"
 
         buildConfigField("String", "APP_VERSION", "\"$versionName\"")
 
