@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 
 object AnalyticsManager {
 
-    private const val TAG = "AnalyticsManager"
+    private const val RETENTION_MS = 30L * 24 * 60 * 60 * 1000
 
     data class DeviceInfo(
         val manufacturer: String,
@@ -69,6 +69,12 @@ object AnalyticsManager {
 
         @Insert
         fun insertCrash(crash: CrashReport)
+
+        @Query("DELETE FROM user_events WHERE timestamp < :before OR id NOT IN (SELECT id FROM user_events ORDER BY id DESC LIMIT 2000)")
+        fun pruneEvents(before: Long)
+
+        @Query("DELETE FROM crash_reports WHERE timestamp < :before OR id NOT IN (SELECT id FROM crash_reports ORDER BY id DESC LIMIT 20)")
+        fun pruneCrashes(before: Long)
     }
 
     @Database(entities = [UserEvent::class, CrashReport::class], version = 1, exportSchema = false)
@@ -85,20 +91,21 @@ object AnalyticsManager {
     private var previousUncaughtHandler: Thread.UncaughtExceptionHandler? = null
 
     @Volatile
-    private var analyticsEnabled = true
+    private var analyticsEnabled = false
     private val gson = Gson()
 
     @JvmStatic
+    @Synchronized
     fun setAnalyticsEnabled(enabled: Boolean) {
         analyticsEnabled = enabled
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enabled)
         firebaseAnalytics?.setAnalyticsCollectionEnabled(enabled)
+        if (!enabled) firebaseAnalytics?.resetAnalyticsData()
     }
 
     @JvmStatic
     fun init(application: Application) {
         appContext = application.applicationContext
-        firebaseAnalytics = FirebaseAnalytics.getInstance(appContext)
+        firebaseAnalytics = if (com.cryonum.BuildConfig.LOCAL_AUDIT) null else FirebaseAnalytics.getInstance(appContext)
 
         db = Room.databaseBuilder(appContext, AnalyticsDatabase::class.java, "analytics_db")
             .fallbackToDestructiveMigrationOnDowngrade(false)
@@ -110,16 +117,11 @@ object AnalyticsManager {
         val prefs = appContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
         val enabled = prefs.getBoolean("analytics_enabled", false)
         setAnalyticsEnabled(enabled)
+        if (!com.cryonum.BuildConfig.LOCAL_AUDIT) FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
 
         previousUncaughtHandler = Thread.getDefaultUncaughtExceptionHandler()
 
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            if (analyticsEnabled) {
-                // Log to Firebase Crashlytics (though it usually catches automatically, 
-                // we can add custom keys before it does)
-                FirebaseCrashlytics.getInstance().setCustomKey("last_screen", "unknown")
-            }
-            
             try {
                 val f = executor.submit {
                     try {
@@ -139,30 +141,26 @@ object AnalyticsManager {
     }
 
     @JvmStatic
+    @Synchronized
     fun logEvent(screen: String, action: String, details: String? = null) {
-        if (!analyticsEnabled) return
-        
-        // Redact potentially sensitive details in production
-        val redactedDetails = if (com.cryonum.BuildConfig.DEBUG) details else "[REDACTED]"
-
-        // Log to Firebase
-        val bundle = Bundle().apply {
-            putString(FirebaseAnalytics.Param.SCREEN_NAME, screen)
-            putString("action", action)
-            redactedDetails?.let { putString("details", it) }
+        // Never retain free-form details (expressions, OCR text, URI or PIN) in either build.
+        val safeScreen = screen.take(64).filter { it.isLetterOrDigit() || it == '_' }
+        val safeAction = action.take(64).filter { it.isLetterOrDigit() || it == '_' }
+        val event = UserEvent(timestamp = System.currentTimeMillis(), screen = safeScreen, action = safeAction)
+        if (analyticsEnabled) {
+            firebaseAnalytics?.logEvent("user_action", Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, safeScreen)
+                putString("action", safeAction)
+            })
         }
-        firebaseAnalytics?.logEvent("user_action", bundle)
-
-        // Log to Crashlytics as a "breadcrumb"
-        FirebaseCrashlytics.getInstance().log("Screen: $screen, Action: $action, Details: $redactedDetails")
-        FirebaseCrashlytics.getInstance().setCustomKey("current_screen", screen)
-
-        val event = UserEvent(timestamp = System.currentTimeMillis(), screen = screen, action = action, details = redactedDetails)
+        // No duplicate user-event channel through Crashlytics logs or custom keys.
         executor.execute {
             try {
-                db?.analyticsDao()?.insertEvent(event)
-            } catch (_: Throwable) {
-            }
+                db?.analyticsDao()?.apply {
+                    insertEvent(event)
+                    pruneEvents(System.currentTimeMillis() - RETENTION_MS)
+                }
+            } catch (_: Exception) { }
         }
     }
 
@@ -177,8 +175,7 @@ object AnalyticsManager {
         val deviceJson = toJson(deviceInfo)
 
         val sw = StringWriter()
-        throwable.printStackTrace(PrintWriter(sw))
-        val stacktrace = sw.toString()
+        val stacktrace = (throwable.javaClass.name + "\n" + throwable.stackTrace.take(100).joinToString("\n")).take(16000)
 
         val crash = CrashReport(
             timestamp = System.currentTimeMillis(),
@@ -191,6 +188,7 @@ object AnalyticsManager {
             val database = db
             if (database != null) {
                 database.analyticsDao().insertCrash(crash)
+                database.analyticsDao().pruneCrashes(System.currentTimeMillis() - RETENTION_MS)
             } else {
                 writeCrashToFileSync(crash)
             }
@@ -205,6 +203,7 @@ object AnalyticsManager {
             if (!dir.exists()) {
                 dir.mkdirs()
             }
+            dir.listFiles()?.sortedByDescending { it.lastModified() }?.drop(19)?.forEach { it.delete() }
             val file = File(dir, "crash_${crash.timestamp}.json")
             FileWriter(file).use { fw ->
                 fw.write(toJson(crash))

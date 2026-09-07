@@ -245,7 +245,7 @@ class ActivitySecurity : AppCompatActivity() {
         }
 
         val biometricManager = BiometricManager.from(this)
-        when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)) {
+        when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 // We can proceed
             }
@@ -292,7 +292,6 @@ class ActivitySecurity : AppCompatActivity() {
 
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
-                isBiometricDialogShowing = false
             }
         }
 
@@ -318,7 +317,7 @@ class ActivitySecurity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        SecurityManager.setLockActivityVisible(false)
+        if (mode == MODE_UNLOCK) SecurityManager.setLockActivityVisible(false)
         isBiometricDialogShowing = false
         biometricPrompt = null
     }

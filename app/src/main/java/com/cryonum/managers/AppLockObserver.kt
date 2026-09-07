@@ -36,7 +36,7 @@ class AppLockObserver(context: Context) : DefaultLifecycleObserver {
     override fun onStop(owner: LifecycleOwner) {
         scope.launch {
             try {
-                SecurityManager.setLastBackgroundTime(appContext, System.currentTimeMillis())
+                SecurityManager.setLastBackgroundTime(appContext, android.os.SystemClock.elapsedRealtime())
             } catch (_: Exception) {
             }
         }

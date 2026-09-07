@@ -9,8 +9,9 @@ import kotlinx.coroutines.launch
 
 object SecurityUtils {
     fun checkLock(activity: AppCompatActivity) {
-        if (activity is ActivitySecurity) return // Don't lock the lock screen itself
+        if (activity is ActivitySecurity && activity.intent.getIntExtra("MODE", ActivitySecurity.MODE_SETTINGS) == ActivitySecurity.MODE_UNLOCK) return
         
+        activity.window.decorView.visibility = android.view.View.INVISIBLE
         activity.lifecycleScope.launch {
             if (SecurityManager.shouldLock(activity)) {
                 if (SecurityManager.checkAndMarkLocking()) {
@@ -20,6 +21,8 @@ object SecurityUtils {
                     }
                     activity.startActivity(intent)
                 }
+            } else {
+                activity.window.decorView.visibility = android.view.View.VISIBLE
             }
         }
     }

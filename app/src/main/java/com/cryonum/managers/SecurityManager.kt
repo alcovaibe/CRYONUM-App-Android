@@ -1,6 +1,13 @@
 package com.cryonum.managers
 
 import android.content.Context
+import android.os.SystemClock
+import android.provider.Settings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.CancellationException
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
@@ -29,6 +36,9 @@ data class SecuritySettings(
 )
 
 object SecurityManager {
+    private val pinMutex = Mutex()
+    private val LOCKOUT_BOOT = intPreferencesKey("lockout_boot")
+    private val LOCKOUT_ELAPSED = longPreferencesKey("lockout_elapsed")
     private const val KEYSTORE_ALIAS = "security_pref_key"
     
     private val PIN_HASH_KEY = stringPreferencesKey("pin_hash")
@@ -71,7 +81,7 @@ object SecurityManager {
         return android.util.Base64.encodeToString(combined, android.util.Base64.NO_WRAP)
     }
 
-    private fun decryptBoolean(encryptedData: String?): Boolean {
+    private fun decryptBoolean(encryptedData: String?, failureValue: Boolean = false): Boolean {
         if (encryptedData == null) return false
         return try {
             val data = android.util.Base64.decode(encryptedData, android.util.Base64.NO_WRAP)
@@ -80,9 +90,9 @@ object SecurityManager {
             val cipher = Cipher.getInstance("AES/GCM/NoPadding")
             cipher.init(Cipher.DECRYPT_MODE, getOrCreateKey(), GCMParameterSpec(128, iv))
             val decrypted = cipher.doFinal(data, 12, data.size - 12)
-            String(decrypted, StandardCharsets.UTF_8).toBoolean()
+            String(decrypted, StandardCharsets.UTF_8).toBooleanStrict()
         } catch (_: Exception) {
-            false
+            failureValue
         }
     }
 
@@ -147,7 +157,12 @@ object SecurityManager {
     }
 
     suspend fun isAppLockEnabled(context: Context): Boolean {
-        return context.dataStore.data.map { decryptBoolean(it[IS_APP_LOCK_ENABLED]) }.first()
+        return try {
+            context.dataStore.data.map { prefs ->
+                if (prefs[IS_APP_LOCK_ENABLED] == null && prefs[PIN_HASH_KEY] != null) true
+                else decryptBoolean(prefs[IS_APP_LOCK_ENABLED], failureValue = true)
+            }.first()
+        } catch (e: CancellationException) { throw e } catch (_: Exception) { true }
     }
 
     suspend fun setAppLockEnabled(context: Context, enabled: Boolean) {
@@ -160,7 +175,7 @@ object SecurityManager {
     }
 
     suspend fun isBiometricEnabled(context: Context): Boolean {
-        return context.dataStore.data.map { decryptBoolean(it[IS_BIOMETRIC_ENABLED]) }.first()
+        return try { context.dataStore.data.map { decryptBoolean(it[IS_BIOMETRIC_ENABLED]) }.first() } catch (e: CancellationException) { throw e } catch (_: Exception) { false }
     }
 
     suspend fun setBiometricEnabled(context: Context, enabled: Boolean) {
@@ -170,7 +185,8 @@ object SecurityManager {
 
     suspend fun savePin(context: Context, pin: String) {
         val salt = ByteArray(16).apply { SecureRandom().nextBytes(this) }
-        val hash = pbkdf2(pin, salt)
+        require(pin.matches(Regex("[0-9]{4}")))
+        val hash = withContext(Dispatchers.Default) { pbkdf2(pin, salt) }
         val saltString = bytesToHex(salt)
         val hashString = bytesToHex(hash)
         
@@ -182,16 +198,18 @@ object SecurityManager {
         }
     }
 
-    suspend fun verifyPin(context: Context, pin: String): Boolean {
+    suspend fun verifyPin(context: Context, pin: String): Boolean = pinMutex.withLock {
+        if (!pin.matches(Regex("[0-9]{4}"))) return@withLock false
         // S-04: Enforce lockout in the domain method
-        if (getRemainingLockoutTime(context) > 0) return false
+        if (getRemainingLockoutTime(context) > 0) return@withLock false
         
         val prefs = context.dataStore.data.first()
-        val savedHash = prefs[PIN_HASH_KEY] ?: return false
-        val savedSalt = prefs[PIN_SALT_KEY] ?: return false
+        val savedHash = prefs[PIN_HASH_KEY] ?: return@withLock false
+        val savedSalt = prefs[PIN_SALT_KEY] ?: return@withLock false
         
+        if (!savedSalt.matches(Regex("[0-9a-f]{32}")) || !savedHash.matches(Regex("[0-9a-f]{64}"))) return@withLock false
         val salt = hexToBytes(savedSalt)
-        val currentHash = pbkdf2(pin, salt)
+        val currentHash = withContext(Dispatchers.Default) { pbkdf2(pin, salt) }
         val currentHashString = bytesToHex(currentHash)
         
         // C-02: Use MessageDigest.isEqual for constant-time comparison (prevention of timing attacks)
@@ -201,6 +219,7 @@ object SecurityManager {
             context.dataStore.edit { 
                 it[FAILED_ATTEMPTS] = 0 
                 it[LOCKOUT_UNTIL] = 0L
+                it[LOCKOUT_ELAPSED] = 0L
             }
         } else {
             val attempts = (prefs[FAILED_ATTEMPTS] ?: 0) + 1
@@ -208,16 +227,31 @@ object SecurityManager {
                 it[FAILED_ATTEMPTS] = attempts 
                 if (attempts >= MAX_ATTEMPTS) {
                     it[LOCKOUT_UNTIL] = System.currentTimeMillis() + LOCKOUT_DURATION_MS
+                    it[LOCKOUT_ELAPSED] = SystemClock.elapsedRealtime() + LOCKOUT_DURATION_MS
+                    it[LOCKOUT_BOOT] = bootCount(context)
                 }
             }
         }
-        return isCorrect
+        isCorrect
     }
 
+    private fun bootCount(context: Context): Int = Settings.Global.getInt(context.contentResolver, Settings.Global.BOOT_COUNT, -1)
+
     suspend fun getRemainingLockoutTime(context: Context): Long {
-        val lockoutUntil = context.dataStore.data.map { it[LOCKOUT_UNTIL] ?: 0L }.first()
-        val remaining = lockoutUntil - System.currentTimeMillis()
-        return if (remaining > 0) remaining else 0L
+        var remaining = 0L
+        context.dataStore.edit { prefs ->
+            if ((prefs[FAILED_ATTEMPTS] ?: 0) >= MAX_ATTEMPTS) {
+                val now = SystemClock.elapsedRealtime()
+                val boot = bootCount(context)
+                if (prefs[LOCKOUT_BOOT] != boot || prefs[LOCKOUT_ELAPSED] == null) {
+                    prefs[LOCKOUT_BOOT] = boot
+                    prefs[LOCKOUT_ELAPSED] = now + LOCKOUT_DURATION_MS
+                }
+                remaining = ((prefs[LOCKOUT_ELAPSED] ?: 0L) - now).coerceIn(0L, LOCKOUT_DURATION_MS)
+                if (remaining == 0L) { prefs[FAILED_ATTEMPTS] = 0; prefs[LOCKOUT_ELAPSED] = 0L }
+            }
+        }
+        return remaining
     }
 
     suspend fun setLastBackgroundTime(context: Context, time: Long) {
@@ -237,7 +271,7 @@ object SecurityManager {
 
             if (lastTime == 0L) return false // Active session, never backgrounded in this process run yet
 
-            val diff = System.currentTimeMillis() - lastTime
+            val diff = SystemClock.elapsedRealtime() - lastTime
             if (diff > LOCK_TIMEOUT_MS) {
                 // Background timeout reached, invalidate session
                 isUnlockedSession.set(false)

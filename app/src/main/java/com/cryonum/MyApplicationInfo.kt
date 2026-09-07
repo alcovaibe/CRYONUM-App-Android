@@ -11,6 +11,8 @@ import com.cryonum.managers.LocaleManager
 import com.cryonum.managers.SecurityManager
 import com.cryonum.managers.ThemeManager
 import com.cryonum.content.ContentDependencies
+import com.cryonum.utils.SecurityUtils
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -32,12 +34,16 @@ class MyApplicationInfo : Application() {
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 applySecureFlag(activity)
+                if (activity is AppCompatActivity) SecurityUtils.checkLock(activity)
             }
 
-            override fun onActivityStarted(activity: Activity) {}
+            override fun onActivityStarted(activity: Activity) {
+                AnalyticsManager.logEvent(activity.javaClass.simpleName, "opened")
+            }
 
             override fun onActivityResumed(activity: Activity) {
                 applySecureFlag(activity)
+                if (activity is AppCompatActivity) SecurityUtils.checkLock(activity)
             }
 
             override fun onActivityPaused(activity: Activity) {}
@@ -52,12 +58,7 @@ class MyApplicationInfo : Application() {
                 applicationScope.launch {
                     if (SecurityManager.isAppLockEnabled(activity.applicationContext)) {
                         activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-                    } else {
-                        // Normally we don't remove it if it was set by activity itself, 
-                        // but here we want global control.
-                        if (activity !is ActivitySecurity) {
-                            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-                        }
+
                     }
                 }
             }
