@@ -4,332 +4,133 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.ComposeView
-import com.cryonum.BuildConfig
 import com.cryonum.R
-import com.cryonum.managers.HistoryManager
-import com.cryonum.managers.PolicyManager
-import com.cryonum.managers.SystemUiManager
-import com.cryonum.managers.ThemeManager
-import com.cryonum.ui.activity.CalculatorScreenBridge
+import com.cryonum.calculator.CalcValue
+import com.cryonum.calculator.CalculatorEngine
+import com.cryonum.calculator.CalculatorViewModel
+import com.cryonum.items.HistoryItem
+import com.cryonum.managers.*
+import com.cryonum.ui.activity.CalculatorScreen
+import com.cryonum.ui.theme.CryonumTheme
 import com.cryonum.utils.SecurityUtils
-import org.mariuszgromada.math.mxparser.Constant
-import org.mariuszgromada.math.mxparser.Expression
-import org.mariuszgromada.math.mxparser.License
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.*
-import java.util.regex.Pattern
 
 class ActivityCalculator : AppCompatActivity() {
-
-    companion object {
-        private const val PREFS_NAME = "calc_prefs_v1"
-        private const val KEY_INPUT = "key_input"
-        private const val KEY_RESULT = "key_result"
-        private const val KEY_MEM = "key_mem"
-        private const val KEY_INV = "key_inv"
-        private const val KEY_RAD = "key_rad"
+    private val state: CalculatorViewModel by viewModels()
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleManager.applyLocale(newBase, LocaleManager.getSavedLanguage(newBase)))
     }
-
-    // State
-    private val inputState = mutableStateOf("")
-    private val resultState = mutableStateOf("")
-    private val isInvertedState = mutableStateOf(false)
-    private val isRadiansState = mutableStateOf(true)
-    private var memoryValue = 0.0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
         super.onCreate(savedInstanceState)
-        
         SecurityUtils.checkLock(this)
-
-        // confirm non-commercial use of mXparser
-        License.iConfirmNonCommercialUse("CRYONUM")
-
-        val composeView = ComposeView(this)
-        setContentView(composeView)
-        SystemUiManager.applyEdgeToEdge(this)
-
         restoreState()
-
-        updateUi(composeView)
-
-        intent.getStringExtra("expression")?.let { inputState.value = it }
-        intent.getStringExtra("result")?.let { resultState.value = it }
+        val view = ComposeView(this)
+        setContentView(view)
+        SystemUiManager.applyEdgeToEdge(this)
+        view.setContent {
+            CryonumTheme {
+                CalculatorScreen(
+                    input = state.input,
+                    result = if (state.busy) getString(R.string.calc_working) else state.result,
+                    isInverted = state.inverted,
+                    isRadians = state.radians,
+                    onBackClick = { finish() },
+                    onToggleOrientation = {
+                        requestedOrientation = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    },
+                    onKeyClick = ::key,
+                    onLaunchPolicyViewer = { PolicyManager.launchPolicyViewer(this, isFirstLaunchMode = it) },
+                    onExitApp = { finishAffinity() },
+                    complexMode = state.complex,
+                    fractionMode = state.fractions
+                )
+            }
+        }
     }
-
-    private fun updateUi(composeView: ComposeView) {
-        CalculatorScreenBridge.setCalculatorContent(
-            composeView = composeView,
-            input = inputState.value,
-            result = resultState.value,
-            isInverted = isInvertedState.value,
-            isRadians = isRadiansState.value,
-            onBackClick = { finish() },
-            onToggleOrientation = { toggleOrientation() },
-            onKeyClick = { key -> handleKeyClick(key, composeView) },
-            onLaunchPolicyViewer = { isFirst ->
-                PolicyManager.launchPolicyViewer(this, isFirstLaunchMode = isFirst)
-            },
-            onExitApp = { finishAffinity() }
-        )
-    }
-
-    private fun handleKeyClick(key: String, composeView: ComposeView) {
+    private fun key(key: String) {
         when (key) {
-            "C", getString(R.string.Clean) -> {
-                inputState.value = ""
-                resultState.value = ""
-            }
-            "inv" -> {
-                isInvertedState.value = !isInvertedState.value
-            }
-            "deg_rad" -> {
-                isRadiansState.value = !isRadiansState.value
-            }
-            "=" -> {
-                evaluateResult()
-            }
-            "MC" -> {
-                memoryValue = 0.0
-                Toast.makeText(this, "Memory cleared", Toast.LENGTH_SHORT).show()
-            }
-            "M+" -> {
-                memoryValue += tryParseDisplayToDouble(resultState.value, inputState.value)
-                Toast.makeText(this, "M+ (added)", Toast.LENGTH_SHORT).show()
-            }
-            "M-" -> {
-                memoryValue -= tryParseDisplayToDouble(resultState.value, inputState.value)
-                Toast.makeText(this, "M- (subtracted)", Toast.LENGTH_SHORT).show()
-            }
-            "MR" -> {
-                val memStr = CalculatorEngine.formatDoubleForDisplay(memoryValue)
-                inputState.value += memStr
-            }
-            "menu" -> {
-                Toast.makeText(this, "Menu pressed", Toast.LENGTH_SHORT).show()
-            }
-            "ⁿ√" -> inputState.value += "root("
-            getString(R.string.symbol_power2) -> inputState.value += "^2"
-            getString(R.string.symbol_percent) -> inputState.value += "%"
-            getString(R.string.module) -> inputState.value += "|"
+            "C", getString(R.string.Clean) -> { state.cancel(); state.input = ""; state.result = ""; state.completed = false }
+            "cancel" -> state.cancel()
             else -> {
-                val toInsert = when(key) {
-                    "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot", "ln", "log" -> "$key("
-                    else -> key
+                if (state.busy) return
+                when (key) {
+                    "inv" -> state.inverted = !state.inverted
+                    "deg_rad" -> { state.radians = !state.radians; state.completed = false }
+                    "complex" -> { state.complex = !state.complex; state.completed = false }
+                    "fraction" -> { state.fractions = !state.fractions; if (state.completed) state.result = state.ans.display(state.fractions) }
+                    "=" -> if (!state.completed) calculate()
+                    "MC" -> state.memory = CalcValue.ZERO
+                    "M+", "M-" -> calculate(if (key == "M+") 1 else -1)
+                    "MR" -> insert("(${state.memory.canonical()})")
+                    "⌫" -> { state.input = state.input.dropLast(1); state.result = ""; state.completed = false }
+                    else -> insert(when (key) {
+                        "ⁿ√" -> "root("
+                        getString(R.string.symbol_power2) -> "^2"
+                        getString(R.string.module) -> "abs("
+                        "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot", "ln", "log", "sqrt" -> "$key("
+                        else -> key
+                    })
                 }
-                inputState.value += toInsert
             }
         }
-        saveState()
-        updateUi(composeView)
     }
-
-    private fun evaluateResult() {
-        val raw = inputState.value
-        if (raw.trim().isEmpty()) {
-            resultState.value = ""
-            return
-        }
-        try {
-            val res = CalculatorEngine.evaluate(raw, isRadiansState.value)
-            inputState.value = res
-            resultState.value = ""
-            
-            HistoryManager.addHistoryEntry(
-                this@ActivityCalculator,
-                com.cryonum.items.HistoryItem(raw, res)
-            )
-
-            saveState()
-        } catch (e: Exception) {
-            resultState.value = "Ошибка"
-        }
+    private fun insert(token: String) {
+        val prefix = if (state.completed) {
+            if (token.firstOrNull() in listOf('+', '-', '*', '/', ':', '×', '^', '%', '!')) "Ans" else ""
+        } else state.input
+        if (prefix.length + token.length > CalculatorEngine.MAX_INPUT) { state.result = getString(R.string.calc_limit); return }
+        state.input = prefix + token; state.result = ""; state.completed = false
     }
-
+    private fun calculate(memorySign: Int = 0) {
+        // Application context only: the ViewModel may outlive this Activity on rotation.
+        val app = applicationContext
+        val radians = state.radians
+        val complex = state.complex
+        state.calculate(memorySign, onSuccess = { expression, result, previousAns ->
+            HistoryManager.addHistoryEntry(app, HistoryItem(expression, result).copy(radians = radians, complex = complex, previousAns = previousAns))
+        }, onError = { reason -> app.getString(when (reason) {
+            "division_zero" -> R.string.calc_division_zero
+            "complex_disabled" -> R.string.calc_complex_disabled
+            "input_limit", "depth_limit", "number_limit", "time_limit" -> R.string.calc_limit
+            "domain", "domain_or_overflow", "overflow", "underflow", "integer_required" -> R.string.calc_domain
+            else -> R.string.calc_syntax
+        }) })
+    }
     override fun onResume() {
-        super.onResume()
-        SecurityUtils.checkLock(this)
-        checkPolicy()
-    }
-
-    private fun checkPolicy() {
+        super.onResume(); SecurityUtils.checkLock(this)
         if (!PolicyManager.isPolicyAccepted(this)) {
-            val currentVersion = PolicyManager.getAcceptedVersion(this)
-            if (currentVersion == 0) {
-                PolicyManager.requestFirstLaunchDialog()
-            } else {
-                PolicyManager.requestAcceptDialog()
-            }
+            if (PolicyManager.getAcceptedVersion(this) == 0) PolicyManager.requestFirstLaunchDialog() else PolicyManager.requestAcceptDialog()
         }
     }
-
-    override fun onPause() {
-        super.onPause()
-        saveState()
-    }
-
-    private fun toggleOrientation() {
-        requestedOrientation = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        }
-        
-        window.decorView.postDelayed({
-            if (!isFinishing) {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-            }
-        }, 400)
-    }
-
-    private fun tryParseDisplayToDouble(resultText: String, inputText: String): Double {
-        var s = if (resultText.isBlank()) inputText else resultText
-        s = s.replace(',', '.')
-        return s.toDoubleOrNull() ?: 0.0
-    }
-
+    override fun onPause() { super.onPause(); saveState() }
     private fun saveState() {
-        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        prefs.edit().apply {
-            putString(KEY_INPUT, inputState.value)
-            putString(KEY_RESULT, resultState.value)
-            putString(KEY_MEM, memoryValue.toString())
-            putBoolean(KEY_INV, isInvertedState.value)
-            putBoolean(KEY_RAD, isRadiansState.value)
-            apply()
-        }
+        getSharedPreferences("calc_prefs_v2", MODE_PRIVATE).edit()
+            .putString("input", state.input).putString("result", state.result)
+            .putString("ans", state.ans.canonical()).putString("memory", state.memory.canonical())
+            .putBoolean("radians", state.radians).putBoolean("inverted", state.inverted)
+            .putBoolean("complex", state.complex).putBoolean("fractions", state.fractions)
+            .putBoolean("completed", state.completed).apply()
     }
-
     private fun restoreState() {
-        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        inputState.value = prefs.getString(KEY_INPUT, "") ?: ""
-        resultState.value = prefs.getString(KEY_RESULT, "") ?: ""
-        memoryValue = prefs.getString(KEY_MEM, "0.0")?.toDoubleOrNull() ?: 0.0
-        isInvertedState.value = prefs.getBoolean(KEY_INV, false)
-        isRadiansState.value = prefs.getBoolean(KEY_RAD, true)
-    }
-
-    private fun formatDoubleForDisplay(value: Double): String {
-        return CalculatorEngine.formatDoubleForDisplay(value)
-    }
-
-    object CalculatorEngine {
-        private var cachedLocale: Locale? = null
-        private var _df: DecimalFormat? = null
-
-        private fun getDf(): DecimalFormat {
-            val currentLocale = Locale.getDefault()
-            if (_df == null || cachedLocale != currentLocale) {
-                cachedLocale = currentLocale
-                val symbols = DecimalFormatSymbols(currentLocale).apply {
-                    decimalSeparator = ','
-                }
-                _df = DecimalFormat("#.############", symbols).apply {
-                    maximumFractionDigits = 12
-                    isGroupingUsed = false
-                }
-            }
-            return _df!!
-        }
-
-        init {
-            try {
-                Constant("pi", Math.PI)
-                Constant("e", Math.E)
-            } catch (ignored: Throwable) {
-            }
-        }
-
-        @JvmStatic
-        fun evaluate(rawExpression: String, radians: Boolean): String {
-            if (BuildConfig.DEBUG) Log.d("CalcDebug", "Raw input: '$rawExpression'")
-            val normalized = normalizeExpression(rawExpression)
-            if (BuildConfig.DEBUG) Log.d("CalcDebug", "Normalized: '$normalized'")
-            if (normalized.isBlank()) {
-                throw IllegalArgumentException("Пустое выражение")
-            }
-            val exprForParser = if (radians) normalized else convertTrigToDegrees(normalized)
-            if (BuildConfig.DEBUG) Log.d("CalcDebug", "Expr for parser: '$exprForParser'")
-
-            val expr = Expression(exprForParser)
-            val result = try {
-                expr.calculate()
-            } catch (ex: Exception) {
-                if (BuildConfig.DEBUG) Log.e("CalcDebug", "Exception during calculate(): ${ex.message}", ex)
-                Double.NaN
-            }
-            if (BuildConfig.DEBUG) Log.d("CalcDebug", "Raw result (double): $result")
-            if (result.isNaN() || result.isInfinite()) {
-                throw IllegalArgumentException("Не удалось посчитать выражение")
-            }
-            return formatResult(result)
-        }
-
-        private fun normalizeExpression(input: String?): String {
-            if (input == null) return ""
-            var s = input.trim()
-            s = s.replace('\u00A0', ' ')
-            s = s.replace("\u200B", "")
-
-            s = s.replace('−', '-')
-            s = s.replace("×", "*")
-            s = s.replace("÷", "/")
-            s = s.replace(":", "/")
-            s = s.replace("·", "*")
-
-            s = s.replace(',', '.')
-            s = s.replace("π", "pi")
-
-            val percentPattern = Pattern.compile("([0-9]+(?:\\.[0-9]+)?)%")
-            val m = percentPattern.matcher(s)
-            val sb = StringBuffer()
-            while (m.find()) {
-                val num = m.group(1)
-                m.appendReplacement(sb, "($num/100)")
-            }
-            m.appendTail(sb)
-            s = sb.toString()
-
-            s = s.replace("√", "sqrt")
-            s = s.replace(Regex("[^0-9a-zA-Z.+\\-*/^()%!_,]"), "")
-
-            return s
-        }
-
-        private fun convertTrigToDegrees(expr: String): String {
-            var s = expr
-            s = s.replace(Regex("(?i)sin\\("), "sin_rad(")
-            s = s.replace(Regex("(?i)cos\\("), "cos_rad(")
-            s = s.replace(Regex("(?i)tan\\("), "tan_rad(")
-
-            s = s.replace(Regex("(?i)asin\\("), "asin_deg(")
-            s = s.replace(Regex("(?i)acos\\("), "acos_deg(")
-            s = s.replace(Regex("(?i)atan\\("), "atan_deg(")
-
-            val defs = "sin_rad(x)=sin(x*pi/180);" +
-                    "cos_rad(x)=cos(x*pi/180);" +
-                    "tan_rad(x)=tan(x*pi/180);" +
-                    "asin_deg(x)=asin(x)*180/pi;" +
-                    "acos_deg(x)=acos(x)*180/pi;" +
-                    "atan_deg(x)=atan(x)*180/pi;"
-
-            return defs + s
-        }
-
-        private fun formatResult(value: Double): String {
-            return getDf().format(value).replace('.', ',')
-        }
-
-        fun formatDoubleForDisplay(value: Double): String {
-            return getDf().format(value).replace('.', ',')
-        }
+        if (state.restored) return
+        state.restored = true
+        val prefs = getSharedPreferences("calc_prefs_v2", MODE_PRIVATE)
+        val legacy = getSharedPreferences("calc_prefs_v1", MODE_PRIVATE)
+        state.input = prefs.getString("input", legacy.getString("key_input", "")).orEmpty().take(CalculatorEngine.MAX_INPUT)
+        state.result = prefs.getString("result", "").orEmpty()
+        state.radians = prefs.getBoolean("radians", true); state.inverted = prefs.getBoolean("inverted", false)
+        state.complex = prefs.getBoolean("complex", false); state.fractions = prefs.getBoolean("fractions", true)
+        var invalidSavedValue = false
+        fun value(key: String) = runCatching { CalculatorEngine.evaluate(prefs.getString(key, "0").orEmpty(), complex = true) }.getOrElse { invalidSavedValue = true; CalcValue.ZERO }
+        state.ans = value("ans"); state.memory = if (prefs.contains("memory")) value("memory") else runCatching { CalculatorEngine.evaluate("approx(${legacy.getString("key_mem", "0.0")})") }.getOrDefault(CalcValue.ZERO); state.completed = prefs.getBoolean("completed", false)
+        if (invalidSavedValue) { state.input = ""; state.result = getString(R.string.calc_syntax); state.completed = false }
+        intent.getStringExtra("expression")?.let { state.input = it.take(CalculatorEngine.MAX_INPUT); state.completed = false; state.result = ""
+            state.radians = intent.getBooleanExtra("radians", true)
+            state.complex = intent.getBooleanExtra("complex", false)
+            state.ans = runCatching { CalculatorEngine.evaluate(intent.getStringExtra("previousAns") ?: "0", complex = true) }.getOrDefault(CalcValue.ZERO) }
     }
 }

@@ -10,6 +10,9 @@ data class HistoryItem(
     @SerializedName("parity") val parity: String? = "",
     @SerializedName("expression") val expression: String? = null,
     @SerializedName("result") val result: String? = null,
+    @SerializedName("previousAns") val previousAns: String? = null,
+    @SerializedName("radians") val radians: Boolean? = null,
+    @SerializedName("complex") val complex: Boolean? = null,
     @SerializedName("lastAccessed") val lastAccessed: Long = System.currentTimeMillis()
 ) {
     enum class HistoryType {

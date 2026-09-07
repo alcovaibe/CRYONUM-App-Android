@@ -161,6 +161,10 @@ fun SubstitutionsScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
+                TextButton(onClick = {
+                    if (isFirstSelected) onUpperChange(upperLine + " ") else onLowerChange(lowerLine + " ")
+                }) { Text(";") }
+
                 Keyboard(
                     onNumberClick = { digit ->
                         if (isFirstSelected) onUpperChange(upperLine + digit)
@@ -291,8 +295,8 @@ object SubstitutionsScreenBridge {
                 SubstitutionsScreen(
                     upperLine = upperLineState.value,
                     lowerLine = lowerLineState.value,
-                    onUpperChange = { upperLineState.value = InputFilter.filterOnlyDigits(it) },
-                    onLowerChange = { lowerLineState.value = InputFilter.filterOnlyDigits(it) },
+                    onUpperChange = { upperLineState.value = it.take(4096) },
+                    onLowerChange = { lowerLineState.value = it.take(4096) },
                     onMenuAction = onMenuAction,
                     onConfirmClick = onConfirmClick,
                     onInputBoxClick = onInputBoxClick,

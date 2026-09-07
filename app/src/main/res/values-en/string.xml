@@ -159,7 +159,7 @@
     <string name="memory_recall">MR</string>
     <string name="input_display_description">Input display description</string>
     <string name="input_display_label">Expression input field</string>
-    <string name="analytics_info">Allow collecting anonymous data about your device and app usage to improve performance and stability.</string>
+    <string name="analytics_info">This switch controls sending usage analytics. Local diagnostics remain enabled. Firebase Crashlytics sends crash reports independently of this switch.</string>
     <string name="analytics_collection"> Analytics collection </string>
     <string name="to_home">Home</string>
     <string name="calculator_title">Calculator</string>
@@ -266,4 +266,11 @@
     <string name="content_storage_note">Files are stored inside the app. Clearing cache does not remove them, but clearing app data or uninstalling the app does.</string>
     <string name="content_notification_channel">Content downloads</string>
     <string name="content_notification_title">CRYONUM is downloading content</string>
+
+    <string name="calc_working">Calculating…</string>
+    <string name="calc_division_zero">Division by zero</string>
+    <string name="calc_complex_disabled">Enable ℂ for this expression</string>
+    <string name="calc_limit">Calculation limit exceeded</string>
+    <string name="calc_domain">Outside the domain or numerical range</string>
+    <string name="calc_syntax">Check the expression, parentheses and arguments</string>
 </resources>

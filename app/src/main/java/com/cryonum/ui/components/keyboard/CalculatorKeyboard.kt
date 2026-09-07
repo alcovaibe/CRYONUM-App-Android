@@ -9,6 +9,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,17 +30,17 @@ fun CalculatorPortraitKeyboard(
 
     // Keyboard keys (exact same list from CalculatorScreen)
     val keys = listOf(
-        stringResource(R.string.Clean), stringResource(R.string.symbol_percent), stringResource(R.string.symbol_power2),
-        "9", "8", "7",
-        "6", "5", "4",
-        "3", "2", "1",
-        "(", "0", ")",
-        "+", "-", ":",
-        stringResource(R.string.symbol_multiplication), stringResource(R.string.module), "="
+        stringResource(R.string.Clean), "⌫", "%", ":",
+        "7", "8", "9", "×",
+        "4", "5", "6", "-",
+        "1", "2", "3", "+",
+        "(", "0", ".", ")",
+        stringResource(R.string.module), "sqrt", stringResource(R.string.symbol_power2), "=",
+        "i", "^", ";", "Ans"
     )
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Fixed(4),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.fillMaxWidth()
@@ -66,7 +68,8 @@ fun CalculatorLandscapeKeyboard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         // Row 1: 0-9
@@ -102,9 +105,15 @@ fun CalculatorLandscapeKeyboard(
             }
         }
 
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            listOf("i", ";", "^", "sqrt").forEach { key ->
+                CalcButton(text = key, onClick = { onKeyClick(key) }, modifier = Modifier.weight(1f))
+            }
+        }
+
         // Row 4: Menu, inv, deg/rad, MC, M+, M-, MR, C, =
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-            CalcButton(text = "⋮", onClick = { onKeyClick("menu") }, modifier = Modifier.weight(1f))
+            CalcButton(text = "⌫", onClick = { onKeyClick("⌫") }, modifier = Modifier.weight(1f))
             CalcButton(
                 text = stringResource(R.string.btn_inv),
                 onClick = { onKeyClick("inv") },
@@ -139,7 +148,7 @@ private fun CalcButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.height(48.dp),
+        modifier = modifier.heightIn(min = 48.dp),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,

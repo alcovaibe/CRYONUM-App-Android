@@ -1,0 +1,4 @@
+# Preserve upstream licenses and raw diagnostic evidence verbatim.
+docs/third-party/** -whitespace
+docs/audit/logs/** -whitespace
+docs/audit/reports/** -whitespace

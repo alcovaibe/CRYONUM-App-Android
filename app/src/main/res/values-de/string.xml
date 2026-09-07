@@ -160,7 +160,7 @@
     <string name="memory_recall">MR</string>
     <string name="input_display_description">Beschreibung der Eingabeanzeige</string>
     <string name="input_display_label">Ausdruckseingabefeld</string>
-    <string name="analytics_info">Erlauben Sie die Erfassung anonymer Daten über Ihr Gerät und die Nutzung der App, um Leistung und Stabilität zu verbessern.</string>
+    <string name="analytics_info">Dieser Schalter steuert die Übermittlung von Nutzungsanalysen. Lokale Diagnosen bleiben aktiv. Firebase Crashlytics sendet Absturzberichte unabhängig davon.</string>
     <string name="analytics_collection"> Sammlung von Analysedaten </string>
     <string name="to_home">Startseite</string>
     <string name="calculator_title">Taschenrechner</string>
@@ -268,4 +268,11 @@
     <string name="content_storage_note">Dateien werden in der App gespeichert. Beim Leeren des Caches bleiben sie erhalten; beim Löschen der App-Daten oder der App werden sie entfernt.</string>
     <string name="content_notification_channel">Material-Downloads</string>
     <string name="content_notification_title">CRYONUM lädt Materialien herunter</string>
+
+    <string name="calc_working">Berechnung…</string>
+    <string name="calc_division_zero">Division durch null</string>
+    <string name="calc_complex_disabled">Für diesen Ausdruck ℂ aktivieren</string>
+    <string name="calc_limit">Berechnungsgrenze überschritten</string>
+    <string name="calc_domain">Außerhalb des Definitions- oder Zahlenbereichs</string>
+    <string name="calc_syntax">Ausdruck, Klammern und Argumente prüfen</string>
 </resources>

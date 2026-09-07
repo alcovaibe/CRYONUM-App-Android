@@ -43,7 +43,7 @@ class ActivityResult : AppCompatActivity() {
         val firstLine = intent?.getStringExtra("firstLine") ?: ""
         val secondLine = intent?.getStringExtra("secondLine") ?: ""
 
-        HistoryManager.addHistoryEntry(
+        if (savedInstanceState == null) HistoryManager.addHistoryEntry(
             this,
             HistoryItem(firstLine, secondLine, inversions, parity)
         )

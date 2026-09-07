@@ -159,7 +159,7 @@
     <string name="memory_recall">MR</string>
     <string name="input_display_description">Описание отображения ввода</string>
     <string name="input_display_label">Поле ввода выражения</string>
-    <string name="analytics_info">Разрешить собирать  анонимные данные о вашем устройстве и действиях в приложении для улучшения работы и стабильности.</string>
+    <string name="analytics_info">Переключатель управляет отправкой пользовательской аналитики. Локальная диагностика сохраняется независимо от него. Отчёты о сбоях отправляются через Firebase Crashlytics независимо от переключателя.</string>
     <string name="analytics_collection"> Сбор аналитики </string>
     <string name="to_home">Главная</string>
     <string name="calculator_title">Калькулятор</string>
@@ -271,4 +271,11 @@
     <string name="content_storage_note">Файлы сохраняются внутри приложения. Они останутся после очистки кэша, но будут удалены при очистке данных или удалении приложения.</string>
     <string name="content_notification_channel">Загрузки материалов</string>
     <string name="content_notification_title">CRYONUM загружает материалы</string>
+
+    <string name="calc_working">Вычисление…</string>
+    <string name="calc_division_zero">Деление на ноль</string>
+    <string name="calc_complex_disabled">Для этого выражения включите ℂ</string>
+    <string name="calc_limit">Превышен предел вычисления</string>
+    <string name="calc_domain">Значение вне области определения или числового диапазона</string>
+    <string name="calc_syntax">Проверьте выражение, скобки и аргументы</string>
 </resources>

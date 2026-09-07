@@ -111,6 +111,9 @@ class ActivityHistory : AppCompatActivity() {
             val intent = Intent(this, ActivityCalculator::class.java).apply {
                 putExtra("expression", item.expression)
                 putExtra("result", item.result)
+                putExtra("previousAns", item.previousAns)
+                putExtra("radians", item.radians ?: true)
+                putExtra("complex", item.complex ?: false)
             }
             startActivity(intent)
         }
@@ -128,7 +131,7 @@ class ActivityHistory : AppCompatActivity() {
         val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 imagePicker?.handleCameraResult()
-            }
+            } else imagePicker?.cancelCamera()
         }
 
         val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

@@ -159,7 +159,7 @@
     <string name="memory_recall">MR</string>
     <string name="input_display_description">Description de l\'affichage de saisie</string>
     <string name="input_display_label">Champ de saisie de l\'expression</string>
-    <string name="analytics_info">Autoriser la collecte de données anonymes sur votre appareil et vos actions dans l\'application pour améliorer le fonctionnement et la stabilité.</string>
+    <string name="analytics_info">Ce bouton contrôle l’envoi des statistiques d’utilisation. Les diagnostics locaux restent actifs. Firebase Crashlytics envoie les rapports de plantage indépendamment de ce réglage.</string>
     <string name="analytics_collection">Collecte d\'analytique</string>
     <string name="to_home">Accueil</string>
     <string name="calculator_title">Calculatrice</string>
@@ -269,4 +269,11 @@
     <string name="content_storage_note">Les fichiers sont stockés dans l’application. Vider le cache ne les supprime pas, mais effacer les données ou désinstaller l’application les supprime.</string>
     <string name="content_notification_channel">Téléchargements de contenu</string>
     <string name="content_notification_title">CRYONUM télécharge du contenu</string>
+
+    <string name="calc_working">Calcul…</string>
+    <string name="calc_division_zero">Division par zéro</string>
+    <string name="calc_complex_disabled">Activez ℂ pour cette expression</string>
+    <string name="calc_limit">Limite de calcul dépassée</string>
+    <string name="calc_domain">Hors du domaine ou de la plage numérique</string>
+    <string name="calc_syntax">Vérifiez la formule, les parenthèses et les arguments</string>
 </resources>

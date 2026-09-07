@@ -50,7 +50,9 @@ fun CalculatorScreen(
     onToggleOrientation: () -> Unit,
     onKeyClick: (String) -> Unit,
     onLaunchPolicyViewer: (Boolean) -> Unit = {},
-    onExitApp: () -> Unit = {}
+    onExitApp: () -> Unit = {},
+    complexMode: Boolean = false,
+    fractionMode: Boolean = true
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -89,9 +91,15 @@ fun CalculatorScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
+        Column(Modifier.padding(padding)) {
+            androidx.compose.foundation.layout.Row {
+                androidx.compose.material3.TextButton(onClick = { onKeyClick("complex") }) { Text(if (complexMode) "ℂ" else "ℝ") }
+                androidx.compose.material3.TextButton(onClick = { onKeyClick("fraction") }) { Text(if (fractionMode) "a/b" else "≈") }
+                androidx.compose.material3.TextButton(onClick = { onKeyClick("cancel") }) { Text(stringResource(R.string.cancel)) }
+            }
         if (isLandscape) {
             CalculatorLandscape(
-                modifier = Modifier.padding(padding),
+                modifier = Modifier.weight(1f),
                 input = input,
                 result = result,
                 isInverted = isInverted,
@@ -100,11 +108,12 @@ fun CalculatorScreen(
             )
         } else {
             CalculatorPortrait(
-                modifier = Modifier.padding(padding),
+                modifier = Modifier.weight(1f),
                 input = input,
                 result = result,
                 onKeyClick = onKeyClick
             )
+        }
         }
     }
 }
@@ -150,7 +159,7 @@ private fun CalculatorPortrait(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CalculatorPortraitKeyboard(onKeyClick = onKeyClick)
+        CalculatorPortraitKeyboard(onKeyClick = onKeyClick, modifier = Modifier.weight(3f))
     }
 }
 
@@ -195,7 +204,8 @@ private fun CalculatorLandscape(
         CalculatorLandscapeKeyboard(
             isInverted = isInverted,
             isRadians = isRadians,
-            onKeyClick = onKeyClick
+            onKeyClick = onKeyClick,
+            modifier = Modifier.weight(2f)
         )
     }
 }

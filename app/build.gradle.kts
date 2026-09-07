@@ -5,8 +5,15 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.ksp)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
+}
+
+// Explicit local-only build: separate applicationId, no Firebase plugin or network reporting.
+val localAudit = providers.gradleProperty("localAudit").map(String::toBoolean).getOrElse(false)
+if (!localAudit) {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
 }
 
 val keyPropertiesFile = rootProject.file("key.properties")
@@ -45,7 +52,8 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.cryonum"
+        applicationId = if (localAudit) "com.cryonum.audit" else "com.cryonum"
+        buildConfigField("boolean", "LOCAL_AUDIT", localAudit.toString())
         minSdk = 26
         targetSdk = 37
         versionCode = 455
@@ -138,6 +146,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.gson)
     implementation(libs.mlkit.text.recognition)
+    implementation("androidx.exifinterface:exifinterface:1.4.1")
     implementation(libs.material)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.livedata)
@@ -146,7 +155,7 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.activity.ktx)
-    implementation(libs.mXparser)
+    implementation("org.apache.commons:commons-math3:3.6.1")
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.work.runtime)

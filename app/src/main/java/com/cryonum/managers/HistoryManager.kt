@@ -17,6 +17,7 @@ object HistoryManager {
     private var cachedHistory: MutableList<HistoryItem>? = null
 
     @JvmStatic
+    @Synchronized
     fun saveHistory(context: Context?, history: List<HistoryItem>) {
         if (context == null) return
 
@@ -33,10 +34,11 @@ object HistoryManager {
     }
 
     @JvmStatic
+    @Synchronized
     fun loadHistory(context: Context?): MutableList<HistoryItem> {
         if (context == null) return mutableListOf()
-        
-        cachedHistory?.let { return it }
+
+        cachedHistory?.let { return it.toMutableList() }
 
         val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val json = prefs.getString(KEY_HISTORY_LIST, null)
@@ -47,11 +49,11 @@ object HistoryManager {
         }
 
         val type = object : TypeToken<ArrayList<HistoryItem>>() {}.type
-        val history: MutableList<HistoryItem>? = Gson().fromJson(json, type)
+        val history: MutableList<HistoryItem>? = if (json.length > 256 * 1024) null else runCatching { Gson().fromJson<MutableList<HistoryItem>>(json, type) }.getOrNull()
         val resultHistory = history ?: mutableListOf()
 
-        val filtered = resultHistory.filter { 
-            (now - it.lastAccessed) <= NINETY_DAYS_MILLIS 
+        val filtered = resultHistory.filterNotNull().take(MAX_HISTORY_SIZE).filter {
+            (now - it.lastAccessed) <= NINETY_DAYS_MILLIS
         }.toMutableList()
 
         if (filtered.size != resultHistory.size) {
@@ -62,6 +64,7 @@ object HistoryManager {
     }
 
     @JvmStatic
+    @Synchronized
     fun addHistoryEntry(context: Context?, entry: HistoryItem?) {
         if (context == null || entry == null) return
 
@@ -73,6 +76,7 @@ object HistoryManager {
     }
 
     @JvmStatic
+    @Synchronized
     fun deleteHistoryEntry(context: Context?, target: HistoryItem?) {
         if (context == null || target == null) return
 

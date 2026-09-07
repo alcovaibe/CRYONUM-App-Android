@@ -23,6 +23,7 @@ import com.cryonum.managers.PolicyManager
 import com.cryonum.managers.SystemUiManager
 import com.cryonum.managers.ThemeManager
 import com.cryonum.math.PermutationUtils
+import com.cryonum.math.PermutationInput
 import com.cryonum.ui.activity.SubstitutionsScreenBridge
 import com.cryonum.utils.InputFilter
 import com.cryonum.utils.SecurityUtils
@@ -66,8 +67,8 @@ class ActivitySubstitutions : AppCompatActivity() {
         imagePicker = ImagePicker(this, object : ImagePicker.Callback {
             override fun onResult(upperLine: String?, lowerLine: String?) {
                 if (!upperLine.isNullOrEmpty() && !lowerLine.isNullOrEmpty()) {
-                    upperLineState.value = InputFilter.filterOnlyDigits(upperLine)
-                    lowerLineState.value = InputFilter.filterOnlyDigits(lowerLine)
+                    upperLineState.value = upperLine
+                    lowerLineState.value = lowerLine
                 } else {
                     Toast.makeText(this@ActivitySubstitutions, getString(R.string.error_photo_camera), Toast.LENGTH_LONG).show()
                 }
@@ -98,7 +99,7 @@ class ActivitySubstitutions : AppCompatActivity() {
             onGenerateLine = { maxValue ->
                 if (maxValue >= 1) {
                     val sb = StringBuilder()
-                    for (i in 1..maxValue) sb.append(i)
+                    for (i in 1..maxValue.coerceAtMost(1000)) { if (i > 1) sb.append(" "); sb.append(i) }
                     upperLineState.value = sb.toString()
                     Toast.makeText(this@ActivitySubstitutions, getString(R.string.The_first_line_is_filled), Toast.LENGTH_SHORT).show()
                 }
@@ -193,7 +194,7 @@ class ActivitySubstitutions : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
                     imagePicker.handleCameraResult()
-                }
+                } else imagePicker.cancelCamera()
             }
 
         galleryLauncher =
@@ -213,6 +214,9 @@ class ActivitySubstitutions : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.enter_first_string), Toast.LENGTH_SHORT).show()
                 return
             }
+            try { PermutationInput.row(first) } catch (_: IllegalArgumentException) {
+                Toast.makeText(this, getString(R.string.error_enter), Toast.LENGTH_SHORT).show(); return
+            }
             firstConfirmed = true
             isFirstSelectedState.value = false
         } else {
@@ -220,13 +224,9 @@ class ActivitySubstitutions : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.enter_second_string), Toast.LENGTH_SHORT).show()
                 return
             }
-            if (first.length != second.length) {
-                Toast.makeText(this, getString(R.string.same_length_error), Toast.LENGTH_SHORT).show()
-                return
-            }
 
             try {
-                val permutation = second.map { Character.getNumericValue(it) }
+                val permutation = PermutationInput.normalized(first, second)
 
                 val inversions = PermutationUtils.countInversions(permutation)
                 val parity = if (PermutationUtils.calculateParity(inversions)) "even" else "odd"

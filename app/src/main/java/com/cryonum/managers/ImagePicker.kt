@@ -17,9 +17,17 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.cryonum.R
 import java.io.File
 import java.lang.ref.WeakReference
+import android.graphics.BitmapFactory
+import android.graphics.Bitmap
+import android.graphics.Matrix
+import androidx.exifinterface.media.ExifInterface
+import kotlinx.coroutines.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 class ImagePicker(activity: Activity, private val callback: Callback) {
     
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val processing = AtomicBoolean(false)
     private val activityRef = WeakReference(activity)
 
     interface Callback {
@@ -45,6 +53,8 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
     }
 
     fun clear() {
+        scope.cancel()
+        photoUri?.let(::cleanupTempFile)
         requestCameraPermissionLauncher = null
         cameraLauncher = null
         galleryLauncher = null
@@ -70,7 +80,7 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
     fun startCamera() {
         val activity = activityRef.get() ?: return
         try {
-            val photoFile = File.createTempFile("IMG_", ".jpg", activity.cacheDir)
+            val photoFile = File.createTempFile("IMG_", ".jpg", File(activity.cacheDir, "camera").apply { mkdirs() })
             val authority = "${activity.packageName}.file_provider"
             photoUri = FileProvider.getUriForFile(activity, authority, photoFile)
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
@@ -110,6 +120,8 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
             callback.onResult(null, null)
         }
     }
+
+    fun cancelCamera() { photoUri?.let(::cleanupTempFile) }
 
     fun handleGalleryResult(data: Intent?) {
         val activity = activityRef.get() ?: return
@@ -153,40 +165,73 @@ class ImagePicker(activity: Activity, private val callback: Callback) {
     }
 
     private fun recognizeText(uri: Uri) {
-        val activity = activityRef.get() ?: return
-        try {
-            val image = InputImage.fromFilePath(activity, uri)
-            recognizer.process(image)
-                .addOnSuccessListener { visionText ->
-                    // S-08 Cleanup temp file after successful recognition if it was a camera photo
-                    cleanupTempFile(uri)
-                    
-                    val full = visionText.text
-                    val lines = full.split(Regex("\\r?\\n")).map { it.trim() }.filter { it.isNotEmpty() }
-                    
-                    if (lines.size >= 2) {
-                        var upperLine = lines[0]
-                        var lowerLine = lines[1]
-                        if (lowerLine.length > upperLine.length) {
-                            val tmp = upperLine
-                            upperLine = lowerLine
-                            lowerLine = tmp
+        if (!processing.compareAndSet(false, true)) return
+        val context = activityRef.get()?.applicationContext ?: run { processing.set(false); return }
+        scope.launch {
+            var bitmap: Bitmap? = null
+            var handedOff = false
+            try {
+                require(uri.scheme == "content")
+                withContext(Dispatchers.IO) {
+                    val file = File.createTempFile("ocr_", ".image", context.cacheDir)
+                    try {
+                        context.contentResolver.openInputStream(uri)!!.use { input ->
+                            file.outputStream().use { output ->
+                                val buffer = ByteArray(32 * 1024); var total = 0L
+                                while (true) {
+                                    ensureActive()
+                                    val count = input.read(buffer); if (count < 0) break
+                                    total += count; require(total <= 20L * 1024 * 1024)
+                                    output.write(buffer, 0, count)
+                                }
+                            }
                         }
-                        callback.onResult(upperLine, lowerLine)
-                    } else {
-                        Toast.makeText(activity, R.string.error_photo_camera, Toast.LENGTH_LONG).show()
-                        callback.onResult(null, null)
+                        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                        BitmapFactory.decodeFile(file.path, bounds)
+                        require(bounds.outWidth > 0 && bounds.outHeight > 0)
+                        var sample = 1
+                        while (maxOf(bounds.outWidth, bounds.outHeight) / sample > 2048) sample *= 2
+                        val decoded = requireNotNull(BitmapFactory.decodeFile(file.path, BitmapFactory.Options().apply { inSampleSize = sample }))
+                        bitmap = decoded
+                        val orientation = ExifInterface(file.path).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+                        val matrix = Matrix().apply {
+                            when (orientation) {
+                                2 -> setScale(-1f, 1f)
+                                3 -> setRotate(180f)
+                                4 -> setScale(1f, -1f)
+                                5 -> { setRotate(90f); postScale(-1f, 1f) }
+                                6 -> setRotate(90f)
+                                7 -> { setRotate(270f); postScale(-1f, 1f) }
+                                8 -> setRotate(270f)
+                            }
+                        }
+                        if (!matrix.isIdentity) {
+                            val oriented = Bitmap.createBitmap(decoded, 0, 0, decoded.width, decoded.height, matrix, true)
+                            bitmap = oriented
+                            if (oriented !== decoded) decoded.recycle()
+                        }
+                    } finally { file.delete() }
+                }
+                val owned = requireNotNull(bitmap)
+                val task = recognizer.process(InputImage.fromBitmap(owned, 0))
+                handedOff = true
+                bitmap = null // ML Kit owns its lifetime until the completion callback.
+                task.addOnSuccessListener { visionText ->
+                    if (activityRef.get()?.isFinishing == false) {
+                        val lines = visionText.text.lineSequence().map(String::trim).filter(String::isNotEmpty).toList()
+                        if (lines.size == 2 && lines.all { it.length <= 4096 }) callback.onResult(lines[0], lines[1])
+                        else callback.onResult(null, null)
                     }
-                }
-                .addOnFailureListener {
-                    cleanupTempFile(uri)
-                    Toast.makeText(activity, R.string.error_photo_galery, Toast.LENGTH_SHORT).show()
-                    callback.onResult(null, null)
-                }
-        } catch (_: Exception) {
-            cleanupTempFile(uri)
-            Toast.makeText(activity, R.string.error_photo_galery, Toast.LENGTH_SHORT).show()
-            callback.onResult(null, null)
+                }.addOnFailureListener {
+                    if (activityRef.get()?.isFinishing == false) callback.onResult(null, null)
+                }.addOnCompleteListener { owned.recycle(); processing.set(false); cleanupTempFile(uri) }
+            } catch (e: CancellationException) { throw e }
+            catch (_: Exception) { callback.onResult(null, null) }
+            finally {
+                bitmap?.recycle()
+                if (!handedOff) processing.set(false)
+                cleanupTempFile(uri)
+            }
         }
     }
 
