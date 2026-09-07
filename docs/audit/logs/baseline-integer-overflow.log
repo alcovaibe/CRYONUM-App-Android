@@ -1,0 +1,22 @@
+JUnit version 4.13.2
+........E...E...
+Time: 0.285
+There were 2 failures:
+1) oversizedSchemaCannotWrapToOne(com.cryonum.content.SignedContentManifestVerifierTest)
+java.lang.AssertionError: expected com.cryonum.content.ContentException to be thrown, but nothing was thrown
+	at org.junit.Assert.assertThrows(Assert.java:1028)
+	at org.junit.Assert.assertThrows(Assert.java:981)
+	at com.cryonum.content.SignedContentManifestVerifierTest.assertSecurity(SignedContentManifestVerifierTest.kt:162)
+	at com.cryonum.content.SignedContentManifestVerifierTest.oversizedSchemaCannotWrapToOne(SignedContentManifestVerifierTest.kt:111)
+2) oversizedSignedRevisionCannotWrapToOne(com.cryonum.content.SignedContentManifestVerifierTest)
+java.lang.AssertionError: expected com.cryonum.content.ContentException to be thrown, but nothing was thrown
+	at org.junit.Assert.assertThrows(Assert.java:1028)
+	at org.junit.Assert.assertThrows(Assert.java:981)
+	at com.cryonum.content.SignedContentManifestVerifierTest.assertSecurity(SignedContentManifestVerifierTest.kt:162)
+	at com.cryonum.content.SignedContentManifestVerifierTest.oversizedSignedRevisionCannotWrapToOne(SignedContentManifestVerifierTest.kt:118)
+
+FAILURES!!!
+Tests run: 14,  Failures: 2
+
+ 
+Baseline reproduction confirmed: two new overflow regressions fail; the other twelve pass.

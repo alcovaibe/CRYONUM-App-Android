@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.cryonum.content.ContentStorageMigrationTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-09-07T19:28:24.167Z" hostname="localhost" time="0.005">
+  <properties/>
+  <testcase name="migration preserves files already stored in CRYONUM directory" classname="com.cryonum.content.ContentStorageMigrationTest" time="0.004"/>
+  <testcase name="legacy content is moved to CRYONUM directory" classname="com.cryonum.content.ContentStorageMigrationTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

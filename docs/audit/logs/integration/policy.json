@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "policy": {
+    "versionCode": 4,
+    "versionName": "4.0",
+    "contentManifestRevision": 1,
+    "contentId": "privacy-policy",
+    "objectPath": "privacy-policy/v4.0/privacy-policy.pdf",
+    "notificationEnabled": true,
+    "requiresReaccept": true
+  }
+}

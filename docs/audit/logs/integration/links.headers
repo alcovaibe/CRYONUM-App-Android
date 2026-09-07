@@ -1,0 +1,27 @@
+HTTP/1.1 200 OK
+date: Mon, 07 Sep 2026 18:49:07 GMT
+
+HTTP/2 200 
+date: Mon, 07 Sep 2026 18:49:08 GMT
+content-type: application/json; charset=utf-8
+content-length: 753
+cf-cache-status: HIT
+cache-control: public, max-age=300, must-revalidate
+etag: "efae8634c76af51de4f823114bdfbd1c"
+strict-transport-security: max-age=31536000
+content-security-policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://download.cryonum.com; media-src 'self'; manifest-src 'self'; upgrade-insecure-requests
+cross-origin-opener-policy: same-origin
+cross-origin-resource-policy: same-origin
+origin-agent-cluster: ?1
+permissions-policy: accelerometer=(), bluetooth=(), browsing-topics=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), serial=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-permitted-cross-domain-policies: none
+speculation-rules: "/cdn-cgi/speculation"
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=QAWilQizy%2Fyks7S%2BU9m%2BLMmENelYWzQZK8lhJEqHbMz%2FlQzBucJg0cj8aIYGspb7meVzVbOnua3rYU9Sv2e7%2FrPIZh70swr9KX6gwSzkIS6DZAR%2FFfys8WMdyPxhtUJShRhunXkELXQhHg%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: a377e4422c89fc87-DFW
+alt-svc: h3=":443"; ma=86400
+

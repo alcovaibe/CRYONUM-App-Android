@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.cryonum.content.ContentHttpValidatorMockWebServerTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-09-07T19:28:24.057Z" hostname="localhost" time="0.085">
+  <properties/>
+  <testcase name="correct206IsAccepted" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.011"/>
+  <testcase name="response429HonorsBoundedRetryAfter" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.006"/>
+  <testcase name="wrongContentRangeIsRejected" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.006"/>
+  <testcase name="disconnectDuringBodyIsObservable" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.006"/>
+  <testcase name="response404IsNotRetryable" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.006"/>
+  <testcase name="successful200IsAccepted" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.009"/>
+  <testcase name="redirectToOtherHostIsNotFollowedAndRejected" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.004"/>
+  <testcase name="redirectToHttpIsNotFollowedAndRejected" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.018"/>
+  <testcase name="response5xxIsRetryable" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.008"/>
+  <testcase name="response200ToRangeRequiresRestart" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.002"/>
+  <testcase name="responseLargerThanSignedSizeIsRejectedFromHeaders" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.007"/>
+  <testcase name="response416VerifiesOnlyCompletePart" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.001"/>
+  <testcase name="changedEtagIsNotAcceptedAsSameValidator" classname="com.cryonum.content.ContentHttpValidatorMockWebServerTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

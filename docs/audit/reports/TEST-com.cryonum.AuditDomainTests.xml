@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.cryonum.AuditDomainTests" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-07T19:28:23.540Z" hostname="localhost" time="0.051">
+  <properties/>
+  <testcase name="pdfAllocationBounds" classname="com.cryonum.AuditDomainTests" time="0.014"/>
+  <testcase name="bijectionValidationAndTopRowOrder" classname="com.cryonum.AuditDomainTests" time="0.019"/>
+  <testcase name="allSmallPermutationsAgainstCycleParity" classname="com.cryonum.AuditDomainTests" time="0.015"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

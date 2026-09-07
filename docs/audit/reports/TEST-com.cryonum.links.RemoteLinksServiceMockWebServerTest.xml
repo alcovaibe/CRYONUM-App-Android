@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.cryonum.links.RemoteLinksServiceMockWebServerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-07T19:28:24.532Z" hostname="localhost" time="0.031">
+  <properties/>
+  <testcase name="rejectsRedirect" classname="com.cryonum.links.RemoteLinksServiceMockWebServerTest" time="0.013"/>
+  <testcase name="rejectsWrongContentType" classname="com.cryonum.links.RemoteLinksServiceMockWebServerTest" time="0.009"/>
+  <testcase name="fetchesValidConfiguration" classname="com.cryonum.links.RemoteLinksServiceMockWebServerTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

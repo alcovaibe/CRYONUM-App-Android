@@ -1,0 +1,121 @@
+app/src/main/java/com/cryonum/links/RemoteLinksService.kt:53:        } catch (e: RemoteLinksException) {
+app/src/main/java/com/cryonum/links/RemoteLinksService.kt:55:        } catch (e: IOException) {
+app/src/main/java/com/cryonum/links/RemoteLinksService.kt:61:        val CONFIG_URL: HttpUrl = "https://cryonum.com/data/site.json".toHttpUrl()
+app/src/main/java/com/cryonum/links/RemoteLinksModels.kt:66:    } catch (e: RemoteLinksException) {
+app/src/main/java/com/cryonum/links/RemoteLinksModels.kt:68:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/links/RemoteLinksModels.kt:84:    } catch (e: RemoteLinksException) {
+app/src/main/java/com/cryonum/links/RemoteLinksModels.kt:86:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/links/RemoteLinksModels.kt:96:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/links/RemoteLinksRepository.kt:23:        } catch (e: CancellationException) {
+app/src/main/java/com/cryonum/links/RemoteLinksRepository.kt:25:        } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/ContentStorage.kt:190:        } catch (e: java.nio.file.AtomicMoveNotSupportedException) {
+app/src/main/java/com/cryonum/content/ContentStorage.kt:192:        } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/ApprovedContentService.kt:29:        } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/ApprovedContentService.kt:32:        } catch (e: IOException) {
+app/src/main/java/com/cryonum/content/ApprovedContentUrlPolicy.kt:7:    val BASE_URL: HttpUrl = "https://download.cryonum.com/".toHttpUrl()
+app/src/main/java/com/cryonum/content/ContentDownloadRepository.kt:213:            } catch (e: CancellationException) {
+app/src/main/java/com/cryonum/content/ContentDownloadRepository.kt:215:            } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/ContentDownloadRepository.kt:217:            } catch (e: IOException) {
+app/src/main/java/com/cryonum/content/ContentDownloadWorker.kt:41:        } catch (e: CancellationException) {
+app/src/main/java/com/cryonum/content/ContentDownloadWorker.kt:43:        } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/ContentDownloadWorker.kt:50:        } catch (e: IOException) {
+app/src/main/java/com/cryonum/content/ContentDownloadWorker.kt:54:        } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/ContentDownloadViewModel.kt:68:            } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/ContentDownloadViewModel.kt:70:            } catch (e: kotlinx.coroutines.CancellationException) {
+app/src/main/java/com/cryonum/content/ContentDownloadViewModel.kt:72:            } catch (_: Exception) {
+app/src/main/java/com/cryonum/content/ContentDownloadViewModel.kt:123:            } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/ContentDownloadViewModel.kt:133:            } catch (e: kotlinx.coroutines.CancellationException) {
+app/src/main/java/com/cryonum/content/ContentDownloadViewModel.kt:135:            } catch (_: Exception) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:38:        } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:50:        } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:105:    } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:107:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:123:    } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:125:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:135:    } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:137:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:145:        } catch (e: IllegalArgumentException) {
+app/src/main/java/com/cryonum/content/SignedContentManifestVerifier.kt:156:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/PolicyConfigService.kt:58:        } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/PolicyConfigService.kt:60:        } catch (e: IOException) {
+app/src/main/java/com/cryonum/content/PolicyConfigService.kt:71:        val CONFIG_URL: HttpUrl = "https://cryonum.com/data/privacy-policy.json".toHttpUrl()
+app/src/main/java/com/cryonum/managers/LocaleManager.kt:188:        } catch (ex: Exception) {
+app/src/main/java/com/cryonum/managers/LocaleManager.kt:260:        } catch (ex: Exception) {
+app/src/main/java/com/cryonum/activity/ActivityAbout.kt:26:        private const val GITHUB_URL = "https://github.com/alcovaibe/CRYONUM-App-Android"
+app/src/main/java/com/cryonum/activity/ActivityAbout.kt:135:        } catch (_: Exception) {
+app/src/main/java/com/cryonum/activity/ActivitySubstitutions.kt:217:            try { PermutationInput.row(first) } catch (_: IllegalArgumentException) {
+app/src/main/java/com/cryonum/activity/ActivitySubstitutions.kt:242:            } catch (e: Exception) {
+app/src/main/java/com/cryonum/activity/ActivitySecurity.kt:312:        } catch (e: Exception) {
+app/src/main/java/com/cryonum/managers/ImagePicker.kt:85:        } catch (e: Exception) {
+app/src/main/java/com/cryonum/managers/ImagePicker.kt:123:            } catch (e: Exception) {
+app/src/main/java/com/cryonum/managers/ImagePicker.kt:181:        } catch (_: Exception) {
+app/src/main/java/com/cryonum/managers/ImagePicker.kt:194:            } catch (e: Exception) {
+app/src/main/java/com/cryonum/activity/ActivityHelpCenter.kt:64:            } catch (e: CancellationException) {
+app/src/main/java/com/cryonum/activity/ActivityHelpCenter.kt:66:            } catch (e: Exception) {
+app/src/main/java/com/cryonum/activity/ActivityHelpCenter.kt:88:        } catch (_: ActivityNotFoundException) {
+app/src/main/java/com/cryonum/activity/ActivityHelpCenter.kt:90:        } catch (e: Exception) {
+app/src/main/java/com/cryonum/activity/ActivityHelpCenter.kt:99:        } catch (e: Exception) {
+app/src/main/java/com/cryonum/activity/ActivityPartners.kt:36:            onNafuLink = { openUrl("https://narfu.ru/") },
+app/src/main/java/com/cryonum/activity/ActivityPartners.kt:37:            onKometLink = { openUrl("https://t.me/TeamKomet") }
+app/src/main/java/com/cryonum/activity/ActivityPartners.kt:47:        } catch (_: Exception) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:18:import com.google.firebase.analytics.FirebaseAnalytics
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:19:import com.google.firebase.crashlytics.FirebaseCrashlytics
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:88:    private var firebaseAnalytics: FirebaseAnalytics? = null
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:108:        firebaseAnalytics = FirebaseAnalytics.getInstance(appContext)
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:120:        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:129:                    } catch (ignored: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:134:                } catch (ignored: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:136:            } catch (ignored: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:152:                putString(FirebaseAnalytics.Param.SCREEN_NAME, safeScreen)
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:163:            } catch (_: Exception) { }
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:170:        } catch (t: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:195:        } catch (_: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:212:        } catch (ignored: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:229:        } catch (ignored: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:251:        } catch (_: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:261:        } catch (ignored: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:269:        } catch (t: Throwable) {
+app/src/main/java/com/cryonum/managers/AnalyticsManager.kt:278:        } catch (ignored: Throwable) {
+app/src/main/java/com/cryonum/activity/ActivityAnalytics.kt:49:                } catch (_: Throwable) {
+app/src/main/java/com/cryonum/managers/AppLockObserver.kt:40:            } catch (_: Exception) {
+app/src/main/java/com/cryonum/calculator/CalculatorEngine.kt:34:            val decimal = try { BigDecimal(s) } catch (_: NumberFormatException) { throw CalculationException("syntax") }
+app/src/main/java/com/cryonum/calculator/CalculatorViewModel.kt:50:            } catch (e: CalculationException) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:46:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:64:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:113:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:121:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:132:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:140:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:149:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:162:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:191:                    } catch (_: Throwable) {}
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:205:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:236:                    } catch (_: Throwable) {}
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:243:        } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:281:                                } catch (_: Throwable) {}
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:303:                    } catch (e: SecurityException) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:306:                    } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:337:            } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:352:            } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:365:            } catch (e: Throwable) {
+app/src/main/java/com/cryonum/pdf/ScreenProtection.kt:374:        } catch (_: Throwable) {
+app/src/main/java/com/cryonum/pdf/ActivityPdfViewer.kt:32:        } catch (ignored: Throwable) {
+app/src/main/java/com/cryonum/content/PolicyConfigModels.kt:73:    } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/PolicyConfigModels.kt:75:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/PolicyConfigModels.kt:91:    } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/PolicyConfigModels.kt:93:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/content/PolicyConfigModels.kt:109:    } catch (e: Exception) {
+app/src/main/java/com/cryonum/managers/ContentConfig.kt:17:        if (BuildConfig.DEBUG) return true
+app/src/main/java/com/cryonum/managers/ContentConfig.kt:42:        return finger.contains("generic")
+app/src/main/java/com/cryonum/managers/ContentConfig.kt:48:                || brand.startsWith("generic") && Build.DEVICE.startsWith("generic")
+app/src/main/java/com/cryonum/pdf/PdfViewerScreen.kt:96:        } catch (e: kotlinx.coroutines.CancellationException) { throw e }
+app/src/main/java/com/cryonum/pdf/PdfViewerScreen.kt:97:        catch (_: Exception) { onPdfError() }
+app/src/main/java/com/cryonum/pdf/PdfViewerScreen.kt:322:        } catch (e: kotlinx.coroutines.CancellationException) { throw e }
+app/src/main/java/com/cryonum/pdf/PdfViewerScreen.kt:323:        catch (_: Exception) { onError() }
+app/src/main/java/com/cryonum/managers/OrientationManager.kt:73:        } catch (e: Settings.SettingNotFoundException) {
+app/src/main/java/com/cryonum/managers/OrientationManager.kt:75:        } catch (e: SecurityException) {
+app/src/main/java/com/cryonum/content/PolicyUpdateWorker.kt:40:        } catch (e: ContentException) {
+app/src/main/java/com/cryonum/content/PolicyUpdateWorker.kt:42:        } catch (_: Exception) {
+app/src/main/java/com/cryonum/managers/SecurityManager.kt:94:        } catch (_: Exception) {
+app/src/main/java/com/cryonum/managers/SecurityManager.kt:165:        } catch (e: CancellationException) { throw e } catch (_: Exception) { true }
+app/src/main/java/com/cryonum/managers/SecurityManager.kt:178:        return try { context.dataStore.data.map { decryptBoolean(it[IS_BIOMETRIC_ENABLED]) }.first() } catch (e: CancellationException) { throw e } catch (_: Exception) { false }

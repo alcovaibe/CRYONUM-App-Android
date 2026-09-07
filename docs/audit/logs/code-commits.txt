@@ -1,0 +1,3 @@
+593463ddf212b5557c8f8018055ac03b2ee2a1db Harden content verification, cancellation, policy acceptance and bounded PDF rendering
+fe35f12ede237eb471ac33dffdf4120b7bbf03c7 Fail closed on lock errors and separate Analytics, Crashlytics and local diagnostics
+6bec45efeb8bfe5fa7ca2e3382f74ac0988a02fb Fix calculator precision and semantics; validate permutation and OCR input

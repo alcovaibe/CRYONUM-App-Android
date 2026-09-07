@@ -1,0 +1,1 @@
+Gradle 9.6.1 distribution SHA-256 verified against services.gradle.org: 9c0f7faeeb306cb14e4279a3e084ca6b596894089a0638e68a07c945a32c9e14

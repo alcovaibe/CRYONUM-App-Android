@@ -1,0 +1,29 @@
+{
+    "schemaVersion": 1,
+    "revision": 2,
+    "site": {
+        "name": "CRYONUM",
+        "shortName": "CRYONUM",
+        "baseUrl": "https://cryonum.com/",
+        "repository": "https://github.com/alcovaibe/Icy_Math_Site",
+        "privacyPolicy": "/privacy",
+        "copyright": "CRYONUM Developers"
+    },
+    "application": {
+        "platform": "Android",
+        "minAndroidVersion": "8.0",
+        "packageName": "com.cryonum"
+    },
+    "socials": {
+        "github": "",
+        "telegram": "https://t.me/cryonum",
+        "x": "https://x.com/cryonum",
+        "email": "mailto:ponydeveloper@gmail.com"
+    },
+    "downloads": {
+        "googlePlay": "",
+        "appGallery": "",
+        "galaxyStore": "",
+        "apkPure": ""
+    }
+}

@@ -1,0 +1,31 @@
+Date: 2026-09-07. Commands are local unless explicitly marked read-only GET.
+Repository: git clone --branch master2 https://github.com/alcovaibe/CRYONUM-App-Android
+Baseline: git rev-parse HEAD => 3f8220cce6b167a6dc1013e7c544ac13bc14edae
+Branch: git switch -c audit/android-2026-09-07
+Final remote check: git ls-remote origin refs/heads/master2 (read only; SHA unchanged)
+
+Baseline wrapper: sh gradlew --version (network failure preserved).
+Baseline real Gradle: compile unavailable on original JRE17 without javac.
+Provisioned JDK21, Gradle9.6.1, SDK37.0 and BuildTools36; checksums/license logs retained.
+
+Final equivalent Gradle command:
+sh gradlew --no-daemon --max-workers=2 -PlocalAudit=true -Pkotlin.incremental=false clean :app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleRelease :app:lintRelease :app:assembleDebugAndroidTest
+Runtime invocation used downloaded GradleMain with JDK21, -Xmx2048m, JAVA_HOME override,
+standard system cacerts and environment HTTPS_PROXY properties; no proxy credentials logged.
+Wrapper URL initially failed direct JVM networking; artifacts came through the permitted proxy.
+
+python3 tools/audit/run_host_tests.py --gradle-lib /workspace/scratch/a4bbe208b4ff/toolchain/gradle-9.6.1/lib --test-libs /workspace/scratch/a4bbe208b4ff/test-libs
+python3 tools/audit/differential.py --gradle-lib /workspace/scratch/a4bbe208b4ff/toolchain/gradle-9.6.1/lib --test-libs /workspace/scratch/a4bbe208b4ff/test-libs
+python3 tools/audit/reproduce_baseline.py --gradle-lib /workspace/scratch/a4bbe208b4ff/toolchain/gradle-9.6.1/lib --test-libs /workspace/scratch/a4bbe208b4ff/test-libs
+python3 tools/audit/reproduce_integer_overflow.py --gradle-lib /workspace/scratch/a4bbe208b4ff/toolchain/gradle-9.6.1/lib --test-libs /workspace/scratch/a4bbe208b4ff/test-libs
+python3 -m unittest discover -s tools/tests -v
+python3 tools/audit/collect_reports.py
+python3 tools/audit/inventory.py
+
+Public integration: ordinary GETs of https://cryonum.com/data/site.json,
+https://cryonum.com/data/privacy-policy.json,
+https://download.cryonum.com/manifests/content-v1.signed.json and 13 declared PDF paths.
+No malformed requests, attack payloads, concurrency/load tests against public services.
+
+Not executed: git push, PR/issues/comments, remote workflows, R2 --apply, Firebase changes,
+production signing/upload, connectedDebugAndroidTest, device profiling, complete dependency CVE scan.

@@ -36,7 +36,7 @@ for name in paths:
  rows.append([name,len(raw),hashlib.sha256(raw).hexdigest(),method,result,findings])
 out=root/'docs/audit/coverage.csv'
 with out.open('w',newline='',encoding='utf-8') as f:
- w=csv.writer(f);w.writerow(['path','current_bytes','current_sha256','method','limits_and_result','findings']);w.writerows(rows)
+ w=csv.writer(f,lineterminator="\n");w.writerow(['path','current_bytes','current_sha256','method','limits_and_result','findings']);w.writerows(rows)
 print('baseline tracked paths:',len(baseline),'current indexed inventory:',len(rows),'not a statement of full semantic coverage')
 # Resource key consistency is not translation quality.
 sets={}

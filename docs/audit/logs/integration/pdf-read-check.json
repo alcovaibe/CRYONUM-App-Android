@@ -1,0 +1,119 @@
+[
+  {
+    "path": "lectures/v1/lecture-01.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 353953,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-02.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 175021,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-03.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 244904,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-04.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 191764,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-05.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 237448,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-06.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 176949,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-07.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 217173,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-08.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 290888,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-09.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 185588,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-10.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 271146,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-11.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 204509,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "lectures/v1/lecture-12.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 193746,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  },
+  {
+    "path": "privacy-policy/v4.0/privacy-policy.pdf",
+    "curlExit": 0,
+    "status": "200",
+    "bytes": 202810,
+    "sizeMatches": true,
+    "sha256MatchesUntrustedManifest": true,
+    "pdfMagic": true
+  }
+]

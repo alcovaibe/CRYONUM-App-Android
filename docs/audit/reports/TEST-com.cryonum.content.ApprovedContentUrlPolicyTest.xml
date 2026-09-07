@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.cryonum.content.ApprovedContentUrlPolicyTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-09-07T19:28:23.658Z" hostname="localhost" time="0.023">
+  <properties/>
+  <testcase name="httpIsRejected" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.017"/>
+  <testcase name="exactExistingR2PolicyKeyIsAccepted" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.001"/>
+  <testcase name="exactExistingR2LectureKeyIsAccepted" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.001"/>
+  <testcase name="lectureVersionDirectoryMustMatchContentVersion" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.001"/>
+  <testcase name="encodedTraversalIsRejected" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.0"/>
+  <testcase name="changedCaseOrDifferentLectureNameIsRejected" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.001"/>
+  <testcase name="absoluteUrlInPathIsRejected" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.0"/>
+  <testcase name="otherHostIsRejected" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.001"/>
+  <testcase name="traversalIsRejected" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.0"/>
+  <testcase name="mismatchedPolicyNamingIsRejected" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.001"/>
+  <testcase name="nonStandardPortIsRejected" classname="com.cryonum.content.ApprovedContentUrlPolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

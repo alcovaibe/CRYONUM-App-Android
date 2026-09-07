@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.cryonum.links.RemoteLinksConfigParserTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-09-07T19:28:24.501Z" hostname="localhost" time="0.008">
+  <properties/>
+  <testcase name="rejectsUnknownSchemaVersion" classname="com.cryonum.links.RemoteLinksConfigParserTest" time="0.002"/>
+  <testcase name="rejectsQuery" classname="com.cryonum.links.RemoteLinksConfigParserTest" time="0.002"/>
+  <testcase name="parsesTelegramLinkAndIgnoresUnrelatedSiteFields" classname="com.cryonum.links.RemoteLinksConfigParserTest" time="0.001"/>
+  <testcase name="rejectsNestedPath" classname="com.cryonum.links.RemoteLinksConfigParserTest" time="0.001"/>
+  <testcase name="rejectsForeignHost" classname="com.cryonum.links.RemoteLinksConfigParserTest" time="0.001"/>
+  <testcase name="rejectsMissingTelegramLink" classname="com.cryonum.links.RemoteLinksConfigParserTest" time="0.001"/>
+  <testcase name="rejectsHttp" classname="com.cryonum.links.RemoteLinksConfigParserTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.cryonum.content.PolicyConfigParserTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-07T19:28:24.174Z" hostname="localhost" time="0.01">
+  <properties/>
+  <testcase name="updateIsNotifiedOnlyAfterAnEarlierAcceptedVersion" classname="com.cryonum.content.PolicyConfigParserTest" time="0.007"/>
+  <testcase name="mismatchedVersionAndPathAreRejected" classname="com.cryonum.content.PolicyConfigParserTest" time="0.001"/>
+  <testcase name="unknownSchemaIsRejected" classname="com.cryonum.content.PolicyConfigParserTest" time="0.0"/>
+  <testcase name="configRollbackIsRejected" classname="com.cryonum.content.PolicyConfigParserTest" time="0.001"/>
+  <testcase name="validConfigUsesConfirmedR2ObjectKey" classname="com.cryonum.content.PolicyConfigParserTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
