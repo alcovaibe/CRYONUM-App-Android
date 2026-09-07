@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
+import androidx.core.content.edit
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
@@ -108,12 +109,13 @@ class ActivityCalculator : AppCompatActivity() {
     }
     override fun onPause() { super.onPause(); saveState() }
     private fun saveState() {
-        getSharedPreferences("calc_prefs_v2", MODE_PRIVATE).edit()
-            .putString("input", state.input).putString("result", state.result)
-            .putString("ans", state.ans.canonical()).putString("memory", state.memory.canonical())
-            .putBoolean("radians", state.radians).putBoolean("inverted", state.inverted)
-            .putBoolean("complex", state.complex).putBoolean("fractions", state.fractions)
-            .putBoolean("completed", state.completed).apply()
+        getSharedPreferences("calc_prefs_v2", MODE_PRIVATE).edit {
+            putString("input", state.input).putString("result", state.result)
+            putString("ans", state.ans.canonical()).putString("memory", state.memory.canonical())
+            putBoolean("radians", state.radians).putBoolean("inverted", state.inverted)
+            putBoolean("complex", state.complex).putBoolean("fractions", state.fractions)
+            putBoolean("completed", state.completed)
+        }
     }
     private fun restoreState() {
         if (state.restored) return

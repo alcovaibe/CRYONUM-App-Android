@@ -1,0 +1,38 @@
+{
+  "base_sha": "2916f41fb13d622ac8aa756a2a919d85bb471ed0",
+  "build_variant": "localAudit",
+  "okhttp": "5.5.0",
+  "mockwebserver": "5.5.0",
+  "debug": {
+    "warnings": 112,
+    "ids": {
+      "EmptySuperCall": 1,
+      "CustomSplashScreen": 1,
+      "VectorRaster": 5,
+      "SourceLockedOrientationActivity": 3,
+      "PluralsCandidate": 1,
+      "VectorPath": 2,
+      "UnusedResources": 95,
+      "IconLocation": 4
+    }
+  },
+  "release": {
+    "warnings": 112,
+    "ids": {
+      "EmptySuperCall": 1,
+      "CustomSplashScreen": 1,
+      "VectorRaster": 5,
+      "SourceLockedOrientationActivity": 3,
+      "PluralsCandidate": 1,
+      "VectorPath": 2,
+      "UnusedResources": 95,
+      "IconLocation": 4
+    }
+  },
+  "junit": {
+    "tests": 86,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

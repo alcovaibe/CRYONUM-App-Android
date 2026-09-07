@@ -17,9 +17,9 @@ lifecycleProcess = "2.11.0"
 gson = "2.14.0"
 mlkitTextRecognition = "16.0.1"
 room = "2.8.4"
-okhttp3 = "5.4.0"
+okhttp3 = "5.5.0"
 work = "2.11.2"
-mockwebserver = "5.4.0"
+mockwebserver = "5.5.0"
 composeBom = "2026.06.01"
 kotlin = "2.4.0"
 ksp = "2.3.9"
@@ -27,7 +27,12 @@ googleServices = "4.5.0"
 splashscreen = "1.2.0"
 crashlyticsPlugin = "3.0.7"
 
+commonsMath = "3.6.1"
+exifinterface = "1.4.1"
+
 [libraries]
+commons-math3 = { module = "org.apache.commons:commons-math3", version.ref = "commonsMath" }
+androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
