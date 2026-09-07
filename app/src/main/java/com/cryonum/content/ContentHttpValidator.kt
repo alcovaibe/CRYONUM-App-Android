@@ -56,7 +56,7 @@ object ContentHttpValidator {
     fun parseRetryAfter(response: Response): Long? {
         if (response.code != 429) return null
         val value = response.header("Retry-After")?.trim() ?: return null
-        val millis = value.toLongOrNull()?.let { it * 1000L } ?: runCatching {
+        val millis = value.toLongOrNull()?.let { it.coerceIn(0L, MAX_RETRY_AFTER_MILLIS / 1000L) * 1000L } ?: runCatching {
             ZonedDateTime.parse(value, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant().toEpochMilli() - Instant.now().toEpochMilli()
         }.getOrNull()
         return millis?.coerceIn(0L, MAX_RETRY_AFTER_MILLIS)

@@ -47,7 +47,6 @@ object PolicyManager {
     const val EXTRA_REQUEST_POLICY_DOWNLOAD = "request_policy_download"
     const val EXTRA_POLICY_VERSION_TO_ACCEPT = "policy_version_to_accept"
 
-    private const val DEFAULT_POLICY_VERSION = 4
     private const val PREF_NAME = "policy_prefs"
     private const val KEY_ACCEPTED_VERSION = "accepted_policy_version"
     private const val KEY_NOTIFICATION_PERMISSION_REQUESTED = "notification_permission_requested"
@@ -69,8 +68,7 @@ object PolicyManager {
     }
 
     @JvmStatic
-    @JvmOverloads
-    fun acceptPolicy(context: Context?, versionCode: Int = DEFAULT_POLICY_VERSION) {
+    fun acceptPolicy(context: Context?, versionCode: Int) {
         if (context == null) return
         if (versionCode <= 0) return
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -142,7 +140,8 @@ object PolicyManager {
                                 onLaunchViewer(false)
                             },
                             onAccept = {
-                                acceptPolicy(context)
+                                dismissDialog()
+                                onLaunchViewer(false)
                             },
                             onDecline = {
                                 requestFinalDeclineDialog()
@@ -152,7 +151,8 @@ object PolicyManager {
                     PolicyDialogType.FINAL_DECLINE -> {
                         FinalDeclineDialog(
                             onAccept = {
-                                acceptPolicy(context)
+                                dismissDialog()
+                                onLaunchViewer(false)
                             },
                             onDecline = {
                                 onExitApp()
@@ -175,28 +175,16 @@ object PolicyManager {
     ) {
         if (activity == null) return
 
-        val outFile = File(ContentDependencies.get(activity).storage.root, "privacy/privacy-policy.pdf")
-        if (!outFile.isFile) {
-            val downloadIntent = Intent(activity, ActivityAbout::class.java).apply {
-                putExtra(EXTRA_REQUEST_POLICY_DOWNLOAD, true)
-                putExtra(EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END, showAcceptDialogOnScrollEnd)
-                putExtra(EXTRA_FROM_NOTIFICATION, fromNotification)
-                putExtra(EXTRA_FROM_DIALOG_VIEW_ACTION, fromDialogViewAction)
-                putExtra("is_first_launch_mode", isFirstLaunchMode)
-            }
-            activity.startActivity(downloadIntent)
-            return
-        }
-
-        val intent = Intent(activity, ActivityPdfViewer::class.java).apply {
-            putExtra(EXTRA_PDF_PATH, outFile.absolutePath)
+        // Every entry point goes through signature + file integrity verification.
+        val intent = Intent(activity, ActivityAbout::class.java).apply {
+            putExtra(EXTRA_REQUEST_POLICY_DOWNLOAD, true)
             putExtra(EXTRA_SHOW_ACCEPT_DIALOG_ON_SCROLL_END, showAcceptDialogOnScrollEnd)
             putExtra(EXTRA_FROM_NOTIFICATION, fromNotification)
             putExtra(EXTRA_FROM_DIALOG_VIEW_ACTION, fromDialogViewAction)
             putExtra("is_first_launch_mode", isFirstLaunchMode)
         }
-
         activity.startActivity(intent)
+
     }
 
     @JvmStatic

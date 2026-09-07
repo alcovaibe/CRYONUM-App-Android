@@ -36,7 +36,7 @@ class ContentDownloadViewModel(application: Application) : AndroidViewModel(appl
         viewModelScope.launch {
             mutableState.update { it.copy(checkingManifest = true, errorCategory = null) }
             try {
-                val verified = repository.manifest()
+                val verified = repository.manifest(preferCached = true)
                 manifest = verified
                 val lectures = repository.localSummary(verified, ContentBundle.LECTURES)
                 val policy = repository.localSummary(verified, ContentBundle.PRIVACY_POLICY)
@@ -67,6 +67,8 @@ class ContentDownloadViewModel(application: Application) : AndroidViewModel(appl
                 }
             } catch (e: ContentException) {
                 mutableState.update { it.copy(checkingManifest = false, manifestReady = false, errorCategory = e.category) }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (_: Exception) {
                 mutableState.update { it.copy(checkingManifest = false, manifestReady = false, errorCategory = ContentErrorCategory.UNKNOWN) }
             }
@@ -89,7 +91,7 @@ class ContentDownloadViewModel(application: Application) : AndroidViewModel(appl
         viewModelScope.launch {
             mutableState.update { it.copy(checkingManifest = true, errorCategory = null) }
             try {
-                val verified = repository.manifest()
+                val verified = repository.manifest(preferCached = true)
                 manifest = verified
                 val file = verified.privacyPolicy
                 val local = repository.verifiedLocalFile(verified, file)
@@ -128,6 +130,8 @@ class ContentDownloadViewModel(application: Application) : AndroidViewModel(appl
                         progressVisible = true
                     )
                 }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (_: Exception) {
                 mutableState.update {
                     it.copy(

@@ -87,7 +87,7 @@ object PolicyConfigParser {
         security(element != null && element.isJsonPrimitive && element.asJsonPrimitive.isNumber, "Invalid $name")
         val primitive = element!!.asJsonPrimitive
         security(primitive.asString.matches(Regex("[0-9]+")), "Invalid integer $name")
-        primitive.asLong
+        primitive.asString.toLong()
     } catch (e: ContentException) {
         throw e
     } catch (e: Exception) {

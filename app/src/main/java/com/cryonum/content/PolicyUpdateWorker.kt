@@ -38,9 +38,11 @@ class PolicyUpdateWorker(
             }
             Result.success()
         } catch (e: ContentException) {
-            if (e.retryable && runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.success()
+            if (e.retryable && runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.failure()
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (_: Exception) {
-            if (runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.success()
+            if (runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.failure()
         }
     }
 

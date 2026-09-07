@@ -17,3 +17,6 @@ google-services.json
 /build/
 .idea/
 gradle-daemon-jvm.properties
+
+.kotlin/
+__pycache__/

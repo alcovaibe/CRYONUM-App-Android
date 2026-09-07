@@ -45,7 +45,7 @@ def inspect_pdf(path: Path) -> tuple[int, str]:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             size += len(chunk)
             digest.update(chunk)
-    if size <= 0:
+    if size <= 0 or size > 100 * 1024 * 1024:
         raise ValueError(f"empty PDF: {path}")
     return size, digest.hexdigest()
 
@@ -65,10 +65,10 @@ def main() -> int:
     args = parser.parse_args()
 
     if (
-        args.revision <= 0
-        or not args.lectures_version.isdigit()
+        not 1 <= args.revision <= 9223372036854775807
+        or not re.fullmatch(r"[1-9][0-9]{0,8}", args.lectures_version)
         or int(args.lectures_version) <= 0
-        or not args.privacy_version_code.isdigit()
+        or not re.fullmatch(r"[1-9][0-9]{0,8}", args.privacy_version_code)
         or int(args.privacy_version_code) <= 0
     ):
         raise ValueError("revision and content version codes must be positive integers")
@@ -117,6 +117,9 @@ def main() -> int:
         "sha256": sha256,
         "contentType": "application/pdf",
     })
+
+    if sum(entry["sizeBytes"] for entry in files) > 512 * 1024 * 1024:
+        raise ValueError("total PDF size exceeds Android limit")
 
     payload = json.dumps({
         "revision": args.revision,

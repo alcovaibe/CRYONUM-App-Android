@@ -145,6 +145,11 @@ class ContentStorage(context: Context, private val gson: Gson) {
                         }
                     } else if (!destination.exists()) {
                         source.copyTo(destination, overwrite = false)
+                    } else {
+                        // Keep the legacy tree if a previous migration left a conflicting file.
+                        // A later signed-manifest check decides which content is valid.
+                        check(destination.isFile && source.length() == destination.length() &&
+                            sha256(source) == sha256(destination)) { "Conflicting content migration file" }
                     }
                 }
             }.onSuccess {

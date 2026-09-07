@@ -70,7 +70,7 @@ fun PdfViewerScreen(
         onExitApp = onExitApp
     )
 
-    val pages = remember(filePath) { mutableStateListOf<Bitmap>() }
+    var pageCount by remember(filePath) { mutableIntStateOf(0) }
     var isLoading by remember { mutableStateOf(true) }
     var showAcceptButton by remember { mutableStateOf(isFirstLaunchMode || fromDialogViewAction) }
 
@@ -81,57 +81,20 @@ fun PdfViewerScreen(
     var isZoomControlVisible by remember { mutableStateOf(false) }
     var isBackButtonVisible by remember { mutableStateOf(true) }
 
-    // Render PDF pages off the main thread and publish the result in one UI update.
     LaunchedEffect(filePath) {
         isLoading = true
-        pages.forEach { it.recycle() }
-        pages.clear()
-
-        val renderedPages = mutableListOf<Bitmap>()
-        val success = withContext(Dispatchers.IO) {
-            try {
-                val file = File(filePath)
-                ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY).use { pfd ->
+        try {
+            pageCount = withContext(Dispatchers.IO) {
+                ParcelFileDescriptor.open(File(filePath), ParcelFileDescriptor.MODE_READ_ONLY).use { pfd ->
                     PdfRenderer(pfd).use { renderer ->
-                        val renderScale = 1.5f
-
-                        for (i in 0 until renderer.pageCount) {
-                            if (!isActive) break
-                            renderer.openPage(i).use { page ->
-                                val bitmapW = (page.width * renderScale).toInt().coerceAtLeast(1)
-                                val bitmapH = (page.height * renderScale).toInt().coerceAtLeast(1)
-                                // S-04: PdfRenderer requires ARGB_8888 for rendering
-                                val bitmap = createBitmap(bitmapW, bitmapH, Bitmap.Config.ARGB_8888)
-                                val canvas = Canvas(bitmap)
-                                canvas.drawColor(Color.WHITE)
-                                val matrix = Matrix().apply { postScale(renderScale, renderScale) }
-                                page.render(bitmap, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                                renderedPages.add(bitmap)
-                            }
-                        }
+                        require(renderer.pageCount in 1..2000)
+                        renderer.pageCount
                     }
                 }
-                true
-            } catch (e: Exception) {
-                android.util.Log.e("PdfViewer", "Error rendering PDF: ${e.message}", e)
-                renderedPages.forEach { it.recycle() }
-                false
             }
-        }
-
-        if (success) {
-            pages.addAll(renderedPages)
             isLoading = false
-        } else {
-            onPdfError()
-        }
-    }
-
-    DisposableEffect(filePath) {
-        onDispose {
-            pages.forEach { it.recycle() }
-            pages.clear()
-        }
+        } catch (e: kotlinx.coroutines.CancellationException) { throw e }
+        catch (_: Exception) { onPdfError() }
     }
 
     // Hide/show back button on scroll without reading mutable state inside the Flow transform.
@@ -208,34 +171,16 @@ fun PdfViewerScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(pages.size, key = { it }) { index ->
-                        val bitmap = pages[index]
-                        Card(
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                            colors = CardDefaults.cardColors(containerColor = androidx.compose.ui.graphics.Color.White),
-                            modifier = Modifier
-                                .padding(bottom = 8.dp)
-                                .wrapContentSize()
-                        ) {
-                            Image(
-                                bitmap = bitmap.asImageBitmap(),
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxWidth(),
-                                contentScale = ContentScale.FillWidth
-                            )
-                        }
+                    items(pageCount, key = { "$filePath:$it" }) { index ->
+                        PdfPage(filePath, index, onPdfError)
                     }
 
-                    if (showAcceptButton) {
+                    if (showAcceptButton && policyVersionToAccept != null) {
                         item {
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(
                                 onClick = {
-                                    if (policyVersionToAccept != null) {
-                                        PolicyManager.acceptPolicy(context, policyVersionToAccept)
-                                    } else {
-                                        PolicyManager.acceptPolicy(context)
-                                    }
+                                    PolicyManager.acceptPolicy(context, policyVersionToAccept)
                                     showAcceptButton = false
                                 },
                                 modifier = Modifier
@@ -292,7 +237,7 @@ fun PdfViewerScreen(
             IconButton(
                 onClick = onBack,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(48.dp)
                     .shadow(4.dp, CircleShape)
                     .background(androidx.compose.ui.graphics.Color.White, CircleShape)
                     .clip(CircleShape)
@@ -342,6 +287,44 @@ fun PdfViewerScreen(
                 }
             }
         }
+    }
+}
+
+/** Only composed pages own bitmaps. Never recycle a bitmap still referenced by a draw command. */
+@Composable
+private fun PdfPage(filePath: String, index: Int, onError: () -> Unit) {
+    var bitmap by remember(filePath, index) { mutableStateOf<Bitmap?>(null) }
+    LaunchedEffect(filePath, index) {
+        var pending: Bitmap? = null
+        try {
+            withContext(Dispatchers.IO) {
+                ParcelFileDescriptor.open(File(filePath), ParcelFileDescriptor.MODE_READ_ONLY).use { pfd ->
+                    PdfRenderer(pfd).use { renderer ->
+                        renderer.openPage(index).use { page ->
+                            val dimensions = PdfRenderBudget.dimensions(page.width, page.height)
+                            val image = createBitmap(dimensions.first, dimensions.second, Bitmap.Config.ARGB_8888)
+                            pending = image
+                            image.eraseColor(Color.WHITE)
+                            val matrix = Matrix().apply {
+                                setScale(dimensions.first.toFloat() / page.width, dimensions.second.toFloat() / page.height)
+                            }
+                            page.render(image, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                        }
+                    }
+                }
+            }
+            bitmap = pending
+            pending = null
+        } catch (e: kotlinx.coroutines.CancellationException) { throw e }
+        catch (_: Exception) { onError() }
+        finally { pending?.recycle() }
+    }
+    val image = bitmap
+    if (image == null) {
+        Box(Modifier.fillMaxWidth().height(400.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+    } else {
+        Image(image.asImageBitmap(), contentDescription = "PDF ${index + 1}",
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), contentScale = ContentScale.FillWidth)
     }
 }
 

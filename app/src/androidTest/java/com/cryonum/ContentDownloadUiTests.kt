@@ -19,7 +19,14 @@ class ContentDownloadUiTests {
 
     @Test
     fun downloadedLecturesDoNotShowOffer() {
-        compose.setContent { CryonumTheme { if (12 < 12) LectureOffer(12) } }
+        compose.setContent {
+            CryonumTheme {
+                com.cryonum.ui.activity.ReferenceMaterialScreen(
+                    title = "Lectures", items = emptyList(), onBackClick = {}, onItemClick = {}, bottomBar = {},
+                    downloadState = ContentDownloadUiState(lecturesDownloaded = 12, showLecturePrompt = false)
+                )
+            }
+        }
         compose.onNodeWithTag("content_offer_dialog").assertDoesNotExist()
     }
 

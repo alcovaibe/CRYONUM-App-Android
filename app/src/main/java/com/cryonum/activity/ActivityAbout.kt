@@ -107,9 +107,7 @@ class ActivityAbout : AppCompatActivity() {
 
     private fun openVerifiedPdf(path: String, contentVersion: Int?) {
         val pending = pendingPolicyLaunch
-        val versionToAccept = pending?.policyVersionToAccept
-            ?.takeIf { it > 0 }
-            ?: contentVersion?.takeIf { it > PolicyManager.getAcceptedVersion(this) }
+        val versionToAccept = contentVersion?.takeIf { it > PolicyManager.getAcceptedVersion(this) }
         val intent = Intent(this, ActivityPdfViewer::class.java).apply {
             putExtra(PolicyManager.EXTRA_PDF_PATH, path)
             putExtra(

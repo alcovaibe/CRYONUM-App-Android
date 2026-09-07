@@ -80,7 +80,7 @@ object RemoteLinksConfigParser {
         requireSecure(element != null && element.isJsonPrimitive && element.asJsonPrimitive.isNumber, "Invalid $name")
         val primitive = element!!.asJsonPrimitive
         requireSecure(primitive.asString.matches(Regex("[0-9]+")), "Invalid integer $name")
-        primitive.asLong
+        primitive.asString.toLong()
     } catch (e: RemoteLinksException) {
         throw e
     } catch (e: Exception) {

@@ -104,6 +104,20 @@ class SignedContentManifestVerifierTest {
         assertSecurity { verifier.verify(envelope(gson.toJson(root).toByteArray()), 0) }
     }
 
+    @Test
+    fun oversizedSchemaCannotWrapToOne() {
+        val root = JsonParser.parseString(String(envelope(payload()))).asJsonObject
+        root.addProperty("schemaVersion", java.math.BigInteger("4294967297"))
+        assertSecurity { verifier.verify(gson.toJson(root).toByteArray(), 0) }
+    }
+
+    @Test
+    fun oversizedSignedRevisionCannotWrapToOne() {
+        val root = payloadObject()
+        root.addProperty("revision", java.math.BigInteger("18446744073709551617"))
+        assertSecurity { verifier.verify(envelope(gson.toJson(root).toByteArray()), 0) }
+    }
+
     private fun payload(revision: Long = 1): ByteArray = gson.toJson(payloadObject(revision)).toByteArray()
 
     private fun payloadObject(revision: Long = 1): JsonObject {

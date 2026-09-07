@@ -1,6 +1,10 @@
 package com.cryonum.content
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.ensureActive
+import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -13,11 +17,16 @@ class ApprovedContentService(
     private val metadataStore: ContentMetadataStore,
     private val storage: ContentStorage
 ) {
-    suspend fun getVerifiedManifest(): ContentManifest = withContext(Dispatchers.IO) {
+    private val manifestLock = Mutex()
+    suspend fun getVerifiedManifest(): ContentManifest = manifestLock.withLock { withContext(Dispatchers.IO) {
         val lastRevision = metadataStore.lastAcceptedRevision()
         try {
             val envelope = fetchEnvelope()
             val manifest = verifier.verify(envelope, lastRevision)
+            val cached = loadCached(lastRevision)
+            if (cached != null && cached.revision == manifest.revision && cached.files != manifest.files) {
+                throw ContentException(ContentErrorCategory.SECURITY, "Content changed without revision increment")
+            }
             storage.writeCachedManifest(envelope)
             metadataStore.acceptRevision(manifest.revision)
             manifest
@@ -25,6 +34,7 @@ class ApprovedContentService(
             if (e.category == ContentErrorCategory.SECURITY) throw e
             loadCached(lastRevision) ?: throw e
         } catch (e: IOException) {
+            coroutineContext.ensureActive()
             loadCached(lastRevision) ?: throw ContentException(
                 ContentErrorCategory.NETWORK,
                 "Unable to fetch content manifest",
@@ -32,16 +42,19 @@ class ApprovedContentService(
                 cause = e
             )
         }
-    }
+    } }
 
-    private fun fetchEnvelope(): ByteArray {
+    suspend fun cached(): ContentManifest? = manifestLock.withLock { withContext(Dispatchers.IO) { loadCached(metadataStore.lastAcceptedRevision()) } }
+
+    private suspend fun fetchEnvelope(): ByteArray {
         val request = Request.Builder()
             .url(ApprovedContentUrlPolicy.MANIFEST_URL)
             .header("Accept", "application/json")
             .header("Accept-Encoding", "identity")
             .get()
             .build()
-        client.newCall(request).execute().use { response ->
+        val call = client.newCall(request)
+        return withCancellableCall(call) { call.execute().use { response ->
             if (response.isRedirect) throw ContentException(ContentErrorCategory.SECURITY, "Manifest redirect rejected")
             if (!response.isSuccessful) {
                 val retryable = response.code == 408 || response.code == 429 || response.code in 500..599
@@ -70,8 +83,8 @@ class ApprovedContentService(
                     output.write(buffer, 0, read)
                 }
             }
-            return output.toByteArray()
-        }
+            output.toByteArray()
+        } }
     }
 
     private fun loadCached(lastRevision: Long): ContentManifest? {

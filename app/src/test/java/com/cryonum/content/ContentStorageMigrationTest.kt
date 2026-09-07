@@ -40,6 +40,8 @@ class ContentStorageMigrationTest {
             val result = ContentStorage.migrateLegacyRoot(filesDir)
 
             assertEquals("current", result.resolve("privacy/privacy-policy.pdf").readText())
+            assertTrue("Conflicting legacy copy must remain recoverable", legacyFile.exists())
+            assertEquals("legacy", legacyFile.readText())
         } finally {
             filesDir.deleteRecursively()
         }

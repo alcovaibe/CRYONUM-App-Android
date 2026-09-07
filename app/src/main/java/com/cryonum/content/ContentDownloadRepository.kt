@@ -1,6 +1,9 @@
 package com.cryonum.content
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -30,9 +33,12 @@ class ContentDownloadRepository(
     private val metadataStore: ContentMetadataStore,
     private val integrityVerifier: ContentIntegrityVerifier
 ) {
-    suspend fun manifest(): ContentManifest = service.getVerifiedManifest()
+    private val bundleLocks = ContentBundle.entries.associateWith { Mutex() }
 
-    suspend fun localSummary(manifest: ContentManifest, bundle: ContentBundle): LocalContentSummary {
+    suspend fun manifest(preferCached: Boolean = false): ContentManifest =
+        (if (preferCached) service.cached() else null) ?: service.getVerifiedManifest()
+
+    suspend fun localSummary(manifest: ContentManifest, bundle: ContentBundle): LocalContentSummary = bundleLocks.getValue(bundle).withLock { withContext(Dispatchers.IO) {
         val files = filesFor(manifest, bundle)
         var verifiedCount = 0
         var verifiedBytes = 0L
@@ -52,16 +58,17 @@ class ContentDownloadRepository(
                 }
             }
         }
-        return LocalContentSummary(
+        LocalContentSummary(
             verifiedCount = verifiedCount,
             totalCount = files.size,
             verifiedBytes = verifiedBytes,
             totalBytes = files.sumOf { it.sizeBytes },
             current = verifiedCount == files.size
         )
-    }
+    } }
 
-    suspend fun verifiedLocalFile(manifest: ContentManifest, file: ContentManifestFile) = withContext(Dispatchers.IO) {
+    suspend fun verifiedLocalFile(manifest: ContentManifest, file: ContentManifestFile) =
+        bundleLocks.getValue(if (file.category == ContentCategory.LECTURE) ContentBundle.LECTURES else ContentBundle.PRIVACY_POLICY).withLock { withContext(Dispatchers.IO) {
         val local = storage.finalFile(file)
         if (integrityVerifier.verify(local, file)) return@withContext local
         val record = metadataStore.completedRecord(file.id)
@@ -71,7 +78,7 @@ class ContentDownloadRepository(
             metadataStore.clearCompleted(file.id)
         }
         null
-    }
+    } }
 
     fun hasStoredFile(file: ContentManifestFile): Boolean = storage.finalFile(file).isFile
 
@@ -79,7 +86,7 @@ class ContentDownloadRepository(
         bundle: ContentBundle,
         onCallChanged: (Call?) -> Unit,
         onProgress: suspend (DownloadProgress) -> Unit
-    ): ContentManifest = withContext(Dispatchers.IO) {
+    ): ContentManifest = bundleLocks.getValue(bundle).withLock { withContext(Dispatchers.IO) {
         val manifest = service.getVerifiedManifest()
         val files = filesFor(manifest, bundle)
         val totalBytes = files.sumOf { it.sizeBytes }
@@ -119,9 +126,9 @@ class ContentDownloadRepository(
         }
         onProgress(DownloadProgress("COMPLETED", null, files.size, files.size, 0, 0, totalBytes, totalBytes, files.size))
         manifest
-    }
+    } }
 
-    fun clearPartials(bundle: ContentBundle) = storage.discardBundlePartials(bundle)
+    suspend fun clearPartials(bundle: ContentBundle) = bundleLocks.getValue(bundle).withLock { storage.discardBundlePartials(bundle) }
 
     private fun filesFor(manifest: ContentManifest, bundle: ContentBundle): List<ContentManifestFile> = when (bundle) {
         ContentBundle.LECTURES -> manifest.lectures
@@ -165,12 +172,12 @@ class ContentDownloadRepository(
             val call = client.newCall(requestBuilder.build())
             onCallChanged(call)
             try {
-                call.execute().use { response ->
+                withCancellableCall(call) { call.execute().use { response ->
                     if (response.isRedirect) throw ContentException(ContentErrorCategory.SECURITY, "Content redirect rejected")
                     if (canResume) {
                         when (ContentHttpValidator.resumeDisposition(response.code, part.length(), file.sizeBytes)) {
                             ResumeDisposition.VERIFY_COMPLETE_PART -> {
-                                if (integrityVerifier.verify(part, file)) return
+                                if (integrityVerifier.verify(part, file)) return@withCancellableCall true
                                 storage.discardPartial(file)
                                 metadata = null
                                 return@use
@@ -201,11 +208,16 @@ class ContentDownloadRepository(
                     }
                     storage.writePartialMetadata(file, PartialContentMetadata(file.id, manifest.revision, file.path, file.sizeBytes, file.sha256, effectiveEtag, start))
                     streamResponse(response, file, start, canResume, effectiveEtag, manifest.revision, onBytes)
-                    return
+                    return@withCancellableCall true
                 }
+                false
+                }.let { if (it) return }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: ContentException) {
                 throw e
             } catch (e: IOException) {
+                coroutineContext.ensureActive()
                 val saved = storage.partialFile(file).length().coerceAtMost(file.sizeBytes)
                 val currentEtag = storage.readPartialMetadata(file)?.etag
                 if (saved > 0) {

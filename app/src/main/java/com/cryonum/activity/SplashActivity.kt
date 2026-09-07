@@ -12,7 +12,7 @@ import com.cryonum.managers.SecurityManager
 import com.cryonum.managers.ThemeManager
 import com.cryonum.ui.activity.SplashScreenContent
 import com.cryonum.ui.theme.CryonumTheme
-import kotlinx.coroutines.CoroutineScope
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -51,7 +51,7 @@ class SplashActivity : ComponentActivity() {
         }
 
         // Delay long enough to show splash
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch {
             delay(SPLASH_DELAY_MS)
 
             if (!isFinishing) {
